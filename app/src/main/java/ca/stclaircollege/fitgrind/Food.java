@@ -7,13 +7,11 @@ package ca.stclaircollege.fitgrind;
 public class Food {
     private String group;
     private String name;
-    private int upc;
     private String ndbno;
 
-    public Food(String group, String name, int upc, String ndbno) {
+    public Food(String group, String name, String ndbno) {
         this.group = group;
         this.name = name;
-        this.upc = upc;
         this.ndbno = ndbno;
     }
 
@@ -31,14 +29,6 @@ public class Food {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public int getUpc() {
-        return upc;
-    }
-
-    public void setUpc(int upc) {
-        this.upc = upc;
     }
 
     public String getNdbno() {
