@@ -1,6 +1,10 @@
 <resources>
     <string name="app_name">FitGrind</string>
 
+    <!-- Put Food API Key here for public access. We don't
+    need to obfuscate it because everyone can get a free API key. -->
+    <string name="API_KEY">pwiN99R45M4Zs6Wj0yHYBxokOxhPYQcZ6WxbQMYt</string>
+
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
