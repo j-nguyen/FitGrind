@@ -1,9 +1,8 @@
 package ca.stclaircollege.fitgrind;
 
-
 import com.loopj.android.http.AsyncHttpClient;
-import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.JsonHttpResponseHandler;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -40,7 +39,6 @@ public class FoodAPI {
      * @return Food object, which should provide important items needed
      */
     public FoodStore searchFood(String food) {
-        FoodStore store = null;
         // we want to retrieve the results, and we want to encode the URL params too
         String urlSearch = URL_SEARCH + "&q=" + food + "&api_key=" + this.apiKey;
         // from urlSearch get the encoded
@@ -53,10 +51,25 @@ public class FoodAPI {
             client.get(urlSearch, null, new JsonHttpResponseHandler() {
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                    // If the response is JSONObject instead of expected JSONArray
-                    // test
+                    // If the response is JSONObject instead of expected JSONArra
                     try {
-                        System.out.println(response.toString(3));
+                        // create the store
+                        FoodStore store = null;
+                        // get list
+                        JSONObject list = response.getJSONObject("list");
+                        JSONArray jsonArray = list.getJSONArray("item");
+                        // depending on the constructor, we can change based on it
+                        if (list.getInt("total") > MAX_RESULTS) {
+                            store = new FoodStore(list.getInt("total"), list.getInt("offset"), list.getInt("start"), list.getInt("end"));
+                        } else {
+                            store = new FoodStore(list.getInt("total"));
+                        }
+                        // Once done, we want to iterate through the JSON array to get the rest of the contents in the item class
+                        for (int i=0; i < jsonArray.length(); i++) {
+                            JSONObject item = jsonArray.getJSONObject(i);
+                            // once retrieved, we know the item KEY already so we can just add it in without needing to know much
+                            
+                        }
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -64,7 +77,7 @@ public class FoodAPI {
             });
         }
         // finally return the object
-        return store;
+        return null;
     }
 
     /**
