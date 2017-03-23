@@ -3,7 +3,10 @@ package ca.stclaircollege.fitgrind;
 
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
-
+import com.loopj.android.http.JsonHttpResponseHandler;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
@@ -47,19 +50,19 @@ public class FoodAPI {
             // We want to create an async http request object
             AsyncHttpClient client = new AsyncHttpClient();
             // we want a GET request, so we use the get method from async
-            client.get(urlSearch, new AsyncHttpResponseHandler() {
+            client.get(urlSearch, null, new JsonHttpResponseHandler() {
                 @Override
-                public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-
-                }
-
-                @Override
-                public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-
+                public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                    // If the response is JSONObject instead of expected JSONArray
+                    // test
+                    try {
+                        System.out.println(response.toString(3));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                 }
             });
         }
-
         // finally return the object
         return store;
     }
