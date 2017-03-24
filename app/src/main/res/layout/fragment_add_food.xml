@@ -1,9 +1,45 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context="ca.stclaircollege.fitgrind.AddFoodFragment">
 
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/padding">
+
+        <EditText
+            android:layout_width="match_parent"
+            android:imeOptions="actionSearch"
+            android:id="@+id/searchField"
+            android:inputType="textUri"
+            android:hint="@string/searchHint"
+            android:selectAllOnFocus="false"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:backgroundTint="@android:color/transparent" />
+
+        <android.support.design.widget.FloatingActionButton
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:clickable="true"
+            android:id="@+id/searchButton"
+            app:elevation="5dp"
+            app:backgroundTint="@android:color/holo_blue_light"
+            android:layout_weight="0"
+            android:src="@drawable/ic_search_black_24dp" />
+
+    </LinearLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:id="@+id/recyclerView" />
 
 </LinearLayout>
