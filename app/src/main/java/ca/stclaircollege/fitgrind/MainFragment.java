@@ -5,6 +5,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -74,7 +76,11 @@ public class MainFragment extends Fragment {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                FragmentManager fm = getActivity().getSupportFragmentManager();
+                FragmentTransaction trans = fm.beginTransaction();
+                trans.replace(R.id.content_main, new AddFoodFragment());
+                trans.addToBackStack(null);
+                trans.commit();
             }
         });
 
