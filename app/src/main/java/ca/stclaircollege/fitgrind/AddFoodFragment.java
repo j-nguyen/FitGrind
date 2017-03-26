@@ -7,6 +7,8 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +20,8 @@ import com.loopj.android.http.JsonHttpResponseHandler;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
 
 import cz.msebera.android.httpclient.Header;
 
@@ -51,6 +55,10 @@ public class AddFoodFragment extends Fragment {
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
 
+    // set-up private API key
+    // search for the food based on searchField text
+    private FoodAPI foodApi;
+
     public AddFoodFragment() {
         // Required empty public constructor
     }
@@ -76,6 +84,10 @@ public class AddFoodFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // create api here
+        foodApi = new FoodAPI(getString(R.string.API_KEY));
+
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
@@ -102,9 +114,54 @@ public class AddFoodFragment extends Fragment {
         mLayoutManager = new LinearLayoutManager(this.getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        // use the adapter we have
-        mAdapter = new MyAdapter(new String[]{"test", "sdfsdf", "sdfsbf"});
-        mRecyclerView.setAdapter(mAdapter);
+        // use a search field for your adapter
+        searchField.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                foodApi.searchFood(searchField.getText().toString(), new JsonHttpResponseHandler() {
+                    @Override
+                    public void onStart() {
+                        // Show loading screen on empty recycler view
+                    }
+
+                    @Override
+                    public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                        // Get the food in food store
+                        try {
+                            JSONObject list = response.getJSONObject("list");
+                            // now we can retrieve data
+                            FoodStore foodStore = new FoodStore(list.getInt("total"), list.getInt("start"), list.getInt("end"));
+                            // now that foodstore has been retrieved, we can set it up!
+                            JSONArray items = list.getJSONArray("item");
+                            // iterate
+                            for (int i = 0; i < items.length(); i++) {
+                                // get json object
+                                JSONObject obj = items.getJSONObject(i);
+                                // add food
+                                foodStore.addFood(new Food(obj.getString("group"), obj.getString("name"), obj.getString("ndbno")));
+                                // set adapter
+                                mAdapter = new MyAdapter(foodStore.getFoods());
+                                mRecyclerView.setAdapter(mAdapter);
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        //                        FoodStore foodStore = ne)
+                        // use the adapter we have
+                        //                        mAdapter = new MyAdapter();
+                        //                        mRecyclerView.setAdapter(mAdapter);
+                    }
+
+                });
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {}
+
+        });
 
         return view;
     }
@@ -113,7 +170,7 @@ public class AddFoodFragment extends Fragment {
      * Our adapter class for RecyclerView. This handles the layout issues on what it needs to have.
      */
     public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
-        private String[] mDataset;
+        private ArrayList<Food> mDataset;
 
         // Provide a reference to the views for each data item
         // Complex data items may need more than one view per item, and
@@ -135,7 +192,7 @@ public class AddFoodFragment extends Fragment {
         }
 
         // Provide a suitable constructor (depends on the kind of dataset)
-        public MyAdapter(String[] myDataset) {
+        public MyAdapter(ArrayList<Food> myDataset) {
             mDataset = myDataset;
         }
 
@@ -158,13 +215,13 @@ public class AddFoodFragment extends Fragment {
             // - get element from your dataset at this position
             // - replace the contents of the view with that element
 //            holder.mTextView.setText(mDataset[position]);
-            holder.getTextView().setText(mDataset[position]);
+            holder.getTextView().setText(mDataset.get(position).getName());
         }
 
         // Return the size of your dataset (invoked by the layout manager)
         @Override
         public int getItemCount() {
-            return mDataset.length;
+            return mDataset.size();
         }
     }
 

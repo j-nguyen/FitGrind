@@ -11,7 +11,12 @@ public class Food {
 
     public Food(String group, String name, String ndbno) {
         this.group = group;
-        this.name = name;
+        // only showcase the Name of the food, not the UPC #. That isn't important to the user.
+        if (name.indexOf(", UPC") != -1) {
+            this.name = name.substring(0, name.indexOf("UPC"));
+        } else {
+            this.name = name;
+        }
         this.ndbno = ndbno;
     }
 

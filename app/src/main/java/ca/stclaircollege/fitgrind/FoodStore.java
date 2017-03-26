@@ -15,7 +15,6 @@ public class FoodStore {
     // This is used if results are higher than expected
     private int start;
     private int end;
-    private int offset;
 
     /**
      * the Integer search results is how much the array should hold in a foodList. This is good because we don't have to use
@@ -31,13 +30,11 @@ public class FoodStore {
     /**
      * This constructor is used if the search results is higher than expected. If it is, we have to do some type of pagination.
      * @param totalSearchResults
-     * @param offset
      * @param start
      * @param end
      */
-    public FoodStore(int totalSearchResults, int offset, int start, int end) {
+    public FoodStore(int totalSearchResults, int start, int end) {
         this.totalSearchResults = totalSearchResults;
-        this.offset = offset;
         this.start = start;
         this.end = end;
         // set the total search results here
@@ -50,5 +47,9 @@ public class FoodStore {
      */
     public void addFood(Food food) {
         this.foodList.add(food);
+    }
+
+    public ArrayList<Food> getFoods() {
+        return this.foodList;
     }
 }
