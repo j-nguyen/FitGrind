@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -132,6 +133,15 @@ public class AddFoodFragment extends Fragment {
             }
         });
 
+        // create search button
+        searchButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // we can use the same searchfood
+                searchFood();
+            }
+        });
+
         return view;
     }
 
@@ -159,9 +169,16 @@ public class AddFoodFragment extends Fragment {
                         JSONObject obj = items.getJSONObject(i);
                         // add food
                         foodStore.addFood(new Food(obj.getString("group"), obj.getString("name"), obj.getString("ndbno")));
-                        // set adapter
-                        mAdapter = new MyAdapter(foodStore.getFoods());
-                        mRecyclerView.setAdapter(mAdapter);
+                    }
+                    // set adapter
+                    mAdapter = new MyAdapter(foodStore.getFoods());
+                    mRecyclerView.setAdapter(mAdapter);
+                    // dismisses keyboard
+                    // Check if no view has focus:
+                    View view = getActivity().getCurrentFocus();
+                    if (view != null) {
+                        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
