@@ -9,9 +9,11 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -119,53 +121,53 @@ public class AddFoodFragment extends Fragment {
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         // use a search field for your adapter
-        searchField.addTextChangedListener(new TextWatcher() {
+        searchField.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                foodApi.searchFood(searchField.getText().toString(), new JsonHttpResponseHandler() {
-                    @Override
-                    public void onStart() {
-                        // Show loading screen on empty recycler view
-                        progressBar.setVisibility(View.VISIBLE);
-                    }
-
-                    @Override
-                    public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                        progressBar.setVisibility(View.GONE);
-                        // Get the food in food store
-                        try {
-                            JSONObject list = response.getJSONObject("list");
-                            // now we can retrieve data
-                            FoodStore foodStore = new FoodStore(list.getInt("total"), list.getInt("start"), list.getInt("end"));
-                            // now that foodstore has been retrieved, we can set it up!
-                            JSONArray items = list.getJSONArray("item");
-                            // iterate
-                            for (int i = 0; i < items.length(); i++) {
-                                // get json object
-                                JSONObject obj = items.getJSONObject(i);
-                                // add food
-                                foodStore.addFood(new Food(obj.getString("group"), obj.getString("name"), obj.getString("ndbno")));
-                                // set adapter
-                                mAdapter = new MyAdapter(foodStore.getFoods());
-                                mRecyclerView.setAdapter(mAdapter);
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-
-                });
+            public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
+                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                    searchFood();
+                    return true;
+                }
+                return false;
             }
-
-            @Override
-            public void afterTextChanged(Editable editable) {}
-
         });
 
         return view;
+    }
+
+    private void searchFood() {
+        foodApi.searchFood(searchField.getText().toString(), new JsonHttpResponseHandler() {
+            @Override
+            public void onStart() {
+                // Show loading screen on empty recycler view
+                progressBar.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                progressBar.setVisibility(View.GONE);
+                // Get the food in food store
+                try {
+                    JSONObject list = response.getJSONObject("list");
+                    // now we can retrieve data
+                    FoodStore foodStore = new FoodStore(list.getInt("total"), list.getInt("start"), list.getInt("end"));
+                    // now that foodstore has been retrieved, we can set it up!
+                    JSONArray items = list.getJSONArray("item");
+                    // iterate
+                    for (int i = 0; i < items.length(); i++) {
+                        // get json object
+                        JSONObject obj = items.getJSONObject(i);
+                        // add food
+                        foodStore.addFood(new Food(obj.getString("group"), obj.getString("name"), obj.getString("ndbno")));
+                        // set adapter
+                        mAdapter = new MyAdapter(foodStore.getFoods());
+                        mRecyclerView.setAdapter(mAdapter);
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     /**
