@@ -177,17 +177,17 @@ public class AddFoodFragment extends Fragment {
         // you provide access to all the views for a data item in a view holder
         public class ViewHolder extends RecyclerView.ViewHolder {
             // each data item is just a string in this case
-            private TextView mTextView;
+            private TextView name, group;
 
             public ViewHolder(View view) {
                 super(view);
 
-                mTextView = (TextView) view.findViewById(R.id.info_text);
+                this.name = (TextView) view.findViewById(R.id.name);
+                this.group = (TextView) view.findViewById(R.id.group);
             }
 
-            public TextView getTextView() {
-                return this.mTextView;
-            }
+            public TextView getNameTextView() { return this.name; }
+            public TextView getGroupTextView() { return this.group; }
 
         }
 
@@ -215,7 +215,8 @@ public class AddFoodFragment extends Fragment {
             // - get element from your dataset at this position
             // - replace the contents of the view with that element
 //            holder.mTextView.setText(mDataset[position]);
-            holder.getTextView().setText(mDataset.get(position).getName());
+            holder.getNameTextView().setText(mDataset.get(position).getName());
+            holder.getGroupTextView().setText(mDataset.get(position).getGroup());
         }
 
         // Return the size of your dataset (invoked by the layout manager)
