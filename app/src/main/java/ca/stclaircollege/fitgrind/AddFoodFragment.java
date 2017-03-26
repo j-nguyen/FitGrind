@@ -13,6 +13,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -49,6 +51,7 @@ public class AddFoodFragment extends Fragment {
     // get the connections
     private FloatingActionButton searchButton;
     private EditText searchField;
+    private LinearLayout progressBar;
 
     // Recycler View
     private RecyclerView mRecyclerView;
@@ -103,6 +106,7 @@ public class AddFoodFragment extends Fragment {
         // connect from the layout
         searchButton = (FloatingActionButton) view.findViewById(R.id.searchButton);
         searchField = (EditText) view.findViewById(R.id.searchField);
+        progressBar = (LinearLayout) view.findViewById(R.id.progressBar);
 
         // set-up the recycler view
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
@@ -125,10 +129,12 @@ public class AddFoodFragment extends Fragment {
                     @Override
                     public void onStart() {
                         // Show loading screen on empty recycler view
+                        progressBar.setVisibility(View.VISIBLE);
                     }
 
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                        progressBar.setVisibility(View.GONE);
                         // Get the food in food store
                         try {
                             JSONObject list = response.getJSONObject("list");
@@ -149,10 +155,6 @@ public class AddFoodFragment extends Fragment {
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-                        //                        FoodStore foodStore = ne)
-                        // use the adapter we have
-                        //                        mAdapter = new MyAdapter();
-                        //                        mRecyclerView.setAdapter(mAdapter);
                     }
 
                 });
