@@ -19,7 +19,6 @@
             android:id="@+id/searchField"
             android:inputType="textUri"
             android:hint="@string/searchHint"
-            android:selectAllOnFocus="false"
             android:layout_height="50dp"
             android:layout_weight="1" />
 

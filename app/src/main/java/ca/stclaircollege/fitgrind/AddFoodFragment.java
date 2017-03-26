@@ -36,18 +36,19 @@ import cz.msebera.android.httpclient.Header;
  * Activities that contain this fragment must implement the
  * {@link AddFoodFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link AddFoodFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
 public class AddFoodFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    // create PRIVATE Constants. This is better practice
+    private static final String LIST_KEY = "list";
+    private static final String TOTAL_KEY = "total";
+    private static final String START_KEY = "start";
+    private static final String END_KEY = "end";
+    private static final String NDB_KEY = "ndbno";
+    private static final String GROUP_KEY = "group";
+    private static final String NAME_KEY = "name";
+    private static final String ITEM_KEY = "item";
 
     private OnFragmentInteractionListener mListener;
 
@@ -69,24 +70,6 @@ public class AddFoodFragment extends Fragment {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment AddFoodFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static AddFoodFragment newInstance(String param1, String param2) {
-        AddFoodFragment fragment = new AddFoodFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -94,10 +77,6 @@ public class AddFoodFragment extends Fragment {
         // create api here
         foodApi = new FoodAPI(getString(R.string.API_KEY));
 
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
@@ -125,7 +104,7 @@ public class AddFoodFragment extends Fragment {
         searchField.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
-                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                if (actionId == EditorInfo.IME_ACTION_SEARCH && searchField.getText().length() != 0) {
                     searchFood();
                     return true;
                 }
@@ -138,7 +117,7 @@ public class AddFoodFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 // we can use the same searchfood
-                searchFood();
+                if (searchField.getText().length() != 0) searchFood();
             }
         });
 
@@ -158,17 +137,17 @@ public class AddFoodFragment extends Fragment {
                 progressBar.setVisibility(View.GONE);
                 // Get the food in food store
                 try {
-                    JSONObject list = response.getJSONObject("list");
+                    JSONObject list = response.getJSONObject(LIST_KEY);
                     // now we can retrieve data
-                    FoodStore foodStore = new FoodStore(list.getInt("total"), list.getInt("start"), list.getInt("end"));
+                    FoodStore foodStore = new FoodStore(list.getInt(TOTAL_KEY), list.getInt(START_KEY), list.getInt(END_KEY));
                     // now that foodstore has been retrieved, we can set it up!
-                    JSONArray items = list.getJSONArray("item");
+                    JSONArray items = list.getJSONArray(ITEM_KEY);
                     // iterate
                     for (int i = 0; i < items.length(); i++) {
                         // get json object
                         JSONObject obj = items.getJSONObject(i);
                         // add food
-                        foodStore.addFood(new Food(obj.getString("group"), obj.getString("name"), obj.getString("ndbno")));
+                        foodStore.addFood(new Food(obj.getString(GROUP_KEY), obj.getString(NAME_KEY), obj.getString(NDB_KEY)));
                     }
                     // set adapter
                     mAdapter = new MyAdapter(foodStore.getFoods());
