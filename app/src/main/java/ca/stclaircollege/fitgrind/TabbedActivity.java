@@ -1,7 +1,9 @@
 package ca.stclaircollege.fitgrind;
 
+import android.net.Uri;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.design.widget.TabLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
@@ -18,7 +20,19 @@ import android.view.ViewGroup;
 
 import android.widget.TextView;
 
-public class TabbedActivity extends AppCompatActivity {
+import java.util.ArrayList;
+import java.util.List;
+
+public class TabbedActivity extends AppCompatActivity implements
+    WorkoutFragment.OnFragmentInteractionListener,
+    TimeFragment.OnFragmentInteractionListener{
+
+    private Toolbar toolbar;
+    private TabLayout tabLayout;
+    private int[] tabIcons = {
+            R.drawable.ic_event_available_black_24dp,
+            R.drawable.ic_access_alarm_black_24dp,
+    };
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -40,8 +54,9 @@ public class TabbedActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tabbed);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
@@ -49,6 +64,11 @@ public class TabbedActivity extends AppCompatActivity {
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
+        setupViewPager(mViewPager);
+
+        tabLayout = (TabLayout) findViewById(R.id.tabs);
+        tabLayout.setupWithViewPager(mViewPager);
+        setupTabIcons();
 
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -60,6 +80,18 @@ public class TabbedActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    private void setupTabIcons() {
+        tabLayout.getTabAt(0).setIcon(tabIcons[0]);
+        tabLayout.getTabAt(1).setIcon(tabIcons[1]);
+    }
+
+    private void setupViewPager(ViewPager viewPager) {
+        SectionsPagerAdapter adapter = new SectionsPagerAdapter(getSupportFragmentManager());
+        adapter.addFrag(new WorkoutFragment(), "Workout Schedule");
+        adapter.addFrag(new TimeFragment(), "Timer");
+        viewPager.setAdapter(adapter);
     }
 
 
@@ -125,6 +157,8 @@ public class TabbedActivity extends AppCompatActivity {
      * one of the sections/tabs/pages.
      */
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
+        private final List<Fragment> mFragmentList = new ArrayList<>();
+        private final List<String> mFragmentTitleList = new ArrayList<>();
 
         public SectionsPagerAdapter(FragmentManager fm) {
             super(fm);
@@ -134,26 +168,26 @@ public class TabbedActivity extends AppCompatActivity {
         public Fragment getItem(int position) {
             // getItem is called to instantiate the fragment for the given page.
             // Return a PlaceholderFragment (defined as a static inner class below).
-            return PlaceholderFragment.newInstance(position + 1);
+            return mFragmentList.get(position);
         }
 
         @Override
         public int getCount() {
-            // Show 3 total pages.
-            return 3;
+            return mFragmentList.size();
+        }
+
+        public void addFrag(Fragment fragment, String title) {
+            mFragmentList.add(fragment);
+            mFragmentTitleList.add(title);
         }
 
         @Override
         public CharSequence getPageTitle(int position) {
-            switch (position) {
-                case 0:
-                    return "SECTION 1";
-                case 1:
-                    return "SECTION 2";
-                case 2:
-                    return "SECTION 3";
-            }
-            return null;
+            return  mFragmentTitleList.get(position);
         }
+    }
+
+    public void onFragmentInteraction(Uri uri) {
+
     }
 }
