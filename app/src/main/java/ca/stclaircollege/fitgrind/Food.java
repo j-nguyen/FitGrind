@@ -7,19 +7,27 @@ package ca.stclaircollege.fitgrind;
 public class Food {
     private String group;
     private String name;
-    private String ndbno;
+    private int ndbNo;
     // provide a list of nutrients. This is always going to be a set value.
-    private Nutrients[] nutrients;
+    private Nutrient[] nutrients;
 
-    public Food(String group, String name, String ndbno) {
+    public Food(String group, String name, int ndbno) {
         this.group = group;
         // only showcase the Name of the food, not the UPC #. That isn't important to the user.
         if (name.indexOf(", UPC") != -1) {
-            this.name = name.substring(0, name.indexOf("UPC"));
+            this.name = name.substring(0, name.indexOf(", UPC"));
         } else {
             this.name = name;
         }
-        this.ndbno = ndbno;
+        this.ndbNo = ndbno;
+    }
+
+    public Nutrient[] getNutrients() {
+        return nutrients;
+    }
+
+    public void addNutrient(Nutrient nutrient, int index) {
+        this.nutrients[index] = nutrient;
     }
 
     public String getGroup() {
@@ -38,11 +46,11 @@ public class Food {
         this.name = name;
     }
 
-    public String getNdbno() {
-        return ndbno;
+    public int getNdbno() {
+        return ndbNo;
     }
 
-    public void setNdbno(String ndbno) {
-        this.ndbno = ndbno;
+    public void setNdbno(int ndbno) {
+        this.ndbNo = ndbno;
     }
 }

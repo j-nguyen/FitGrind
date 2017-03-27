@@ -8,14 +8,14 @@ package ca.stclaircollege.fitgrind;
  * @version 1.0
  */
 
-public class Nutrients {
+public class Nutrient {
     private int nutrientId;
     private String name;
     private String group;
     private String unit;
     private double value;
 
-    public Nutrients(int nutrientId, String name, String group, String unit, double value) {
+    public Nutrient(int nutrientId, String name, String group, String unit, double value) {
         this.nutrientId = nutrientId;
         this.name = name;
         this.group = group;

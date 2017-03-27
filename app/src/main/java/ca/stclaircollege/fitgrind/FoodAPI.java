@@ -19,8 +19,8 @@ public class FoodAPI {
     // We want to create constant URLS so we don't mess up.
     // URL Search is the URL needed for searching for a certain food item.
     // URL INFO is to get nutritional info from the search parameters.
-    private static final String URL_SEARCH = "https://api.nal.usda.gov/ndb/search/?format=json&";
-    private static final String URL_INFO = "";
+    private static final String URL_SEARCH = "https://api.nal.usda.gov/ndb/search/?format=json";
+    private static final String URL_INFO = "https://api.nal.usda.gov/ndb/reports/?format=json&type=b";
 
     // Constant of how many nutrients there are
     private static final int MAX_NUTRIENTS = 0;
@@ -48,7 +48,21 @@ public class FoodAPI {
             // We want to create an async http request object
             AsyncHttpClient client = new AsyncHttpClient();
             // we want a GET request, so we use the get method from async
-            client.get(urlSearch, handler);
+            client.get(encodedSearch, handler);
+        }
+    }
+
+    public void getFoodResult(int ndbNo, AsyncHttpResponseHandler handler) {
+        // finish the rest of the URL parameters
+        String urlSearch = URL_INFO + "&ndbno=" + ndbNo + "&api_key=" + this.apiKey;
+        // encode the URL,
+        String encodedSearch = encodeUrl(urlSearch);
+        // now make sure it doesn't return null so we can add an async search
+        if (encodedSearch != null) {
+            // Create an async request client
+            AsyncHttpClient client = new AsyncHttpClient();
+            // and now use the handler received
+            client.get(encodedSearch, handler);
         }
     }
 
