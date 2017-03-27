@@ -20,16 +20,17 @@ public class FoodAPI {
     // URL Search is the URL needed for searching for a certain food item.
     // URL INFO is to get nutritional info from the search parameters.
     private static final String URL_SEARCH = "https://api.nal.usda.gov/ndb/search/?format=json";
-    private static final String URL_INFO = "https://api.nal.usda.gov/ndb/reports/?format=json&type=b";
+    private static final String URL_INFO = "https://api.nal.usda.gov/ndb/nutrients/?format=json";
 
     // Constant of how many nutrients there are
-    private static final int MAX_NUTRIENTS = 0;
-    public static final int MAX_RESULTS = 150; // the max results. The API returns a limit of 150 items, but the search results could be more.
+    private static final int[] NUTRIENT_LIST = new int[]{208,269,204,205,606,605,601,307,291,203,320,401,301,303,306};
+    private static final int MAX_NUTRIENTS = NUTRIENT_LIST.length;
 
+    // the max results. The API returns a limit of 150 items, but the search results could be more.
+    public static final int MAX_RESULTS = 150;
 
     // We will need the API key. We can use context to pass, but having it passed like this might be much better
     private String apiKey;
-
 
     public FoodAPI(String apiKey) { this.apiKey = apiKey; }
 
@@ -55,6 +56,13 @@ public class FoodAPI {
     public void getFoodResult(int ndbNo, AsyncHttpResponseHandler handler) {
         // finish the rest of the URL parameters
         String urlSearch = URL_INFO + "&ndbno=" + ndbNo + "&api_key=" + this.apiKey;
+        // We now want to add our URL encode
+        for (int nutrient : NUTRIENT_LIST) {
+            // now add this in
+            urlSearch += "&nutrients=" + nutrient;
+        }
+        // we'll use a substring, to finally remove the end to make sure
+        urlSearch = urlSearch.substring(0, urlSearch.length()-1); // -1 index to get last index
         // encode the URL,
         String encodedSearch = encodeUrl(urlSearch);
         // now make sure it doesn't return null so we can add an async search
