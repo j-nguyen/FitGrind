@@ -1,10 +1,13 @@
 package ca.stclaircollege.fitgrind;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * Food class is used to retrieve items.
  */
 
-public class Food {
+public class Food implements Parcelable {
     private String group;
     private String name;
     private int ndbNo;
@@ -20,6 +23,12 @@ public class Food {
             this.name = name;
         }
         this.ndbNo = ndbno;
+    }
+
+    protected Food(Parcel in) {
+        this.group = in.readString();
+        this.name = in.readString();
+        this.ndbNo = in.readInt();
     }
 
     public Nutrient[] getNutrients() {
@@ -53,4 +62,29 @@ public class Food {
     public void setNdbno(int ndbno) {
         this.ndbNo = ndbno;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(group);
+        dest.writeString(name);
+        dest.writeInt(ndbNo);
+    }
+
+    @SuppressWarnings("unused")
+    public static final Parcelable.Creator<Food> CREATOR = new Parcelable.Creator<Food>() {
+        @Override
+        public Food createFromParcel(Parcel in) {
+            return new Food(in);
+        }
+
+        @Override
+        public Food[] newArray(int size) {
+            return new Food[size];
+        }
+    };
 }

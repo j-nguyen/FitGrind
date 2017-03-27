@@ -14,19 +14,34 @@ import android.view.ViewGroup;
  */
 public class ViewFoodFragment extends Fragment {
 
+    private static final String FOOD_KEY = "Food";
+
     private OnFragmentInteractionListener mListener;
 
     // our current food being passed onto the process.
     private Food currFood;
 
-    public ViewFoodFragment(Food currFood) {
-        // get it from the constructor
-        this.currFood = currFood;
+    public ViewFoodFragment() {}
+
+    public static ViewFoodFragment newInstance(Food food) {
+        ViewFoodFragment viewFoodFragment = new ViewFoodFragment();
+
+        Bundle args = new Bundle();
+        // to pass an object, we need to use the parcelable object
+        args.putParcelable(FOOD_KEY, food);
+        viewFoodFragment.setArguments(args);
+
+        return viewFoodFragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // get arguments
+        if (getArguments() != null) {
+            currFood = (Food) getArguments().getParcelable(FOOD_KEY);
+        }
     }
 
     @Override
@@ -34,6 +49,12 @@ public class ViewFoodFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_view_food, container, false);
+
+        // check to make sure we can get the food
+        if (currFood != null) {
+            
+        }
+
         return view;
     }
 
