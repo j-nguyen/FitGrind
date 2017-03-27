@@ -104,8 +104,9 @@ public class AddFoodFragment extends Fragment {
         searchField.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
-                if (actionId == EditorInfo.IME_ACTION_SEARCH && searchField.getText().length() != 0) {
-                    searchFood();
+                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                    dismissKeyboard();
+                    if (searchField.getText().length() != 0) searchFood();
                     return true;
                 }
                 return false;
@@ -116,12 +117,24 @@ public class AddFoodFragment extends Fragment {
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                dismissKeyboard();
                 // we can use the same searchfood
                 if (searchField.getText().length() != 0) searchFood();
+
             }
         });
 
         return view;
+    }
+
+    private void dismissKeyboard() {
+        // dismisses keyboard
+        // Check if no view has focus
+        View view = getActivity().getCurrentFocus();
+        if (view != null) {
+            InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
     }
 
     private void searchFood() {
@@ -152,13 +165,6 @@ public class AddFoodFragment extends Fragment {
                     // set adapter
                     mAdapter = new MyAdapter(foodStore.getFoods());
                     mRecyclerView.setAdapter(mAdapter);
-                    // dismisses keyboard
-                    // Check if no view has focus:
-                    View view = getActivity().getCurrentFocus();
-                    if (view != null) {
-                        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-                    }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
