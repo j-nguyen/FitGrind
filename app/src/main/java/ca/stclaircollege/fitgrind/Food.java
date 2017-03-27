@@ -8,6 +8,8 @@ public class Food {
     private String group;
     private String name;
     private String ndbno;
+    // provide a list of nutrients. This is always going to be a set value.
+    private Nutrients[] nutrients;
 
     public Food(String group, String name, String ndbno) {
         this.group = group;

@@ -21,7 +21,11 @@ public class FoodAPI {
     // URL INFO is to get nutritional info from the search parameters.
     private static final String URL_SEARCH = "https://api.nal.usda.gov/ndb/search/?format=json&";
     private static final String URL_INFO = "";
-    public static int MAX_RESULTS = 150; // the max results. The API returns a limit of 150 items, but the search results could be more.
+
+    // Constant of how many nutrients there are
+    private static final int MAX_NUTRIENTS = 0;
+    public static final int MAX_RESULTS = 150; // the max results. The API returns a limit of 150 items, but the search results could be more.
+
 
     // We will need the API key. We can use context to pass, but having it passed like this might be much better
     private String apiKey;
