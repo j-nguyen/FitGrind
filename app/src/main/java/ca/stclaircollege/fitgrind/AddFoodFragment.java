@@ -32,15 +32,12 @@ import cz.msebera.android.httpclient.Header;
 
 
 /**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link AddFoodFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * create an instance of this fragment.
+ * AddFoodFragment class handles the search and view aspects of the food item you've searched for.
+ * Once searched, it opens up a new Fragment that allows us to find fragments
  */
 public class AddFoodFragment extends Fragment {
 
-    // create PRIVATE Constants. This is better practice
+    // create PRIVATE Constants. This is better practice, and avoids mis-spelling
     private static final String LIST_KEY = "list";
     private static final String TOTAL_KEY = "total";
     private static final String START_KEY = "start";
@@ -66,9 +63,7 @@ public class AddFoodFragment extends Fragment {
     // search for the food based on searchField text
     private FoodAPI foodApi;
 
-    public AddFoodFragment() {
-        // Required empty public constructor
-    }
+    public AddFoodFragment() {}
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -127,6 +122,9 @@ public class AddFoodFragment extends Fragment {
         return view;
     }
 
+    /**
+     * This method dismisses keyboard as long as the view is active.
+     */
     private void dismissKeyboard() {
         // dismisses keyboard
         // Check if no view has focus
@@ -137,6 +135,9 @@ public class AddFoodFragment extends Fragment {
         }
     }
 
+    /**
+     * This method searches for food
+     */
     private void searchFood() {
         foodApi.searchFood(searchField.getText().toString(), new JsonHttpResponseHandler() {
             @Override
@@ -160,7 +161,7 @@ public class AddFoodFragment extends Fragment {
                         // get json object
                         JSONObject obj = items.getJSONObject(i);
                         // add food
-                        foodStore.addFood(new Food(obj.getString(GROUP_KEY), obj.getString(NAME_KEY), obj.getString(NDB_KEY)));
+                        foodStore.addFood(new Food(obj.getString(GROUP_KEY), obj.getString(NAME_KEY), Integer.parseInt(obj.getString(NDB_KEY))));
                     }
                     // set adapter
                     mAdapter = new MyAdapter(foodStore.getFoods());
@@ -220,7 +221,6 @@ public class AddFoodFragment extends Fragment {
         public void onBindViewHolder(ViewHolder holder, int position) {
             // - get element from your dataset at this position
             // - replace the contents of the view with that element
-//            holder.mTextView.setText(mDataset[position]);
             holder.getNameTextView().setText(mDataset.get(position).getName());
             holder.getGroupTextView().setText(mDataset.get(position).getGroup());
         }
