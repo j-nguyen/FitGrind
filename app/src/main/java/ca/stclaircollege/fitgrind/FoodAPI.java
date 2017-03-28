@@ -10,7 +10,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
 /**
- * FoodAPI class is where we retrieve all our food, nutiritional values and much more.
+ * FoodAPI class is where we retrieve all our food, nutritional values and much more.
  * This is primarily where we get our requests
  * @author Johnny Nguyen
  * @version 1.0
@@ -24,7 +24,7 @@ public class FoodAPI {
 
     // Constant of how many nutrients there are
     private static final int[] NUTRIENT_LIST = new int[]{208,269,204,205,606,605,601,307,291,203,320,401,301,303,306};
-    private static final int MAX_NUTRIENTS = NUTRIENT_LIST.length;
+    public static final int MAX_NUTRIENTS = NUTRIENT_LIST.length;
 
     // the max results. The API returns a limit of 150 items, but the search results could be more.
     public static final int MAX_RESULTS = 150;

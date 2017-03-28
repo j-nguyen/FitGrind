@@ -3,6 +3,8 @@ package ca.stclaircollege.fitgrind;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.Arrays;
+
 /**
  * Food class is used to retrieve items.
  */
@@ -23,6 +25,8 @@ public class Food implements Parcelable {
             this.name = name;
         }
         this.ndbNo = ndbno;
+        // set the new nutrients, we know the max, so we can use a normal array
+        this.nutrients = new Nutrient[FoodAPI.MAX_NUTRIENTS];
     }
 
     protected Food(Parcel in) {
@@ -87,4 +91,17 @@ public class Food implements Parcelable {
             return new Food[size];
         }
     };
+
+
+    // testing
+
+    @Override
+    public String toString() {
+        return "Food{" +
+                "group='" + group + '\'' +
+                ", name='" + name + '\'' +
+                ", ndbNo=" + ndbNo +
+                ", nutrients=" + Arrays.toString(nutrients) +
+                '}';
+    }
 }

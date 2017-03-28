@@ -25,7 +25,8 @@ import cz.msebera.android.httpclient.Header;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
                     MainFragment.OnFragmentInteractionListener,
-                    AddFoodFragment.OnFragmentInteractionListener {
+                    AddFoodFragment.OnFragmentInteractionListener,
+                    ViewFoodFragment.OnFragmentInteractionListener {
 
     // create fragment manager
     FragmentManager fm = getSupportFragmentManager();

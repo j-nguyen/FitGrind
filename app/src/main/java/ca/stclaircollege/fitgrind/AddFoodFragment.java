@@ -5,12 +5,16 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
@@ -119,6 +123,8 @@ public class AddFoodFragment extends Fragment {
             }
         });
 
+        // add a recyclerview item click
+
         return view;
     }
 
@@ -210,10 +216,25 @@ public class AddFoodFragment extends Fragment {
             // create a new view
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.search_layout, parent, false);
 
-            // set the view's size, margins, paddings and layout parameters
-            ViewHolder vh = new ViewHolder(view);
+            // create an event handler for each adapter
+            view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // we wanna get the position of where it is
+                    int position = mRecyclerView.indexOfChild(v);
+                    // we can reference from the mDataset, and launch a new fragment
+                    // but we need to get the fragment Manager
+                    FragmentManager fm = getActivity().getSupportFragmentManager();
+                    FragmentTransaction trans = fm.beginTransaction();
+                    // get the position and reference mDataset to add
+                    trans.replace(R.id.content_main, ViewFoodFragment.newInstance(mDataset.get(position)));
+                    trans.commit();
+                }
+            });
 
-            return vh;
+            // set the view's size, margins, paddings and layout parameters
+            return new ViewHolder(view);
+
         }
 
         // Replace the contents of a view (invoked by the layout manager)
@@ -223,6 +244,7 @@ public class AddFoodFragment extends Fragment {
             // - replace the contents of the view with that element
             holder.getNameTextView().setText(mDataset.get(position).getName());
             holder.getGroupTextView().setText(mDataset.get(position).getGroup());
+
         }
 
         // Return the size of your dataset (invoked by the layout manager)

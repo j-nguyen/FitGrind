@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 /**
  * ViewFoodFragment class handles the viewing process of the food, such as the nutritional values that the food provides, as well
@@ -40,7 +41,7 @@ public class ViewFoodFragment extends Fragment {
 
         // get arguments
         if (getArguments() != null) {
-            currFood = (Food) getArguments().getParcelable(FOOD_KEY);
+            currFood = getArguments().getParcelable(FOOD_KEY);
         }
     }
 
@@ -52,7 +53,7 @@ public class ViewFoodFragment extends Fragment {
 
         // check to make sure we can get the food
         if (currFood != null) {
-            
+            ((TextView) view.findViewById(R.id.foodText)).setText(currFood.getName());
         }
 
         return view;
