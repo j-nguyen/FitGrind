@@ -7,7 +7,9 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -15,6 +17,8 @@ import com.loopj.android.http.JsonHttpResponseHandler;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.List;
 
 import cz.msebera.android.httpclient.Header;
 
@@ -36,6 +40,7 @@ public class ViewFoodFragment extends Fragment {
 
     // our connection
     private LinearLayout progressView;
+    private ListView mListView;
 
     public ViewFoodFragment() {}
 
@@ -70,6 +75,8 @@ public class ViewFoodFragment extends Fragment {
 
         // set the connection for linear layout
         progressView = (LinearLayout) view.findViewById(R.id.progressView);
+        mListView = (ListView) view.findViewById(R.id.listview);
+
 
         // check to make sure we can get the food
         if (currFood != null) {
@@ -100,6 +107,7 @@ public class ViewFoodFragment extends Fragment {
                             Nutrient nutrient = new Nutrient(val.getInt("nutrient_id"), val.getString("nutrient"), val.getString("unit"), Double.parseDouble(val.getString("value")));
                             currFood.addNutrient(nutrient, i);
                         }
+                        mListView.setAdapter(new CustomAdapter());
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -108,6 +116,31 @@ public class ViewFoodFragment extends Fragment {
         }
 
         return view;
+    }
+
+    /**
+     * Create custom adapter for our list view. This way we can set up our custom layout
+     */
+
+    public class CustomAdapter extends ArrayAdapter<Food> {
+
+        public CustomAdapter(Context context, int resource, Food[] food) {
+            super(context, 0, food);
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            // Get the data item for this position
+            Food food = getItem(position);
+            // Check if an existing view is being reused, otherwise inflate the view
+            if (convertView == null) {
+                convertView = LayoutInflater.from(getContext()).inflate(R.layout.item_user, parent, false);
+            }
+
+            // Return the completed view to render on screen
+            return convertView;
+        }
+
     }
 
     // TODO: Rename method, update argument and hook method into UI event

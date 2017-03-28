@@ -49,10 +49,6 @@ public class Food implements Parcelable {
         return group;
     }
 
-    public void setGroup(String group) {
-        this.group = group;
-    }
-
     public String getName() {
         return name;
     }
@@ -63,10 +59,6 @@ public class Food implements Parcelable {
 
     public int getNdbno() {
         return ndbNo;
-    }
-
-    public void setNdbno(int ndbno) {
-        this.ndbNo = ndbno;
     }
 
     public int getWeight() {
