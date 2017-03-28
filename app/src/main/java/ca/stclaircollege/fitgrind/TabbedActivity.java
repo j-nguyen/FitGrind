@@ -30,7 +30,7 @@ public class TabbedActivity extends AppCompatActivity implements
     private Toolbar toolbar;
     private TabLayout tabLayout;
     private int[] tabIcons = {
-            R.drawable.ic_event_available_black_24dp,
+            R.drawable.ic_today_black_24dp,
             R.drawable.ic_access_alarm_black_24dp,
     };
 
