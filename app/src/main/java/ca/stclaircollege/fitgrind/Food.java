@@ -13,6 +13,8 @@ public class Food implements Parcelable {
     private String group;
     private String name;
     private int ndbNo;
+    private int weight;
+    private String measure;
     // provide a list of nutrients. This is always going to be a set value.
     private Nutrient[] nutrients;
 
@@ -65,6 +67,22 @@ public class Food implements Parcelable {
 
     public void setNdbno(int ndbno) {
         this.ndbNo = ndbno;
+    }
+
+    public int getWeight() {
+        return weight;
+    }
+
+    public void setWeight(int weight) {
+        this.weight = weight;
+    }
+
+    public String getMeasure() {
+        return measure;
+    }
+
+    public void setMeasure(String measure) {
+        this.measure = measure;
     }
 
     @Override

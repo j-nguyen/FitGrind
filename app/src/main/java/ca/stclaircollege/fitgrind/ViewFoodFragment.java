@@ -7,7 +7,16 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.loopj.android.http.JsonHttpResponseHandler;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import cz.msebera.android.httpclient.Header;
 
 /**
  * ViewFoodFragment class handles the viewing process of the food, such as the nutritional values that the food provides, as well
@@ -21,6 +30,12 @@ public class ViewFoodFragment extends Fragment {
 
     // our current food being passed onto the process.
     private Food currFood;
+
+    // get the food api class again
+    private FoodAPI foodApi;
+
+    // our connection
+    private LinearLayout progressView;
 
     public ViewFoodFragment() {}
 
@@ -42,6 +57,8 @@ public class ViewFoodFragment extends Fragment {
         // get arguments
         if (getArguments() != null) {
             currFood = getArguments().getParcelable(FOOD_KEY);
+            // set API here
+            foodApi = new FoodAPI(getString(R.string.API_KEY));
         }
     }
 
@@ -51,9 +68,43 @@ public class ViewFoodFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_view_food, container, false);
 
+        // set the connection for linear layout
+        progressView = (LinearLayout) view.findViewById(R.id.progressView);
+
         // check to make sure we can get the food
         if (currFood != null) {
-            ((TextView) view.findViewById(R.id.foodText)).setText(currFood.getName());
+            // now we can use the foodApi
+            foodApi.getFoodResult(currFood.getNdbno(), new JsonHttpResponseHandler() {
+                @Override
+                public void onStart() {
+                    // show the view of the linear layout
+                    progressView.setVisibility(View.VISIBLE);
+                }
+
+                @Override
+                public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                    // disable the view of the linearlayout
+                    progressView.setVisibility(View.GONE);
+                    // print
+                    try {
+                        // Get the result of the food
+                        JSONArray foods = response.getJSONObject("report").getJSONArray("foods");
+                        // set the food's weight and measure
+                        currFood.setMeasure(foods.getJSONObject(0).getString("measure"));
+                        currFood.setWeight(foods.getJSONObject(0).getInt("weight"));
+                        // iterate through the nutrients json array
+                        JSONArray nutrientList = foods.getJSONObject(0).getJSONArray("nutrients");
+                        for (int i=0; i < nutrientList.length(); i++) {
+                            JSONObject val = nutrientList.getJSONObject(i);
+                            // get the required nutrients
+                            Nutrient nutrient = new Nutrient(val.getInt("nutrient_id"), val.getString("nutrient"), val.getString("unit"), Double.parseDouble(val.getString("value")));
+                            currFood.addNutrient(nutrient, i);
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
         }
 
         return view;

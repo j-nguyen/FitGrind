@@ -15,7 +15,7 @@ public class Nutrient {
     private String unit;
     private double value;
 
-    public Nutrient(int nutrientId, String name, String group, String unit, double value) {
+    public Nutrient(int nutrientId, String name, String unit, double value) {
         this.nutrientId = nutrientId;
         this.name = name;
         this.group = group;

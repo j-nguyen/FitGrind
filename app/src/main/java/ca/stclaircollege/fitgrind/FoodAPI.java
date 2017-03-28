@@ -55,14 +55,14 @@ public class FoodAPI {
 
     public void getFoodResult(int ndbNo, AsyncHttpResponseHandler handler) {
         // finish the rest of the URL parameters
-        String urlSearch = URL_INFO + "&ndbno=" + ndbNo + "&api_key=" + this.apiKey;
+        String urlSearch = URL_INFO + "&ndbno=" + ndbNo;
         // We now want to add our URL encode
         for (int nutrient : NUTRIENT_LIST) {
             // now add this in
             urlSearch += "&nutrients=" + nutrient;
         }
         // we'll use a substring, to finally remove the end to make sure
-        urlSearch = urlSearch.substring(0, urlSearch.length()-1); // -1 index to get last index
+        urlSearch += "&api_key=" + this.apiKey;
         // encode the URL,
         String encodedSearch = encodeUrl(urlSearch);
         // now make sure it doesn't return null so we can add an async search
