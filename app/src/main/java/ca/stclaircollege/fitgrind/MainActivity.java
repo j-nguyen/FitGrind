@@ -90,17 +90,30 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
+        if (id == R.id.nav_home) {
+//            FragmentTransaction tran = fm.beginTransaction();
+//            tran.replace(R.id.content_main, new ());
+//            tran.commit();
 
-        } else if (id == R.id.nav_slideshow) {
+        } else if (id == R.id.nav_add_food) {
+//            FragmentTransaction tran = fm.beginTransaction();
+//            tran.replace(R.id.content_main, new ());
+//            tran.commit();
 
-        } else if (id == R.id.nav_manage) {
+        } else if (id == R.id.nav_weight_log) {
+//            FragmentTransaction tran = fm.beginTransaction();
+//            tran.replace(R.id.content_main, new ());
+//            tran.commit();
 
-        } else if (id == R.id.nav_share) {
+        } else if (id == R.id.nav_workout_schedule) {
+//            FragmentTransaction tran = fm.beginTransaction();
+//            tran.replace(R.id.content_main, new ());
+//            tran.commit();
 
-        } else if (id == R.id.nav_send) {
+        } else if (id == R.id.nav_progress_gallary) {
+//            FragmentTransaction tran = fm.beginTransaction();
+//            tran.replace(R.id.content_main, new ());
+//            tran.commit();
 
         }
 
