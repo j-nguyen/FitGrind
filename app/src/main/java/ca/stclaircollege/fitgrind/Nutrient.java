@@ -11,14 +11,12 @@ package ca.stclaircollege.fitgrind;
 public class Nutrient {
     private int nutrientId;
     private String name;
-    private String group;
     private String unit;
     private double value;
 
     public Nutrient(int nutrientId, String name, String unit, double value) {
         this.nutrientId = nutrientId;
         this.name = name;
-        this.group = group;
         this.unit = unit;
         this.value = value;
     }
@@ -39,14 +37,6 @@ public class Nutrient {
         this.name = name;
     }
 
-    public String getGroup() {
-        return group;
-    }
-
-    public void setGroup(String group) {
-        this.group = group;
-    }
-
     public String getUnit() {
         return unit;
     }
@@ -61,5 +51,9 @@ public class Nutrient {
 
     public void setValue(double value) {
         this.value = value;
+    }
+
+    public String getValueUnit() {
+        return this.value + this.unit;
     }
 }

@@ -17,6 +17,7 @@ import com.loopj.android.http.JsonHttpResponseHandler;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.util.List;
 
@@ -104,10 +105,12 @@ public class ViewFoodFragment extends Fragment {
                         for (int i=0; i < nutrientList.length(); i++) {
                             JSONObject val = nutrientList.getJSONObject(i);
                             // get the required nutrients
-                            Nutrient nutrient = new Nutrient(val.getInt("nutrient_id"), val.getString("nutrient"), val.getString("unit"), Double.parseDouble(val.getString("value")));
+                            // check for value
+                            double value = (val.getString("value").equals("--")) ? 0 : Double.parseDouble(val.getString("value"));
+                            Nutrient nutrient = new Nutrient(val.getInt("nutrient_id"), val.getString("nutrient"), val.getString("unit"), value);
                             currFood.addNutrient(nutrient, i);
                         }
-                        mListView.setAdapter(new CustomAdapter());
+                        mListView.setAdapter(new CustomAdapter(ViewFoodFragment.this.getContext(), currFood.getNutrients()));
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -122,20 +125,26 @@ public class ViewFoodFragment extends Fragment {
      * Create custom adapter for our list view. This way we can set up our custom layout
      */
 
-    public class CustomAdapter extends ArrayAdapter<Food> {
+    public class CustomAdapter extends ArrayAdapter<Nutrient> {
 
-        public CustomAdapter(Context context, int resource, Food[] food) {
-            super(context, 0, food);
+        public CustomAdapter(Context context, Nutrient[] nutrients) {
+            super(context, 0, nutrients);
         }
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             // Get the data item for this position
-            Food food = getItem(position);
+            Nutrient nutrient = getItem(position);
             // Check if an existing view is being reused, otherwise inflate the view
-            if (convertView == null) {
-                convertView = LayoutInflater.from(getContext()).inflate(R.layout.item_user, parent, false);
-            }
+            if (convertView == null) convertView = LayoutInflater.from(getContext()).inflate(R.layout.view_food_item, parent, false);
+
+            // connect Text View
+            TextView nutrientName = (TextView) convertView.findViewById(R.id.nutrient_name);
+            TextView nutrientValue = (TextView) convertView.findViewById(R.id.nutrient_value);
+
+            // set the text view
+            nutrientName.setText(nutrient.getName());
+            nutrientValue.setText(nutrient.getValueUnit());
 
             // Return the completed view to render on screen
             return convertView;
