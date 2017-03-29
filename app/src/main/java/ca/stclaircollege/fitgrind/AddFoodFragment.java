@@ -228,6 +228,7 @@ public class AddFoodFragment extends Fragment {
                     FragmentTransaction trans = fm.beginTransaction();
                     // get the position and reference mDataset to add
                     trans.replace(R.id.content_main, ViewFoodFragment.newInstance(mDataset.get(position)));
+                    trans.addToBackStack(null);
                     trans.commit();
                 }
             });

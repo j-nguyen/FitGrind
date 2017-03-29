@@ -42,6 +42,7 @@ public class ViewFoodFragment extends Fragment {
     // our connection
     private LinearLayout progressView;
     private ListView mListView;
+    private TextView mFoodName, mFoodWeight;
 
     public ViewFoodFragment() {}
 
@@ -77,6 +78,8 @@ public class ViewFoodFragment extends Fragment {
         // set the connection for linear layout
         progressView = (LinearLayout) view.findViewById(R.id.progressView);
         mListView = (ListView) view.findViewById(R.id.listview);
+        mFoodName = (TextView) view.findViewById(R.id.food_title);
+        mFoodWeight = (TextView) view.findViewById(R.id.food_weight);
 
 
         // check to make sure we can get the food
@@ -91,15 +94,19 @@ public class ViewFoodFragment extends Fragment {
 
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                    // disable the view of the linearlayout
+                    // disable the view of the linear layout
                     progressView.setVisibility(View.GONE);
                     // print
                     try {
                         // Get the result of the food
                         JSONArray foods = response.getJSONObject("report").getJSONArray("foods");
                         // set the food's weight and measure
-                        currFood.setMeasure(foods.getJSONObject(0).getString("measure"));
-                        currFood.setWeight(foods.getJSONObject(0).getInt("weight"));
+                        String servingSize = foods.getJSONObject(0).getString("measure") + " " + foods.getJSONObject(0).getInt("weight") + "g";
+                        currFood.setServingSize(servingSize);
+                        // set the text view
+                        mFoodName.setText(currFood.getName());
+                        mFoodWeight.setText(currFood.getServingSize());
+
                         // iterate through the nutrients json array
                         JSONArray nutrientList = foods.getJSONObject(0).getJSONArray("nutrients");
                         for (int i=0; i < nutrientList.length(); i++) {
