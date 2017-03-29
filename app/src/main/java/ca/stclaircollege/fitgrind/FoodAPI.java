@@ -2,6 +2,7 @@ package ca.stclaircollege.fitgrind;
 
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -41,54 +42,26 @@ public class FoodAPI {
      */
     public void searchFood(String food, AsyncHttpResponseHandler handler) {
         // we want to retrieve the results, and we want to encode the URL params too
-        String urlSearch = URL_SEARCH + "&q=" + food + "&api_key=" + this.apiKey;
-        // from urlSearch get the encoded
-        String encodedSearch = encodeUrl(urlSearch);
-        // check if it doesn't return null, if it doesn't we can do an async search
-        if (encodedSearch != null) {
-            // We want to create an async http request object
-            AsyncHttpClient client = new AsyncHttpClient();
-            // we want a GET request, so we use the get method from async
-            client.get(encodedSearch, handler);
-        }
+        RequestParams params = new RequestParams();
+        // we want to add using basic name value pairs, which is what this RequestParams class uses.
+        params.put("q", food);
+        params.put("api_key", this.apiKey);
+        // create the client aobject
+        AsyncHttpClient client = new AsyncHttpClient();
+        // reference this one
+        client.get(URL_SEARCH, params, handler);
     }
 
     public void getFoodResult(int ndbNo, AsyncHttpResponseHandler handler) {
         // finish the rest of the URL parameters
-        String urlSearch = URL_INFO + "&ndbno=" + ndbNo;
+        RequestParams params = new RequestParams();
         // We now want to add our URL encode
-        for (int nutrient : NUTRIENT_LIST) {
-            // now add this in
-            urlSearch += "&nutrients=" + nutrient;
-        }
-        // we'll use a substring, to finally remove the end to make sure
-        urlSearch += "&api_key=" + this.apiKey;
-        // encode the URL,
-        String encodedSearch = encodeUrl(urlSearch);
-        // now make sure it doesn't return null so we can add an async search
-        if (encodedSearch != null) {
-            // Create an async request client
-            AsyncHttpClient client = new AsyncHttpClient();
-            // and now use the handler received
-            client.get(encodedSearch, handler);
-        }
+        for (int nutrient : NUTRIENT_LIST) params.put("nutrients", nutrient);
+        // put your api key
+        params.put("api_key", this.apiKey);
+        // Create an async request client
+        AsyncHttpClient client = new AsyncHttpClient();
+        // and now use the handler received
+        client.get(URL_INFO, params, handler);
     }
-
-    /**
-     * This private method will help us encode URL links when POSTing or GETing requests
-     * @param url
-     * @return a String that's been properly encoded
-     */
-    private String encodeUrl(String url) {
-        String results = null;
-        // get the url, and encode the results
-        try {
-            // encode it in utf-8
-            results = URLEncoder.encode(url, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-        return results;
-    }
-
 }
