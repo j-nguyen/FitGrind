@@ -22,12 +22,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final String TIMELOG_TABLE_NAME = "time_log";
     private static final String WEIGHTLOG_TABLE_NAME = "weight_log";
     private static final String CALORIELOG_TABLE_NAME = "calorie_log";
+
     // progress table is where we keep track of our pictures.
     private static final String PROGRESS_TABLE_NAME = "progress";
     private static final String IMAGELOCATION_TABLE_NAME = "image_location";
 
     // Create our keys.
-
     private static final String KEY_ID = "id";
     private static final String KEY_TIMEID = "time_id";
     private static final String KEY_IMAGEID = "image_id";
@@ -37,6 +37,19 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final String KEY_CALORIES = "calories";
     private static final String KEY_RESOURCE = "resource";
 
+    // now finally, we can create our tables
+    private static final String CREATE_TIMELOG_TABLE = "CREATE TABLE " + TIMELOG_TABLE_NAME + "(" + KEY_ID +
+            " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " + KEY_DATE + " DATETIME);";
+    private static final String CREATE_WEIGHTLOG_TABLE = "CREATE TABLE " + WEIGHTLOG_TABLE_NAME + "(" + KEY_ID +
+            " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " + KEY_TIMEID + " INTEGER REFERENCES " +
+            KEY_TIMEID + "(" + KEY_ID + "), " + KEY_WEIGHT + " FLOAT);";
+    private static final String CREATE_CALORIELOG_TABLE = "CREATE TABLE " + CALORIELOG_TABLE_NAME + "(" + KEY_ID +
+            " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " + KEY_TIMEID + " INTEGER REFERENCES " + KEY_TIMEID +
+            "(" + KEY_ID + "), " + KEY_FOOD + " TEXT NOT NULL, " + KEY_CALORIES + " INTEGER NOT NULL);";
+    private static final String CREATE_PROGRESS_TABLE = "CREATE TABLE " + PROGRESS_TABLE_NAME + "(" + KEY_ID +
+            " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " + KEY_RESOURCE + " TEXT NOT NULL);";
+//    private static final String CREATE_IMAGELOCATION_TABLE = "CREATE TABLE " + IMAGELOCATION_TABLE_NAME + "(" + KEY_ID +
+//            " INTEGER PRIMARY KEY AUTOINCREME"
 
     public DatabaseHandler(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
