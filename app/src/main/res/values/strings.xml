@@ -17,8 +17,10 @@
 
     <string name="action_settings">Settings</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="searchHint">Enter in food or drink</string>
+
+    <!-- Food Names -->
+    <string name="food_name_label">Food Name:</string>
+    <string name="food_serving_label">Serving Size:</string>
 
 </resources>
