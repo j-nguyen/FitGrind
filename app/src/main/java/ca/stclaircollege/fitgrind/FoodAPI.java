@@ -3,12 +3,8 @@ package ca.stclaircollege.fitgrind;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * FoodAPI class is where we retrieve all our food, nutritional values and much more.
@@ -55,8 +51,13 @@ public class FoodAPI {
     public void getFoodResult(int ndbNo, AsyncHttpResponseHandler handler) {
         // finish the rest of the URL parameters
         RequestParams params = new RequestParams();
+        Set<Integer> set = new HashSet<>();
         // We now want to add our URL encode
-        for (int nutrient : NUTRIENT_LIST) params.put("nutrients", nutrient);
+        for (int nutrient : NUTRIENT_LIST) set.add(nutrient);
+        // add all the required parameters
+        params.put("nutrients", set);
+        // add in the ndb Search for
+        params.put("ndbno", ndbNo);
         // put your api key
         params.put("api_key", this.apiKey);
         // Create an async request client
