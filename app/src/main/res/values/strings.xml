@@ -5,14 +5,22 @@
     need to obfuscate it because everyone can get a free API key. -->
     <string name="API_KEY">pwiN99R45M4Zs6Wj0yHYBxokOxhPYQcZ6WxbQMYt</string>
 
+    <!-- Nav menu title -->
+    <string name="home">Home</string>
+    <string name="add_food">Add Food</string>
+    <string name="weight_log">Weight Log</string>
+    <string name="workout_schedule">Workout Schedule</string>
+    <string name="progress_gallary">Progress Gallary</string>
+
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_settings">Settings</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="searchHint">Enter in food or drink</string>
+
+    <!-- Food Names -->
     <string name="food_name_label">Food Name:</string>
     <string name="food_serving_label">Serving Size:</string>
+
 </resources>
