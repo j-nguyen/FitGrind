@@ -9,31 +9,21 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.loopj.android.http.JsonHttpResponseHandler;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
-import java.util.List;
 
-import cz.msebera.android.httpclient.Header;
+import ca.stclaircollege.fitgrind.api.ApiResponse;
+import ca.stclaircollege.fitgrind.api.Item;
+import ca.stclaircollege.fitgrind.api.FoodAPI;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -151,15 +141,14 @@ public class AddFoodFragment extends Fragment {
      * This method searches for food
      */
     private void searchFood() {
-        foodApi.foodSearch(searchField.getText().toString(), new Callback<List<Food>>() {
+        foodApi.foodSearch(searchField.getText().toString(), new Callback<ApiResponse>() {
             @Override
-            public void onResponse(Call<List<Food>> call, Response<List<Food>> response) {
-                Log.d("Response", response.body().get(0).getName());
-
+            public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
+                System.out.println(response.body().getList().getGroup());
             }
 
             @Override
-            public void onFailure(Call<List<Food>> call, Throwable t) {
+            public void onFailure(Call<ApiResponse> call, Throwable t) {
 
             }
         });
@@ -185,7 +174,7 @@ public class AddFoodFragment extends Fragment {
 //                        // get json object
 //                        JSONObject obj = items.getJSONObject(i);
 //                        // add food
-//                        foodStore.addFood(new Food(obj.getString(GROUP_KEY), obj.getString(NAME_KEY), Integer.parseInt(obj.getString(NDB_KEY))));
+//                        foodStore.addFood(new Item(obj.getString(GROUP_KEY), obj.getString(NAME_KEY), Integer.parseInt(obj.getString(NDB_KEY))));
 //                    }
 //                    // set adapter
 //                    mAdapter = new MyAdapter(foodStore.getFoods());
@@ -201,7 +190,7 @@ public class AddFoodFragment extends Fragment {
      * Our adapter class for RecyclerView. This handles the layout issues on what it needs to have.
      */
     public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
-        private ArrayList<Food> mDataset;
+        private ArrayList<Item> mDataset;
 
         // Provide a reference to the views for each data item
         // Complex data items may need more than one view per item, and
@@ -223,7 +212,7 @@ public class AddFoodFragment extends Fragment {
         }
 
         // Provide a suitable constructor (depends on the kind of dataset)
-        public MyAdapter(ArrayList<Food> myDataset) {
+        public MyAdapter(ArrayList<Item> myDataset) {
             mDataset = myDataset;
         }
 

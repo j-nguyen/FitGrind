@@ -1,8 +1,8 @@
-package ca.stclaircollege.fitgrind;
+package ca.stclaircollege.fitgrind.api;
 
 
 /**
- * This class retreives information from the Food class. By getting the NDBNo, we can retreive
+ * This class retreives information from the Item class. By getting the NDBNo, we can retreive
  * nutrition value from the food.
  * @author Johnny Nguyen
  * @version 1.0

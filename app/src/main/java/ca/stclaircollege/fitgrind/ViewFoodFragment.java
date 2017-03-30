@@ -17,10 +17,10 @@ import com.loopj.android.http.JsonHttpResponseHandler;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
-import java.util.List;
-
+import ca.stclaircollege.fitgrind.api.Item;
+import ca.stclaircollege.fitgrind.api.FoodAPI;
+import ca.stclaircollege.fitgrind.api.Nutrient;
 import cz.msebera.android.httpclient.Header;
 
 /**
@@ -29,12 +29,12 @@ import cz.msebera.android.httpclient.Header;
  */
 public class ViewFoodFragment extends Fragment {
 
-    private static final String FOOD_KEY = "Food";
+    private static final String FOOD_KEY = "Item";
 
     private OnFragmentInteractionListener mListener;
 
     // our current food being passed onto the process.
-    private Food currFood;
+    private Item currItem;
 
     // get the food api class again
     private FoodAPI foodApi;
@@ -46,12 +46,12 @@ public class ViewFoodFragment extends Fragment {
 
     public ViewFoodFragment() {}
 
-    public static ViewFoodFragment newInstance(Food food) {
+    public static ViewFoodFragment newInstance(Item item) {
         ViewFoodFragment viewFoodFragment = new ViewFoodFragment();
 
         Bundle args = new Bundle();
         // to pass an object, we need to use the parcelable object
-        args.putParcelable(FOOD_KEY, food);
+        args.putParcelable(FOOD_KEY, item);
         viewFoodFragment.setArguments(args);
 
         return viewFoodFragment;
@@ -63,7 +63,7 @@ public class ViewFoodFragment extends Fragment {
 
         // get arguments
         if (getArguments() != null) {
-            currFood = getArguments().getParcelable(FOOD_KEY);
+            currItem = getArguments().getParcelable(FOOD_KEY);
             // set API here
             foodApi = new FoodAPI(getString(R.string.API_KEY));
         }
@@ -83,9 +83,9 @@ public class ViewFoodFragment extends Fragment {
 
 
         // check to make sure we can get the food
-        if (currFood != null) {
+        if (currItem != null) {
             // now we can use the foodApi
-            foodApi.getFoodResult(currFood.getNdbno(), new JsonHttpResponseHandler() {
+            foodApi.getFoodResult(currItem.getNdbno(), new JsonHttpResponseHandler() {
                 @Override
                 public void onStart() {
                     // show the view of the linear layout
@@ -102,10 +102,10 @@ public class ViewFoodFragment extends Fragment {
                         JSONArray foods = response.getJSONObject("report").getJSONArray("foods");
                         // set the food's weight and measure
                         String servingSize = foods.getJSONObject(0).getString("measure") + " " + foods.getJSONObject(0).getInt("weight") + "g";
-                        currFood.setServingSize(servingSize);
+                        currItem.setServingSize(servingSize);
                         // set the text view
-                        mFoodName.setText(currFood.getName());
-                        mFoodWeight.setText(currFood.getServingSize());
+                        mFoodName.setText(currItem.getName());
+                        mFoodWeight.setText(currItem.getServingSize());
 
                         // iterate through the nutrients json array
                         JSONArray nutrientList = foods.getJSONObject(0).getJSONArray("nutrients");
@@ -115,9 +115,9 @@ public class ViewFoodFragment extends Fragment {
                             // check for value
                             double value = (val.getString("value").equals("--")) ? 0 : Double.parseDouble(val.getString("value"));
                             Nutrient nutrient = new Nutrient(val.getInt("nutrient_id"), val.getString("nutrient"), val.getString("unit"), value);
-                            currFood.addNutrient(nutrient, i);
+                            currItem.addNutrient(nutrient, i);
                         }
-                        mListView.setAdapter(new CustomAdapter(ViewFoodFragment.this.getContext(), currFood.getNutrients()));
+                        mListView.setAdapter(new CustomAdapter(ViewFoodFragment.this.getContext(), currItem.getNutrients()));
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }

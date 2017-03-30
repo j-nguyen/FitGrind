@@ -1,4 +1,4 @@
-package ca.stclaircollege.fitgrind;
+package ca.stclaircollege.fitgrind.api;
 
 import java.util.ArrayList;
 
@@ -10,21 +10,21 @@ import java.util.ArrayList;
 
 public class FoodStore {
     // our arraylist
-    private ArrayList<Food> foodList;
+    private ArrayList<Item> itemList;
     private int totalSearchResults;
     // This is used if results are higher than expected
     private int start;
     private int end;
 
     /**
-     * the Integer search results is how much the array should hold in a foodList. This is good because we don't have to use
+     * the Integer search results is how much the array should hold in a itemList. This is good because we don't have to use
      * an arraylist, since we know what size of the array is. We're not wasting space.
      * @param totalSearchResults
      */
     public FoodStore(int totalSearchResults) {
         this.totalSearchResults = totalSearchResults;
         // now we can make our food list items here
-        this.foodList = new ArrayList<Food>();
+        this.itemList = new ArrayList<Item>();
     }
 
     /**
@@ -38,18 +38,18 @@ public class FoodStore {
         this.start = start;
         this.end = end;
         // set the total search results here
-        this.foodList = new ArrayList<Food>();
+        this.itemList = new ArrayList<Item>();
     }
 
     /**
-     * This method adds food into the array.
-     * @param food
+     * This method adds item into the array.
+     * @param item
      */
-    public void addFood(Food food) {
-        this.foodList.add(food);
+    public void addFood(Item item) {
+        this.itemList.add(item);
     }
 
-    public ArrayList<Food> getFoods() {
-        return this.foodList;
+    public ArrayList<Item> getFoods() {
+        return this.itemList;
     }
 }

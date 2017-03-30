@@ -1,4 +1,4 @@
-package ca.stclaircollege.fitgrind;
+package ca.stclaircollege.fitgrind.api;
 
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
@@ -8,10 +8,8 @@ import java.util.List;
 import java.util.Set;
 
 import okhttp3.OkHttpClient;
-import okhttp3.Request;
 import retrofit2.Call;
 import retrofit2.Callback;
-import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.GET;
@@ -28,6 +26,7 @@ public class FoodAPI {
     // We want to create constant URLS so we don't mess up.
     // URL Search is the URL needed for searching for a certain food item.
     // URL INFO is to get nutritional info from the search parameters.
+    // We can create constants inside here to use later on
     private static final String BASE_URL = "https://api.nal.usda.gov/ndb/";
     private static final String URL_SEARCH = "https://api.nal.usda.gov/ndb/";
     private static final String URL_INFO = "https://api.nal.usda.gov/ndb/nutrients/?format=json";
@@ -43,28 +42,42 @@ public class FoodAPI {
     private String apiKey;
 
     // our private retrofit variables to use for searching
-    private OkHttpClient client = new OkHttpClient();
+    private FoodService foodService;
+
+    // Create an inner food service instead for us to use upon
+    public interface FoodService {
+
+        // create one for food search
+        @GET("?format=json")
+        Call<ApiResponse> searchFood(@Query("q") String food, @Query("api_key") String apiKey);
+
+    }
 
     public FoodAPI(String apiKey) {
         this.apiKey = apiKey;
         // create the Retrofit class. One is for search, the other is for getting the nutrient info
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        // and now set it to the interface
+        foodService = retrofit.create(FoodService.class);
     }
     
 
     /**
-     * Food search
+     * Item search
      * @param food
      * @param handler
      */
-    public void foodSearch(String food, Callback<List<Food>> handler) {
-        this.request.new
-//        foodSearch.listFood("json", food, this.apiKey).enqueue(handler);
+    public void foodSearch(String food, Callback<ApiResponse> handler) {
+        foodService.searchFood("json", this.apiKey).enqueue(handler);
     }
 
     /**
      * This method searches for the food based on what's given from a textfield, most likely.
      * @param food
-     * @return Food object, which should provide important items needed
+     * @return Item object, which should provide important items needed
      */
     public void searchFood(String food, AsyncHttpResponseHandler handler) {
         // we want to retrieve the results, and we want to encode the URL params too
