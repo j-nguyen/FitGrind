@@ -31,8 +31,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import cz.msebera.android.httpclient.Header;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 
 /**
@@ -105,6 +109,7 @@ public class AddFoodFragment extends Fragment {
             public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
                 if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                     dismissKeyboard();
+                    progressBar.setVisibility(View.VISIBLE);
                     if (searchField.getText().length() != 0) searchFood();
                     return true;
                 }
@@ -117,6 +122,7 @@ public class AddFoodFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 dismissKeyboard();
+                progressBar.setVisibility(View.VISIBLE);
                 // we can use the same searchfood
                 if (searchField.getText().length() != 0) searchFood();
 
@@ -145,38 +151,50 @@ public class AddFoodFragment extends Fragment {
      * This method searches for food
      */
     private void searchFood() {
-        foodApi.searchFood(searchField.getText().toString(), new JsonHttpResponseHandler() {
+        foodApi.foodSearch(searchField.getText().toString(), new Callback<List<Food>>() {
             @Override
-            public void onStart() {
-                // Show loading screen on empty recycler view
-                progressBar.setVisibility(View.VISIBLE);
+            public void onResponse(Call<List<Food>> call, Response<List<Food>> response) {
+                Log.d("Response", response.body().get(0).getName());
+
             }
 
             @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                progressBar.setVisibility(View.GONE);
-                // Get the food in food store
-                try {
-                    JSONObject list = response.getJSONObject(LIST_KEY);
-                    // now we can retrieve data
-                    FoodStore foodStore = new FoodStore(list.getInt(TOTAL_KEY), list.getInt(START_KEY), list.getInt(END_KEY));
-                    // now that foodstore has been retrieved, we can set it up!
-                    JSONArray items = list.getJSONArray(ITEM_KEY);
-                    // iterate
-                    for (int i = 0; i < items.length(); i++) {
-                        // get json object
-                        JSONObject obj = items.getJSONObject(i);
-                        // add food
-                        foodStore.addFood(new Food(obj.getString(GROUP_KEY), obj.getString(NAME_KEY), Integer.parseInt(obj.getString(NDB_KEY))));
-                    }
-                    // set adapter
-                    mAdapter = new MyAdapter(foodStore.getFoods());
-                    mRecyclerView.setAdapter(mAdapter);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+            public void onFailure(Call<List<Food>> call, Throwable t) {
+
             }
         });
+//        foodApi.searchFood(searchField.getText().toString(), new JsonHttpResponseHandler() {
+//            @Override
+//            public void onStart() {
+//                // Show loading screen on empty recycler view
+//                progressBar.setVisibility(View.VISIBLE);
+//            }
+//
+//            @Override
+//            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+//                progressBar.setVisibility(View.GONE);
+//                // Get the food in food store
+//                try {
+//                    JSONObject list = response.getJSONObject(LIST_KEY);
+//                    // now we can retrieve data
+//                    FoodStore foodStore = new FoodStore(list.getInt(TOTAL_KEY), list.getInt(START_KEY), list.getInt(END_KEY));
+//                    // now that foodstore has been retrieved, we can set it up!
+//                    JSONArray items = list.getJSONArray(ITEM_KEY);
+//                    // iterate
+//                    for (int i = 0; i < items.length(); i++) {
+//                        // get json object
+//                        JSONObject obj = items.getJSONObject(i);
+//                        // add food
+//                        foodStore.addFood(new Food(obj.getString(GROUP_KEY), obj.getString(NAME_KEY), Integer.parseInt(obj.getString(NDB_KEY))));
+//                    }
+//                    // set adapter
+//                    mAdapter = new MyAdapter(foodStore.getFoods());
+//                    mRecyclerView.setAdapter(mAdapter);
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        });
     }
 
     /**

@@ -4,19 +4,32 @@ import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+import retrofit2.http.GET;
+import retrofit2.http.Query;
 
 /**
  * FoodAPI class is where we retrieve all our food, nutritional values and much more.
  * This is primarily where we get our requests
+ * NOTE: We are now using the RetroFit Library, provided by Square. This to ensure that our APP works on Android 2.3+
  * @author Johnny Nguyen
- * @version 1.0
+ * @version 2.0
  */
 public class FoodAPI {
     // We want to create constant URLS so we don't mess up.
     // URL Search is the URL needed for searching for a certain food item.
     // URL INFO is to get nutritional info from the search parameters.
-    private static final String URL_SEARCH = "https://api.nal.usda.gov/ndb/search/?format=json";
+    private static final String BASE_URL = "https://api.nal.usda.gov/ndb/";
+    private static final String URL_SEARCH = "https://api.nal.usda.gov/ndb/";
     private static final String URL_INFO = "https://api.nal.usda.gov/ndb/nutrients/?format=json";
 
     // Constant of how many nutrients there are
@@ -29,7 +42,24 @@ public class FoodAPI {
     // We will need the API key. We can use context to pass, but having it passed like this might be much better
     private String apiKey;
 
-    public FoodAPI(String apiKey) { this.apiKey = apiKey; }
+    // our private retrofit variables to use for searching
+    private OkHttpClient client = new OkHttpClient();
+
+    public FoodAPI(String apiKey) {
+        this.apiKey = apiKey;
+        // create the Retrofit class. One is for search, the other is for getting the nutrient info
+    }
+    
+
+    /**
+     * Food search
+     * @param food
+     * @param handler
+     */
+    public void foodSearch(String food, Callback<List<Food>> handler) {
+        this.request.new
+//        foodSearch.listFood("json", food, this.apiKey).enqueue(handler);
+    }
 
     /**
      * This method searches for the food based on what's given from a textfield, most likely.
