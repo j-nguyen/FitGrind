@@ -18,6 +18,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -54,7 +55,6 @@ public class AddFoodFragment extends Fragment {
 
     // Recycler View
     private RecyclerView mRecyclerView;
-    private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
 
     // set-up private API key
@@ -144,46 +144,24 @@ public class AddFoodFragment extends Fragment {
         foodApi.foodSearch(searchField.getText().toString(), new Callback<ApiResponse>() {
             @Override
             public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
-                System.out.println(response.body().getList().getGroup());
+                // if search results has it we can display
+                if (response.body().hasItems()) {
+                    // close progress
+                    progressBar.setVisibility(View.GONE);
+                    // set the adapter
+                    MyAdapter mAdapter = new MyAdapter(response.body().getItems());
+                    mRecyclerView.setAdapter(mAdapter);
+                }
             }
 
             @Override
             public void onFailure(Call<ApiResponse> call, Throwable t) {
-
+                // close progress
+                progressBar.setVisibility(View.GONE);
+                // show toast
+                Toast.makeText(getContext(), R.string.invalid_search, Toast.LENGTH_SHORT);
             }
         });
-//        foodApi.searchFood(searchField.getText().toString(), new JsonHttpResponseHandler() {
-//            @Override
-//            public void onStart() {
-//                // Show loading screen on empty recycler view
-//                progressBar.setVisibility(View.VISIBLE);
-//            }
-//
-//            @Override
-//            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-//                progressBar.setVisibility(View.GONE);
-//                // Get the food in food store
-//                try {
-//                    JSONObject list = response.getJSONObject(LIST_KEY);
-//                    // now we can retrieve data
-//                    FoodStore foodStore = new FoodStore(list.getInt(TOTAL_KEY), list.getInt(START_KEY), list.getInt(END_KEY));
-//                    // now that foodstore has been retrieved, we can set it up!
-//                    JSONArray items = list.getJSONArray(ITEM_KEY);
-//                    // iterate
-//                    for (int i = 0; i < items.length(); i++) {
-//                        // get json object
-//                        JSONObject obj = items.getJSONObject(i);
-//                        // add food
-//                        foodStore.addFood(new Item(obj.getString(GROUP_KEY), obj.getString(NAME_KEY), Integer.parseInt(obj.getString(NDB_KEY))));
-//                    }
-//                    // set adapter
-//                    mAdapter = new MyAdapter(foodStore.getFoods());
-//                    mRecyclerView.setAdapter(mAdapter);
-//                } catch (JSONException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        });
     }
 
     /**
@@ -227,6 +205,8 @@ public class AddFoodFragment extends Fragment {
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    searchField.setText("");
+                    searchField.clearFocus();
                     // we wanna get the position of where it is
                     int position = mRecyclerView.indexOfChild(v);
                     // we can reference from the mDataset, and launch a new fragment

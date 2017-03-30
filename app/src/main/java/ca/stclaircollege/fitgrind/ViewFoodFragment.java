@@ -83,47 +83,47 @@ public class ViewFoodFragment extends Fragment {
 
 
         // check to make sure we can get the food
-        if (currItem != null) {
-            // now we can use the foodApi
-            foodApi.getFoodResult(currItem.getNdbno(), new JsonHttpResponseHandler() {
-                @Override
-                public void onStart() {
-                    // show the view of the linear layout
-                    progressView.setVisibility(View.VISIBLE);
-                }
-
-                @Override
-                public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                    // disable the view of the linear layout
-                    progressView.setVisibility(View.GONE);
-                    // print
-                    try {
-                        // Get the result of the food
-                        JSONArray foods = response.getJSONObject("report").getJSONArray("foods");
-                        // set the food's weight and measure
-                        String servingSize = foods.getJSONObject(0).getString("measure") + " " + foods.getJSONObject(0).getInt("weight") + "g";
-                        currItem.setServingSize(servingSize);
-                        // set the text view
-                        mFoodName.setText(currItem.getName());
-                        mFoodWeight.setText(currItem.getServingSize());
-
-                        // iterate through the nutrients json array
-                        JSONArray nutrientList = foods.getJSONObject(0).getJSONArray("nutrients");
-                        for (int i=0; i < nutrientList.length(); i++) {
-                            JSONObject val = nutrientList.getJSONObject(i);
-                            // get the required nutrients
-                            // check for value
-                            double value = (val.getString("value").equals("--")) ? 0 : Double.parseDouble(val.getString("value"));
-                            Nutrient nutrient = new Nutrient(val.getInt("nutrient_id"), val.getString("nutrient"), val.getString("unit"), value);
-                            currItem.addNutrient(nutrient, i);
-                        }
-                        mListView.setAdapter(new CustomAdapter(ViewFoodFragment.this.getContext(), currItem.getNutrients()));
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-            });
-        }
+//        if (currItem != null) {
+//            // now we can use the foodApi
+//            foodApi.getFoodResult(currItem.getNdbno(), new JsonHttpResponseHandler() {
+//                @Override
+//                public void onStart() {
+//                    // show the view of the linear layout
+//                    progressView.setVisibility(View.VISIBLE);
+//                }
+//
+//                @Override
+//                public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+//                    // disable the view of the linear layout
+//                    progressView.setVisibility(View.GONE);
+//                    // print
+//                    try {
+//                        // Get the result of the food
+//                        JSONArray foods = response.getJSONObject("report").getJSONArray("foods");
+//                        // set the food's weight and measure
+//                        String servingSize = foods.getJSONObject(0).getString("measure") + " " + foods.getJSONObject(0).getInt("weight") + "g";
+////                        currItem.setServingSize(servingSize);
+//                        // set the text view
+//                        mFoodName.setText(currItem.getName());
+//                        mFoodWeight.setText(currItem.getServingSize());
+//
+//                        // iterate through the nutrients json array
+//                        JSONArray nutrientList = foods.getJSONObject(0).getJSONArray("nutrients");
+//                        for (int i=0; i < nutrientList.length(); i++) {
+//                            JSONObject val = nutrientList.getJSONObject(i);
+//                            // get the required nutrients
+//                            // check for value
+//                            double value = (val.getString("value").equals("--")) ? 0 : Double.parseDouble(val.getString("value"));
+//                            Nutrient nutrient = new Nutrient(val.getInt("nutrient_id"), val.getString("nutrient"), val.getString("unit"), value);
+//                            currItem.addNutrient(nutrient, i);
+//                        }
+//                        mListView.setAdapter(new CustomAdapter(ViewFoodFragment.this.getContext(), currItem.getNutrients()));
+//                    } catch (JSONException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//            });
+//        }
 
         return view;
     }

@@ -48,9 +48,11 @@ public class FoodAPI {
     public interface FoodService {
 
         // create one for food search
-        @GET("?format=json")
+        @GET("search/?format=json")
         Call<ApiResponse> searchFood(@Query("q") String food, @Query("api_key") String apiKey);
 
+        // get one for food
+        
     }
 
     public FoodAPI(String apiKey) {
@@ -71,7 +73,7 @@ public class FoodAPI {
      * @param handler
      */
     public void foodSearch(String food, Callback<ApiResponse> handler) {
-        foodService.searchFood("json", this.apiKey).enqueue(handler);
+        foodService.searchFood(food, this.apiKey).enqueue(handler);
     }
 
     /**

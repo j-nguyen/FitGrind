@@ -23,4 +23,6 @@
     <string name="food_name_label">Food Name:</string>
     <string name="food_serving_label">Serving Size:</string>
 
+    <string name="invalid_search">Could not search! Invalid Search.</string>
+
 </resources>

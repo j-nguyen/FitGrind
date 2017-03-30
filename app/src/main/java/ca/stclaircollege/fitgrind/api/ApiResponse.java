@@ -1,6 +1,7 @@
 package ca.stclaircollege.fitgrind.api;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import java.util.ArrayList;
 
 public class ApiResponse {
 
@@ -8,12 +9,11 @@ public class ApiResponse {
     @Expose
     private List list;
 
-    public List getList() {
-        return list;
+    public boolean hasItems() {
+        return list.getItem().size() > 0;
     }
 
-    public void setList(List list) {
-        this.list = list;
+    public ArrayList<Item> getItems() {
+        return (ArrayList<Item>) list.getItem();
     }
-
 }

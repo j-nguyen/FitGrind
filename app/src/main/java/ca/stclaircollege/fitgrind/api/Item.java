@@ -5,10 +5,13 @@ import android.os.Parcelable;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+/**
+ * This is probably where all our main class goes. This is where we can retrieve our items
+ */
 public class Item implements Parcelable {
     @SerializedName("offset")
     @Expose
-    private Integer offset;
+    private int offset;
     @SerializedName("group")
     @Expose
     private String group;
@@ -21,6 +24,8 @@ public class Item implements Parcelable {
     @SerializedName("ds")
     @Expose
     private String ds;
+
+    private boolean hasCheck = false;
 
     public final static Parcelable.Creator<Item> CREATOR = new Creator<Item>() {
 
@@ -45,7 +50,7 @@ public class Item implements Parcelable {
         return offset;
     }
 
-    public void setOffset(Integer offset) {
+    public void setOffset(int offset) {
         this.offset = offset;
     }
 
@@ -58,6 +63,9 @@ public class Item implements Parcelable {
     }
 
     public String getName() {
+        // check if upc exists if it's there we want to remove it
+        if (!hasCheck && name.indexOf(", UPC") != -1) name = name.substring(0, name.indexOf(", UPC"));
+        hasCheck = true;
         return name;
     }
 
