@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">FitGrind</string>
 
-    <!-- Put Food API Key here for public access. We don't
+    <!-- Put Item API Key here for public access. We don't
     need to obfuscate it because everyone can get a free API key. -->
     <string name="API_KEY">pwiN99R45M4Zs6Wj0yHYBxokOxhPYQcZ6WxbQMYt</string>
 
@@ -17,11 +17,20 @@
 
     <string name="action_settings">Settings</string>
 
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
     <string name="title_activity_tabbed">TabbedActivity</string>
     <string name="section_format">Hello World from section: %1$d</string>
     <string name="searchHint">Enter in food or drink</string>
+
+    <!-- Item Names -->
+    <string name="food_name_label">Food Name:</string>
+    <string name="food_serving_label">Serving Size:</string>
+
+    <string name="invalid_search">Could not search! Invalid Search.</string>
+    <string name="item_not_exist">Food or Drink you entered does not exist.</string>
+    <string name="invalid_info">Something went wrong with gathering food data! Please try again.</string>
 
 </resources>
