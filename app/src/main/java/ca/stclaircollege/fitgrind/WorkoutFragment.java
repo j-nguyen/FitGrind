@@ -1,12 +1,20 @@
 package ca.stclaircollege.fitgrind;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.TextView;
+
+import java.util.ArrayList;
 
 
 /**
@@ -26,6 +34,8 @@ public class WorkoutFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+
+    ListView list;
 
     private OnFragmentInteractionListener mListener;
 
@@ -64,7 +74,57 @@ public class WorkoutFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_workout, container, false);
+        View view = inflater.inflate(R.layout.fragment_workout, container, false);
+        list = (ListView) view.findViewById(R.id.workoutList);
+        final ArrayList<Program> programsList = new ArrayList<Program>();
+        programsList.add(new Program("text", "test", "test"));
+        programsList.add(new Program("text", "test", "test"));
+        programsList.add(new Program("text", "test", "test"));
+        programsList.add(new Program("text", "test", "test"));
+        programsList.add(new Program("text", "test", "test"));
+        programsList.add(new Program("text", "test", "test"));
+        programsList.add(new Program("text", "test", "test"));
+        programsList.add(new Program("text", "test", "test"));
+        programsList.add(new Program("text", "test", "test"));
+        final CustomAdapter adapter = new CustomAdapter(getContext(), programsList);
+        list.setAdapter(adapter);
+        
+        //remove each list
+        list.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                programsList.remove(position);
+                adapter.notifyDataSetChanged();
+                return false;
+            }
+        });
+        return view;
+    }
+
+
+    public class CustomAdapter extends ArrayAdapter<Program> {
+        public CustomAdapter(Context context, ArrayList<Program> items) {
+            super(context, 0, items);
+        }
+        //get each item and assign a view to it
+        public View getView(int position, View convertView, ViewGroup parent){
+            final Program item = getItem(position);
+            if(convertView == null){
+                convertView = LayoutInflater.from(getContext()).inflate(R.layout.program_view, parent, false);
+            }
+
+            //set the listview items
+            TextView name = (TextView) convertView.findViewById(R.id.programName);
+            name.setText(item.getName());
+
+            TextView description = (TextView) convertView.findViewById(R.id.programDescription);
+            description.setText(item.getDescription());
+
+            TextView length = (TextView) convertView.findViewById(R.id.programLength);
+            length.setText(item.getLength());
+
+            return  convertView;
+        }
     }
 
     // TODO: Rename method, update argument and hook method into UI event
