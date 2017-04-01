@@ -9,51 +9,35 @@ package ca.stclaircollege.fitgrind.api;
  */
 
 public class Nutrient {
-    private int nutrientId;
-    private String name;
+    private String nutrientId;
+    private String nutrient;
     private String unit;
-    private double value;
+    private String value;
+    private String gm;
 
-    public Nutrient(int nutrientId, String name, String unit, double value) {
-        this.nutrientId = nutrientId;
-        this.name = name;
-        this.unit = unit;
-        this.value = value;
-    }
+    public String getNutrientId() { return nutrientId; }
 
-    public int getNutrientId() {
-        return nutrientId;
-    }
-
-    public void setNutrientId(int nutrientId) {
-        this.nutrientId = nutrientId;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
+    public String getNutrient() {
+        if (nutrient.equals("--")) return "0";
+        return nutrient;
     }
 
     public String getUnit() {
         return unit;
     }
 
-    public void setUnit(String unit) {
-        this.unit = unit;
-    }
-
-    public double getValue() {
+    public String getValue() {
         return value;
     }
 
-    public void setValue(double value) {
-        this.value = value;
-    }
-
-    public String getValueUnit() {
-        return this.value + this.unit;
+    @Override
+    public String toString() {
+        return "Nutrient{" +
+                "nutrientId='" + nutrientId + '\'' +
+                ", nutrient='" + nutrient + '\'' +
+                ", unit='" + unit + '\'' +
+                ", value='" + value + '\'' +
+                ", gm='" + gm + '\'' +
+                '}';
     }
 }

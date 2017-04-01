@@ -12,16 +12,11 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.loopj.android.http.JsonHttpResponseHandler;
+import java.util.ArrayList;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import ca.stclaircollege.fitgrind.api.Item;
 import ca.stclaircollege.fitgrind.api.FoodAPI;
+import ca.stclaircollege.fitgrind.api.Item;
 import ca.stclaircollege.fitgrind.api.Nutrient;
-import cz.msebera.android.httpclient.Header;
 
 /**
  * ViewFoodFragment class handles the viewing process of the food, such as the nutritional values that the food provides, as well
@@ -46,12 +41,12 @@ public class ViewFoodFragment extends Fragment {
 
     public ViewFoodFragment() {}
 
-    public static ViewFoodFragment newInstance(Item item) {
+    public static ViewFoodFragment newInstance(int ndbno) {
         ViewFoodFragment viewFoodFragment = new ViewFoodFragment();
 
         Bundle args = new Bundle();
         // to pass an object, we need to use the parcelable object
-        args.putParcelable(FOOD_KEY, item);
+//        args.putParcelable(FOOD_KEY, item);
         viewFoodFragment.setArguments(args);
 
         return viewFoodFragment;
@@ -65,7 +60,7 @@ public class ViewFoodFragment extends Fragment {
         if (getArguments() != null) {
             currItem = getArguments().getParcelable(FOOD_KEY);
             // set API here
-            foodApi = new FoodAPI(getString(R.string.API_KEY));
+            foodApi = new FoodAPI(getActivity().getApplicationContext(), getString(R.string.API_KEY));
         }
     }
 
@@ -83,47 +78,30 @@ public class ViewFoodFragment extends Fragment {
 
 
         // check to make sure we can get the food
-//        if (currItem != null) {
-//            // now we can use the foodApi
-//            foodApi.getFoodResult(currItem.getNdbno(), new JsonHttpResponseHandler() {
+        if (currItem != null) {
+            // load the progress bar
+            progressView.setVisibility(View.VISIBLE);
+            // get food result
+//            foodApi.foodResult(currItem.getNdbno(), new Callback<FoodResponse>() {
 //                @Override
-//                public void onStart() {
-//                    // show the view of the linear layout
-//                    progressView.setVisibility(View.VISIBLE);
+//                public void onResponse(Call<FoodResponse> call, Response<FoodResponse> response) {
+//                    progressView.setVisibility(View.GONE);
+//                    // set the new adapaters and textview
+//                    mFoodName.setText(currItem.getName());
+//                    mFoodWeight.setText(response.body().getServing());
+//                    // set the new adapter now
+//                    ArrayList<Nutrient> nutrients = response.body().getNutrients();
+//                    CustomAdapter adapter = new CustomAdapter(getContext(), nutrients);
+//                    mListView.setAdapter(adapter);
 //                }
 //
 //                @Override
-//                public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-//                    // disable the view of the linear layout
+//                public void onFailure(Call<FoodResponse> call, Throwable t) {
 //                    progressView.setVisibility(View.GONE);
-//                    // print
-//                    try {
-//                        // Get the result of the food
-//                        JSONArray foods = response.getJSONObject("report").getJSONArray("foods");
-//                        // set the food's weight and measure
-//                        String servingSize = foods.getJSONObject(0).getString("measure") + " " + foods.getJSONObject(0).getInt("weight") + "g";
-////                        currItem.setServingSize(servingSize);
-//                        // set the text view
-//                        mFoodName.setText(currItem.getName());
-//                        mFoodWeight.setText(currItem.getServingSize());
-//
-//                        // iterate through the nutrients json array
-//                        JSONArray nutrientList = foods.getJSONObject(0).getJSONArray("nutrients");
-//                        for (int i=0; i < nutrientList.length(); i++) {
-//                            JSONObject val = nutrientList.getJSONObject(i);
-//                            // get the required nutrients
-//                            // check for value
-//                            double value = (val.getString("value").equals("--")) ? 0 : Double.parseDouble(val.getString("value"));
-//                            Nutrient nutrient = new Nutrient(val.getInt("nutrient_id"), val.getString("nutrient"), val.getString("unit"), value);
-//                            currItem.addNutrient(nutrient, i);
-//                        }
-//                        mListView.setAdapter(new CustomAdapter(ViewFoodFragment.this.getContext(), currItem.getNutrients()));
-//                    } catch (JSONException e) {
-//                        e.printStackTrace();
-//                    }
+//                    Toast.makeText(getContext(), R.string.invalid_search, Toast.LENGTH_SHORT);
 //                }
 //            });
-//        }
+        }
 
         return view;
     }
@@ -134,7 +112,7 @@ public class ViewFoodFragment extends Fragment {
 
     public class CustomAdapter extends ArrayAdapter<Nutrient> {
 
-        public CustomAdapter(Context context, Nutrient[] nutrients) {
+        public CustomAdapter(Context context, ArrayList<Nutrient> nutrients) {
             super(context, 0, nutrients);
         }
 
@@ -150,8 +128,8 @@ public class ViewFoodFragment extends Fragment {
             TextView nutrientValue = (TextView) convertView.findViewById(R.id.nutrient_value);
 
             // set the text view
-            nutrientName.setText(nutrient.getName());
-            nutrientValue.setText(nutrient.getValueUnit());
+            nutrientName.setText(nutrient.getNutrient());
+            nutrientValue.setText(nutrient.getValue() + nutrient.getUnit());
 
             // Return the completed view to render on screen
             return convertView;

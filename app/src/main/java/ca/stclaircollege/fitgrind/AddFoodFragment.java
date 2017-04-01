@@ -19,16 +19,14 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
+import com.androidnetworking.error.ANError;
+import com.androidnetworking.interfaces.JSONObjectRequestListener;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import java.util.ArrayList;
-
-import ca.stclaircollege.fitgrind.api.ApiResponse;
-import ca.stclaircollege.fitgrind.api.Item;
 import ca.stclaircollege.fitgrind.api.FoodAPI;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-
+import ca.stclaircollege.fitgrind.api.Item;
 
 /**
  * AddFoodFragment class handles the search and view aspects of the food item you've searched for.
@@ -36,15 +34,15 @@ import retrofit2.Response;
  */
 public class AddFoodFragment extends Fragment {
 
-    // create PRIVATE Constants. This is better practice, and avoids mis-spelling
     private static final String LIST_KEY = "list";
-    private static final String TOTAL_KEY = "total";
+    private static final String ERRORS_KEY = "errors";
+    private static final String ERROR_KEY = "error";
+    private static final String MESSAGE_KEY = "message";
+    private static final String ITEM_KEY = "item";
+    // -------------------------------------------
     private static final String START_KEY = "start";
     private static final String END_KEY = "end";
-    private static final String NDB_KEY = "ndbno";
-    private static final String GROUP_KEY = "group";
-    private static final String NAME_KEY = "name";
-    private static final String ITEM_KEY = "item";
+    private static final String TOTAL_KEY = "total";
 
     private OnFragmentInteractionListener mListener;
 
@@ -61,15 +59,16 @@ public class AddFoodFragment extends Fragment {
     // search for the food based on searchField text
     private FoodAPI foodApi;
 
+    // Instead of creating a class for this, we can set up private variables for start, end, and total for the result returned
+    private int start, end, total;
+
     public AddFoodFragment() {}
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         // create api here
-        foodApi = new FoodAPI(getString(R.string.API_KEY));
-
+        foodApi = new FoodAPI(getActivity().getApplicationContext(), getString(R.string.API_KEY));
     }
 
     @Override
@@ -140,26 +139,47 @@ public class AddFoodFragment extends Fragment {
     /**
      * This method searches for food
      */
-    private void searchFood() {
-        foodApi.foodSearch(searchField.getText().toString(), new Callback<ApiResponse>() {
+    private void searchFood(){
+        // show progress
+        progressBar.setVisibility(View.VISIBLE);
+        foodApi.foodSearch(searchField.getText().toString(), new JSONObjectRequestListener() {
             @Override
-            public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
-                // if search results has it we can display
-                if (response.body().hasItems()) {
-                    // close progress
-                    progressBar.setVisibility(View.GONE);
-                    // set the adapter
-                    MyAdapter mAdapter = new MyAdapter(response.body().getItems());
-                    mRecyclerView.setAdapter(mAdapter);
+            public void onResponse(JSONObject response) {
+                // If a response occurs we search
+                progressBar.setVisibility(View.GONE);
+                try {
+                    // check to make sure if we have a result, if not, then who care
+                    if (response.has(LIST_KEY)) {
+                        // We now want to only get the items, so we can display it on the listview
+                        JSONObject list = response.getJSONObject(LIST_KEY);
+                        start = list.getInt(START_KEY);
+                        end = list.getInt(END_KEY);
+                        total = list.getInt(TOTAL_KEY);
+                        JSONArray jsonArray = list.getJSONArray(ITEM_KEY);
+                        // create a new item list to start
+                        ArrayList<Item> itemList = new ArrayList<Item>();
+                        // iterate in a for loop
+                        for (int i=0; i< jsonArray.length(); i++) {
+                            JSONObject obj = jsonArray.getJSONObject(i);
+                            itemList.add(new Item(obj.getString(Item.GROUP_KEY), obj.getString(Item.NAME_KEY), Integer.parseInt(obj.getString(Item.NDBNO_KEY))));
+                        }
+                        // set the adapter
+                        mRecyclerView.setAdapter(new MyAdapter(itemList));
+                    } else {
+                        // if we don't we make a text view
+                        JSONArray result = response.getJSONObject(ERRORS_KEY).getJSONArray(ERROR_KEY);
+                        String message = (String) ((JSONObject) result.get(0)).get(MESSAGE_KEY);
+                        Toast.makeText(getContext(),  message, Toast.LENGTH_LONG).show();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
             }
 
             @Override
-            public void onFailure(Call<ApiResponse> call, Throwable t) {
-                // close progress
+            public void onError(ANError anError) {
                 progressBar.setVisibility(View.GONE);
-                // show toast
-                Toast.makeText(getContext(), R.string.invalid_search, Toast.LENGTH_SHORT);
+                Toast.makeText(getContext(), R.string.invalid_search, Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -214,7 +234,7 @@ public class AddFoodFragment extends Fragment {
                     FragmentManager fm = getActivity().getSupportFragmentManager();
                     FragmentTransaction trans = fm.beginTransaction();
                     // get the position and reference mDataset to add
-                    trans.replace(R.id.content_main, ViewFoodFragment.newInstance(mDataset.get(position)));
+                    trans.replace(R.id.content_main, ViewFoodFragment.newInstance(mDataset.get(position).getNdbno()));
                     trans.addToBackStack(null);
                     trans.commit();
                 }

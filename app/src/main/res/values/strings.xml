@@ -24,5 +24,6 @@
     <string name="food_serving_label">Serving Size:</string>
 
     <string name="invalid_search">Could not search! Invalid Search.</string>
+    <string name="item_not_exist">Food or Drink you entered does not exist.</string>
 
 </resources>
