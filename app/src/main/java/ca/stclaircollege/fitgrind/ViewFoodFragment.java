@@ -11,11 +11,17 @@ import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
+import com.androidnetworking.error.ANError;
+import com.androidnetworking.interfaces.JSONObjectRequestListener;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import java.util.ArrayList;
 
+import ca.stclaircollege.fitgrind.api.Food;
 import ca.stclaircollege.fitgrind.api.FoodAPI;
-import ca.stclaircollege.fitgrind.api.Item;
 import ca.stclaircollege.fitgrind.api.Nutrient;
 
 /**
@@ -24,12 +30,15 @@ import ca.stclaircollege.fitgrind.api.Nutrient;
  */
 public class ViewFoodFragment extends Fragment {
 
-    private static final String FOOD_KEY = "Item";
+    private static final String NDBNO_KEY = "ndbno";
+    private static final String REPORT_KEY = "report";
+    private static final String FOODS_KEY = "foods";
+    private static final String NUTRIENT_KEY = "nutrients";
 
     private OnFragmentInteractionListener mListener;
 
-    // our current food being passed onto the process.
-    private Item currItem;
+    // Get the unique Id from the previous fragment
+    private int currNdbno;
 
     // get the food api class again
     private FoodAPI foodApi;
@@ -46,7 +55,7 @@ public class ViewFoodFragment extends Fragment {
 
         Bundle args = new Bundle();
         // to pass an object, we need to use the parcelable object
-//        args.putParcelable(FOOD_KEY, item);
+        args.putInt(NDBNO_KEY, ndbno);
         viewFoodFragment.setArguments(args);
 
         return viewFoodFragment;
@@ -58,7 +67,7 @@ public class ViewFoodFragment extends Fragment {
 
         // get arguments
         if (getArguments() != null) {
-            currItem = getArguments().getParcelable(FOOD_KEY);
+            currNdbno = getArguments().getInt(NDBNO_KEY);
             // set API here
             foodApi = new FoodAPI(getActivity().getApplicationContext(), getString(R.string.API_KEY));
         }
@@ -78,29 +87,46 @@ public class ViewFoodFragment extends Fragment {
 
 
         // check to make sure we can get the food
-        if (currItem != null) {
+        if (currNdbno != 0) {
             // load the progress bar
             progressView.setVisibility(View.VISIBLE);
-            // get food result
-//            foodApi.foodResult(currItem.getNdbno(), new Callback<FoodResponse>() {
-//                @Override
-//                public void onResponse(Call<FoodResponse> call, Response<FoodResponse> response) {
-//                    progressView.setVisibility(View.GONE);
-//                    // set the new adapaters and textview
-//                    mFoodName.setText(currItem.getName());
-//                    mFoodWeight.setText(response.body().getServing());
-//                    // set the new adapter now
-//                    ArrayList<Nutrient> nutrients = response.body().getNutrients();
-//                    CustomAdapter adapter = new CustomAdapter(getContext(), nutrients);
-//                    mListView.setAdapter(adapter);
-//                }
-//
-//                @Override
-//                public void onFailure(Call<FoodResponse> call, Throwable t) {
-//                    progressView.setVisibility(View.GONE);
-//                    Toast.makeText(getContext(), R.string.invalid_search, Toast.LENGTH_SHORT);
-//                }
-//            });
+            // use food method
+            foodApi.foodResult(currNdbno, new JSONObjectRequestListener() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    progressView.setVisibility(View.GONE);
+                    // In this response, we show them
+                    try {
+                        JSONObject report = response.getJSONObject(REPORT_KEY);
+                        // retrieve the data. Because we know NDBno is unique, we expect ONLY 1.
+                        JSONObject foodObj = (JSONObject) report.getJSONArray(FOODS_KEY).get(0);
+                        // Create a tmp variable for better storage organize
+                        String serving = foodObj.getString(Food.MEASURE_KEY) + " " + foodObj.getString(Food.WEIGHT_KEY) + "g";
+                        // create the food object
+                        Food food = new Food(Integer.parseInt(foodObj.getString(NDBNO_KEY)), foodObj.getString(Food.NAME_KEY), serving);
+                        // now we want to iterate through the nutrient list json object.
+                        JSONArray nutrientObj = foodObj.getJSONArray(NUTRIENT_KEY);
+                        for (int i=0; i < nutrientObj.length(); i++) {
+                            JSONObject obj = nutrientObj.getJSONObject(i);
+                            // add new nutrient
+                            food.addNutrient(new Nutrient(Integer.parseInt(obj.getString(Nutrient.ID_KEY)), obj.getString(Nutrient.NUTRIENT_KEY),
+                                    obj.getString(Nutrient.UNIT_KEY), obj.getString(Nutrient.VALUE_KEY)));
+                        }
+                        // set adapter and food name as well as the serving
+                        mFoodName.setText(food.getName());
+                        mFoodWeight.setText(food.getServingSize());
+                        mListView.setAdapter(new CustomAdapter(getContext(), food.getNutrients()));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                @Override
+                public void onError(ANError anError) {
+                    // output toast text if error
+                    Toast.makeText(getContext(), R.string.invalid_info, Toast.LENGTH_LONG).show();
+                }
+            });
         }
 
         return view;

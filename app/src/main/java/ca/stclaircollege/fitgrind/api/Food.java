@@ -1,29 +1,43 @@
 package ca.stclaircollege.fitgrind.api;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by johnnynguyen on 2017-03-30.
  */
 public class Food {
-    private String ndnbo;
+    public static final String NAME_KEY = "name";
+    public static final String WEIGHT_KEY = "weight";
+    public static final String MEASURE_KEY = "measure";
+
+    private int ndbno;
     private String name;
-    private double weight;
-    private String measure;
-    private java.util.List<Nutrient> nutrients = null;
+    private String servingSize;
+    // always set it by default to max nutrients. This is great
+    private ArrayList<Nutrient> nutrients;
 
-    public List<Nutrient> getNutrients() { return nutrients; }
-
-    public String getMeasure() {
-        return measure;
+    public Food(int ndbno, String name, String servingSize) {
+        this.ndbno = ndbno;
+        this.name = name;
+        this.servingSize = servingSize;
+        // instantiate new array list
+        nutrients = new ArrayList<Nutrient>();
     }
 
-    public double getWeight() {
-        return weight;
+    public void addNutrient(Nutrient nutrient) {
+        nutrients.add(nutrient);
     }
 
     public String getName() {
         return name;
     }
 
+    public String getServingSize() {
+        return servingSize;
+    }
+
+    public ArrayList<Nutrient> getNutrients() {
+        return nutrients;
+    }
 }

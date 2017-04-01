@@ -98,7 +98,6 @@ public class AddFoodFragment extends Fragment {
             public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
                 if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                     dismissKeyboard();
-                    progressBar.setVisibility(View.VISIBLE);
                     if (searchField.getText().length() != 0) searchFood();
                     return true;
                 }
@@ -111,7 +110,6 @@ public class AddFoodFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 dismissKeyboard();
-                progressBar.setVisibility(View.VISIBLE);
                 // we can use the same searchfood
                 if (searchField.getText().length() != 0) searchFood();
 
@@ -152,6 +150,7 @@ public class AddFoodFragment extends Fragment {
                     if (response.has(LIST_KEY)) {
                         // We now want to only get the items, so we can display it on the listview
                         JSONObject list = response.getJSONObject(LIST_KEY);
+                        // we need this for later to gather when Recycler View is scrolling down.
                         start = list.getInt(START_KEY);
                         end = list.getInt(END_KEY);
                         total = list.getInt(TOTAL_KEY);

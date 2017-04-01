@@ -25,5 +25,6 @@
 
     <string name="invalid_search">Could not search! Invalid Search.</string>
     <string name="item_not_exist">Food or Drink you entered does not exist.</string>
+    <string name="invalid_info">Something went wrong with gathering food data! Please try again.</string>
 
 </resources>

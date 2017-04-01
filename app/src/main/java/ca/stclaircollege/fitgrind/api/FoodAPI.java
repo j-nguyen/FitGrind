@@ -18,7 +18,9 @@ public class FoodAPI {
     // URL INFO is to get nutritional info from the search parameters.
     // We can create constants inside here to use later on
     private static final String BASE_URL = "https://api.nal.usda.gov/ndb/";
-    private static final String[] NUTRIENT_LIST = new String[]{"208","269","204","205","606","605","601","307","291","203","320","401","301","303","306"};
+    private static final String NUTRIENT_URL = "&nutrients=208&nutrients=269&nutrients=204&nutrients=205&nutrients=606&nutrients=605" +
+            "&nutrients=601&nutrients=307&nutrients=291&nutrients=203&nutrients=320&nutrients=401&nutrients=301&nutrients=303&nutrients=306";
+    public static final int MAX_NUTRIENTS = 15;
 
     // We will need the API key. We can use context to pass, but having it passed like this might be much better
     private String apiKey;
@@ -49,26 +51,10 @@ public class FoodAPI {
      * @param ndbno
      * @param requestListener
      */
-    public void foodResult(String ndbno, JSONObjectRequestListener requestListener) {
+    public void foodResult(int ndbno, JSONObjectRequestListener requestListener) {
         // because there's no easy way, we'll have to add it manually like so
-        AndroidNetworking.get(BASE_URL + "nutrients/?")
-                .addQueryParameter("format", "json")
-                .addQueryParameter("nutrients", NUTRIENT_LIST[0])
-                .addQueryParameter("nutrients", NUTRIENT_LIST[1])
-                .addQueryParameter("nutrients", NUTRIENT_LIST[2])
-                .addQueryParameter("nutrients", NUTRIENT_LIST[3])
-                .addQueryParameter("nutrients", NUTRIENT_LIST[4])
-                .addQueryParameter("nutrients", NUTRIENT_LIST[5])
-                .addQueryParameter("nutrients", NUTRIENT_LIST[6])
-                .addQueryParameter("nutrients", NUTRIENT_LIST[7])
-                .addQueryParameter("nutrients", NUTRIENT_LIST[8])
-                .addQueryParameter("nutrients", NUTRIENT_LIST[9])
-                .addQueryParameter("nutrients", NUTRIENT_LIST[10])
-                .addQueryParameter("nutrients", NUTRIENT_LIST[11])
-                .addQueryParameter("nutrients", NUTRIENT_LIST[12])
-                .addQueryParameter("nutrients", NUTRIENT_LIST[13])
-                .addQueryParameter("nutrients", NUTRIENT_LIST[14])
-                .addQueryParameter("ndbno", ndbno)
+        AndroidNetworking.get(BASE_URL + "nutrients/?format=json" + NUTRIENT_URL)
+                .addQueryParameter("ndbno", Integer.toString(ndbno))
                 .addQueryParameter("api_key", this.apiKey)
                 .build()
                 .getAsJSONObject(requestListener);
