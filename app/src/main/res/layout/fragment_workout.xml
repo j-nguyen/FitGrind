@@ -5,15 +5,10 @@
     tools:context="ca.stclaircollege.fitgrind.WorkoutFragment">
 
     <!-- TODO: Update blank fragment layout -->
-    <android.support.v7.widget.CardView
+    <ListView
+        android:id="@+id/workoutList"
         android:layout_width="match_parent"
-        android:layout_height="150dp" >
-
-        <TextView
-            android:text="TextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/textView2" />
-    </android.support.v7.widget.CardView>
+        android:layout_height="match_parent">
+    </ListView>
 
 </LinearLayout>
