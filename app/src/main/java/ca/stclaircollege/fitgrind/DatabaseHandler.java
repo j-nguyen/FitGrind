@@ -60,11 +60,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 "image_id INTEGER REFERENCES progress(id), " +
                 "DATE TIMESTAMP DEFAULT CURRENT_TIMESTAMP);";
 
-    private static final String CREATE_WORKOUTTYPE_TABLE =
-            "CREATE TABLE workout_type (" +
-                "id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
-                "type VARCHAR(8));";
-
     private static final String CREATE_WORKOUTDAY_TABLE =
             "CREATE TABLE workout_day (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
@@ -73,7 +68,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final String CREATE_WORKOUTSTR_TABLE =
             "CREATE TABLE workout_strength (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
-                "type_id INTEGER REFERENCES workout_type(id), " +
                 "name TEXT, " +
                 "set INTEGER, " +
                 "rep INTEGER, " +
@@ -82,9 +76,15 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final String CREATE_WORKOUTCARDIO_TABLE =
             "CREATE TABLE workout_cardio (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
-                "type_id INTEGER REFERENCES workout_type(id), " +
                 "name TEXT, " +
                 "time FLOAT);";
+
+    private static final String CREATE_WORKOUT_TABLE =
+            "CREATE TABLE workout (" +
+                "id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                "strength_id INTEGER REFERENCES workout_strength(id), " +
+                "cardio_id INTEGER REFERENCES workout_cardio(id), " +
+                "day_id INTEGER REFERENCES workout_day(id));";
 
     public DatabaseHandler(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
@@ -97,10 +97,10 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.execSQL(CREATE_FOODLOG_TABLE);
         db.execSQL(CREATE_PROGRESS_TABLE);
         db.execSQL(CREATE_IMAGE_TABLE);
-        db.execSQL(CREATE_WORKOUTTYPE_TABLE);
         db.execSQL(CREATE_WORKOUTDAY_TABLE);
         db.execSQL(CREATE_WORKOUTSTR_TABLE);
         db.execSQL(CREATE_WORKOUTCARDIO_TABLE);
+        db.execSQL(CREATE_WORKOUT_TABLE);
     }
 
     @Override
@@ -111,10 +111,10 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + CREATE_FOODLOG_TABLE);
         db.execSQL("DROP TABLE IF EXISTS " + CREATE_PROGRESS_TABLE);
         db.execSQL("DROP TABLE IF EXISTS " + CREATE_IMAGE_TABLE);
-        db.execSQL("DROP TABLE IF EXISTS " + CREATE_WORKOUTTYPE_TABLE);
         db.execSQL("DROP TABLE IF EXISTS " + CREATE_WORKOUTDAY_TABLE);
         db.execSQL("DROP TABLE IF EXISTS " + CREATE_WORKOUTSTR_TABLE);
         db.execSQL("DROP TABLE IF EXISTS " + CREATE_WORKOUTCARDIO_TABLE);
+        db.execSQL("DROP TABLE IF EXISTS " + CREATE_WORKOUT_TABLE);
         // relaunch onCreate
         onCreate(db);
     }
