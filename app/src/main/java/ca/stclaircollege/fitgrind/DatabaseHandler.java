@@ -19,38 +19,72 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final String DB_NAME = "fitgrind.db";
 
     // create our table names
-    private static final String TIMELOG_TABLE_NAME = "time_log";
-    private static final String WEIGHTLOG_TABLE_NAME = "weight_log";
-    private static final String CALORIELOG_TABLE_NAME = "calorie_log";
+    private static final String CREATE_WEIGHTLOG_TABLE =
+            "CREATE TABLE weight_log (" +
+                "id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                "WEIGHT FLOAT, " +
+                "DATE TIMESTAMP DEFAULT CURRENT_TIMESTAMP);";
 
-    // progress table is where we keep track of our pictures.
-    private static final String PROGRESS_TABLE_NAME = "progress";
-    private static final String IMAGELOCATION_TABLE_NAME = "image_location";
+    private static final String CREATE_FOOD_TABLE =
+            "CREATE TABLE food (" +
+                "id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                "name TEXT, " +
+                "serving TEXT, " +
+                "calories FLOAT, " +
+                "sugar FLOAT, " +
+                "total_fat FLOAT, " +
+                "cholesterol FLOAT, " +
+                "sodium FLOAT, " +
+                "fiber FLOAT, " +
+                "protein FLOAT, " +
+                "vitamin_a FLOAT, " +
+                "vitamin_c FLOAT, " +
+                "calcium FLOAT, " +
+                "iron FLOAT, " +
+                "potassium FLOAT);";
 
-    // Create our keys.
-    private static final String KEY_ID = "id";
-    private static final String KEY_TIMEID = "time_id";
-    private static final String KEY_IMAGEID = "image_id";
-    private static final String KEY_DATE = "date";
-    private static final String KEY_WEIGHT = "weight";
-    private static final String KEY_FOOD = "food";
-    private static final String KEY_CALORIES = "calories";
-    private static final String KEY_RESOURCE = "resource";
+    private static final String CREATE_FOODLOG_TABLE =
+            "CREATE TABLE food_log (" +
+                "id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                "food_id INTEGER REFERENCES food(id), " +
+                "DATE TIMESTAMP DEFAULT CURRENT_TIMESTAMP);";
 
-    // now finally, we can create our tables
-    private static final String CREATE_TIMELOG_TABLE = "CREATE TABLE " + TIMELOG_TABLE_NAME + "(" + KEY_ID +
-            " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " + KEY_DATE + " DATETIME);";
-    private static final String CREATE_WEIGHTLOG_TABLE = "CREATE TABLE " + WEIGHTLOG_TABLE_NAME + "(" + KEY_ID +
-            " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " + KEY_TIMEID + " INTEGER REFERENCES " +
-            KEY_TIMEID + "(" + KEY_ID + "), " + KEY_WEIGHT + " FLOAT);";
-    private static final String CREATE_CALORIELOG_TABLE = "CREATE TABLE " + CALORIELOG_TABLE_NAME + "(" + KEY_ID +
-            " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " + KEY_TIMEID + " INTEGER REFERENCES " + KEY_TIMEID +
-            "(" + KEY_ID + "), " + KEY_FOOD + " TEXT NOT NULL, " + KEY_CALORIES + " INTEGER NOT NULL);";
-    private static final String CREATE_PROGRESS_TABLE = "CREATE TABLE " + PROGRESS_TABLE_NAME + "(" + KEY_ID +
-            " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " + KEY_RESOURCE + " TEXT NOT NULL);";
-    private static final String CREATE_IMAGELOCATION_TABLE = "CREATE TABLE " + IMAGELOCATION_TABLE_NAME + "(" + KEY_ID +
-            " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " + KEY_IMAGEID +  " INTEGER REFERENCES " + PROGRESS_TABLE_NAME + "(" + KEY_ID + "), " +
-            KEY_TIMEID + " INTEGER REFERENCES " + TIMELOG_TABLE_NAME + "(" + KEY_ID + "));";
+    private static final String CREATE_PROGRESS_TABLE =
+            "CREATE TABLE progress (" +
+                "id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                "resource TEXT);";
+
+    private static final String CREATE_IMAGE_TABLE =
+            "CREATE TABLE image (" +
+                "id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                "image_id INTEGER REFERENCES progress(id), " +
+                "DATE TIMESTAMP DEFAULT CURRENT_TIMESTAMP);";
+
+    private static final String CREATE_WORKOUTTYPE_TABLE =
+            "CREATE TABLE workout_type (" +
+                "id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                "type VARCHAR(8));";
+
+    private static final String CREATE_WORKOUTDAY_TABLE =
+            "CREATE TABLE workout_day (" +
+                "id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                "day VARCHAR(9));";
+
+    private static final String CREATE_WORKOUTSTR_TABLE =
+            "CREATE TABLE workout_strength (" +
+                "id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                "type_id INTEGER REFERENCES workout_type(id), " +
+                "name TEXT, " +
+                "set INTEGER, " +
+                "rep INTEGER, " +
+                "weight FLOAT);" +
+
+    private static final String CREATE_WORKOUTCARDIO_TABLE =
+            "CREATE TABLE workout_cardio (" +
+                "id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                "type_id INTEGER REFERENCES workout_type(id), " +
+                "name TEXT, " +
+                "time FLOAT);";
 
     public DatabaseHandler(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
@@ -58,26 +92,35 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL(CREATE_TIMELOG_TABLE);
         db.execSQL(CREATE_WEIGHTLOG_TABLE);
-        db.execSQL(CREATE_CALORIELOG_TABLE);
+        db.execSQL(CREATE_FOOD_TABLE);
+        db.execSQL(CREATE_FOODLOG_TABLE);
         db.execSQL(CREATE_PROGRESS_TABLE);
-        db.execSQL(CREATE_IMAGELOCATION_TABLE);
+        db.execSQL(CREATE_IMAGE_TABLE);
+        db.execSQL(CREATE_WORKOUTTYPE_TABLE);
+        db.execSQL(CREATE_WORKOUTDAY_TABLE);
+        db.execSQL(CREATE_WORKOUTSTR_TABLE);
+        db.execSQL(CREATE_WORKOUTCARDIO_TABLE);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // drop the table if it exists
-        db.execSQL("DROP TABLE IF EXISTS " + IMAGELOCATION_TABLE_NAME);
-        db.execSQL("DROP TABLE IF EXISTS " + PROGRESS_TABLE_NAME);
-        db.execSQL("DROP TABLE IF EXISTS " + CALORIELOG_TABLE_NAME);
-        db.execSQL("DROP TABLE IF EXISTS " + WEIGHTLOG_TABLE_NAME);
-        db.execSQL("DROP TABLE IF EXISTS " + TIMELOG_TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + CREATE_WEIGHTLOG_TABLE);
+        db.execSQL("DROP TABLE IF EXISTS " + CREATE_FOOD_TABLE);
+        db.execSQL("DROP TABLE IF EXISTS " + CREATE_FOODLOG_TABLE);
+        db.execSQL("DROP TABLE IF EXISTS " + CREATE_PROGRESS_TABLE);
+        db.execSQL("DROP TABLE IF EXISTS " + CREATE_IMAGE_TABLE);
+        db.execSQL("DROP TABLE IF EXISTS " + CREATE_WORKOUTTYPE_TABLE);
+        db.execSQL("DROP TABLE IF EXISTS " + CREATE_WORKOUTDAY_TABLE);
+        db.execSQL("DROP TABLE IF EXISTS " + CREATE_WORKOUTSTR_TABLE);
+        db.execSQL("DROP TABLE IF EXISTS " + CREATE_WORKOUTCARDIO_TABLE);
+        // relaunch onCreate
+        onCreate(db);
     }
 
     // now we wanna create our crud operations in here. We will need a ton
-
-
+    
 
 
 }
