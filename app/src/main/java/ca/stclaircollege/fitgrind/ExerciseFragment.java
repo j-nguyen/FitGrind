@@ -3,25 +3,22 @@ package ca.stclaircollege.fitgrind;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link WorkoutExerciseFragment.OnFragmentInteractionListener} interface
+ * {@link ExerciseFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link WorkoutExerciseFragment#newInstance} factory method to
+ * Use the {@link ExerciseFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class WorkoutExerciseFragment extends Fragment {
+public class ExerciseFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -30,12 +27,10 @@ public class WorkoutExerciseFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-    private ViewPager viewPager;
-    private SectionPagerAdapter sectionPagerAdapter;
 
     private OnFragmentInteractionListener mListener;
 
-    public WorkoutExerciseFragment() {
+    public ExerciseFragment() {
         // Required empty public constructor
     }
 
@@ -45,11 +40,11 @@ public class WorkoutExerciseFragment extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment WorkoutExerciseFragment.
+     * @return A new instance of fragment ExerciseFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static WorkoutExerciseFragment newInstance(String param1, String param2) {
-        WorkoutExerciseFragment fragment = new WorkoutExerciseFragment();
+    public static ExerciseFragment newInstance(String param1, String param2) {
+        ExerciseFragment fragment = new ExerciseFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -70,46 +65,13 @@ public class WorkoutExerciseFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_workout_exercise, container, false);
-        sectionPagerAdapter = new SectionPagerAdapter(getChildFragmentManager());
-        viewPager = (ViewPager) view.findViewById(R.id.exerciseContent);
-        viewPager.setAdapter(sectionPagerAdapter);
-        if(savedInstanceState == null){
-            Snackbar.make(view, "Swipe left for more gear", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show();
+        View view = inflater.inflate(R.layout.fragment_exercise, container, false);
+        if(mParam1 != null){
+            TextView text = (TextView) view.findViewById(R.id.day);
+            text.setText(mParam1);
         }
 
         return view;
-    }
-
-    public class SectionPagerAdapter extends FragmentPagerAdapter {
-        public SectionPagerAdapter(FragmentManager fm){
-            super(fm);
-        }
-        public Fragment getItem(int position){
-            switch(position){
-                case 0:
-                    return ExerciseFragment.newInstance("Sunday", "");
-                case 1:
-                    return ExerciseFragment.newInstance("Monday", "");
-                case 2:
-                    return ExerciseFragment.newInstance("Tuesday", "");
-                case 3:
-                    return ExerciseFragment.newInstance("Wednesday", "");
-                case 4:
-                    return ExerciseFragment.newInstance("Thursday", "");
-                case 5:
-                    return ExerciseFragment.newInstance("Friday ", "");
-                case 6:
-                    return ExerciseFragment.newInstance("Saturday", "");
-                default:
-                    return ExerciseFragment.newInstance("Sunday", "");
-            }
-        }
-        public int getCount(){
-            return 7;
-        }
-
     }
 
     // TODO: Rename method, update argument and hook method into UI event

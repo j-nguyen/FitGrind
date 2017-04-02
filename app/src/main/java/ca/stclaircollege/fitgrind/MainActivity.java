@@ -20,7 +20,9 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
                     MainFragment.OnFragmentInteractionListener,
                     AddFoodFragment.OnFragmentInteractionListener,
-                    ViewFoodFragment.OnFragmentInteractionListener {
+                    ViewFoodFragment.OnFragmentInteractionListener,
+                    WorkoutExerciseFragment.OnFragmentInteractionListener,
+                    ExerciseFragment.OnFragmentInteractionListener{
 
     // create fragment manager
     FragmentManager fm = getSupportFragmentManager();
@@ -107,6 +109,11 @@ public class MainActivity extends AppCompatActivity
 //            FragmentTransaction tran = fm.beginTransaction();
 //            tran.replace(R.id.content_main, new ());
 //            tran.commit();
+
+        } else if (id == R.id.nav_test) {
+            FragmentTransaction tran = fm.beginTransaction();
+            tran.replace(R.id.content_main, new WorkoutExerciseFragment());
+            tran.commit();
 
         }
 
