@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TabbedActivity extends AppCompatActivity implements
-    WorkoutFragment.OnFragmentInteractionListener,
+    WorkoutProgramFragment.OnFragmentInteractionListener,
     TimeFragment.OnFragmentInteractionListener{
 
     private Toolbar toolbar;
@@ -89,7 +89,7 @@ public class TabbedActivity extends AppCompatActivity implements
 
     private void setupViewPager(ViewPager viewPager) {
         SectionsPagerAdapter adapter = new SectionsPagerAdapter(getSupportFragmentManager());
-        adapter.addFrag(new WorkoutFragment(), "Workout Schedule");
+        adapter.addFrag(new WorkoutProgramFragment(), "Workout Schedule");
         adapter.addFrag(new TimeFragment(), "Timer");
         viewPager.setAdapter(adapter);
     }
