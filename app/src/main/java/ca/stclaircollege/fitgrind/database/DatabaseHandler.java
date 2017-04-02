@@ -21,6 +21,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     // table name
     private static final String WORKOUTROUTINE_TABLE_NAME = "workout_routine";
+    private static final String EXERCISE_TABLE_NAME = "exercise";
+    private static final String CARDIOLOG_TABLE_NAME = "cardio_log";
+    private static final String STRENGTHLOG_TABLE_NAME = "strength_log";
 
     // create our table names
     private static final String CREATE_WEIGHTLOG_TABLE =
@@ -149,8 +152,11 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     // now we wanna create our crud operations in here. We will need a ton
 
-    // Let's start off with the routine method first.
-    public boolean insertRoutine(Routine routine) {
+    /**
+     * Inserts routine into sqlite db. Parameters include the routine object.
+     * @param routine
+     */
+    public void insertRoutine(Routine routine) {
         // Create the writeable DB
         SQLiteDatabase db = getWritableDatabase();
         // Use contentvalues
@@ -159,16 +165,49 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         values.put("name", routine.getName());
         values.put("description", routine.getDescription());
         db.insert(WORKOUTROUTINE_TABLE_NAME, null, values);
-        return true;
     }
 
-    public boolean insertWorkout() {
+    /**
+     * Inserts a workout, with the cardio object
+     * @param cardio
+     */
+    public void insertWorkout(Cardio cardio) {
         // writeable db
         SQLiteDatabase db = getWritableDatabase();
         // create content values
         ContentValues values = new ContentValues();
-        //
-        return true;
+        // input the values
+        values.put("name", cardio.getName());
+        // after inserting we want the id
+        long id = db.insert(EXERCISE_TABLE_NAME, null, values);
+        // now we wanna insert on the row
+        values.clear(); // clear
+        values.put("exercise_id", id);
+        values.put("time", cardio.getTime());
+        db.insert(CARDIOLOG_TABLE_NAME, null, values);
     }
+
+    /**
+     * Inserts workout with strength object
+     * @param strength
+     */
+    public void insertWorkout(Strength strength) {
+        // create db
+        SQLiteDatabase db = getWritableDatabase();
+        // create the content values
+        ContentValues values = new ContentValues();
+        // input the name and insert.
+        values.put("name", strength.getName());
+        // insert and retrieve the id
+        long id = db.insert(STRENGTHLOG_TABLE_NAME, null, values);
+        values.clear();
+        // insert again
+        values.put("exercise_id", id);
+        values.put("set", strength.getSet());
+        values.put("rep", strength.getReptitions());
+        values.put("weight", strength.getWeight());
+    }
+
+    
 
 }
