@@ -1,5 +1,6 @@
 package ca.stclaircollege.fitgrind.database;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -17,6 +18,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     // Follow suit with our db fitgrind name
     private static final String DB_NAME = "fitgrind.db";
+
+    // table name
+    private static final String WORKOUTROUTINE_TABLE_NAME = "workout_routine";
 
     // create our table names
     private static final String CREATE_WEIGHTLOG_TABLE =
@@ -146,8 +150,25 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     // now we wanna create our crud operations in here. We will need a ton
 
     // Let's start off with the routine method first.
-    public boolean insertRoutine(){
+    public boolean insertRoutine(Routine routine) {
+        // Create the writeable DB
+        SQLiteDatabase db = getWritableDatabase();
+        // Use contentvalues
+        ContentValues values = new ContentValues();
+        // put name and desc
+        values.put("name", routine.getName());
+        values.put("description", routine.getDescription());
+        db.insert(WORKOUTROUTINE_TABLE_NAME, null, values);
+        return true;
+    }
 
+    public boolean insertWorkout() {
+        // writeable db
+        SQLiteDatabase db = getWritableDatabase();
+        // create content values
+        ContentValues values = new ContentValues();
+        //
+        return true;
     }
 
 }
