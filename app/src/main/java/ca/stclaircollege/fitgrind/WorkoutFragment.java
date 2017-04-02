@@ -1,7 +1,6 @@
 package ca.stclaircollege.fitgrind;
 
 import android.content.Context;
-import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -10,11 +9,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+
+import ca.stclaircollege.fitgrind.database.Routine;
 
 
 /**
@@ -76,16 +76,16 @@ public class WorkoutFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_workout, container, false);
         list = (ListView) view.findViewById(R.id.workoutList);
-        final ArrayList<Program> programsList = new ArrayList<Program>();
-        programsList.add(new Program("text", "test", "test"));
-        programsList.add(new Program("text", "test", "test"));
-        programsList.add(new Program("text", "test", "test"));
-        programsList.add(new Program("text", "test", "test"));
-        programsList.add(new Program("text", "test", "test"));
-        programsList.add(new Program("text", "test", "test"));
-        programsList.add(new Program("text", "test", "test"));
-        programsList.add(new Program("text", "test", "test"));
-        programsList.add(new Program("text", "test", "test"));
+        final ArrayList<Routine> programsList = new ArrayList<Routine>();
+        programsList.add(new Routine("text", "test"));
+        programsList.add(new Routine("text", "test"));
+        programsList.add(new Routine("text", "test"));
+        programsList.add(new Routine("text", "test"));
+        programsList.add(new Routine("text", "test"));
+        programsList.add(new Routine("text", "test"));
+        programsList.add(new Routine("text", "test"));
+        programsList.add(new Routine("text", "test"));
+        programsList.add(new Routine("text", "test"));
         final CustomAdapter adapter = new CustomAdapter(getContext(), programsList);
         list.setAdapter(adapter);
         
@@ -102,13 +102,13 @@ public class WorkoutFragment extends Fragment {
     }
 
 
-    public class CustomAdapter extends ArrayAdapter<Program> {
-        public CustomAdapter(Context context, ArrayList<Program> items) {
+    public class CustomAdapter extends ArrayAdapter<Routine> {
+        public CustomAdapter(Context context, ArrayList<Routine> items) {
             super(context, 0, items);
         }
         //get each item and assign a view to it
         public View getView(int position, View convertView, ViewGroup parent){
-            final Program item = getItem(position);
+            final Routine item = getItem(position);
             if(convertView == null){
                 convertView = LayoutInflater.from(getContext()).inflate(R.layout.program_view, parent, false);
             }
@@ -119,9 +119,6 @@ public class WorkoutFragment extends Fragment {
 
             TextView description = (TextView) convertView.findViewById(R.id.programDescription);
             description.setText(item.getDescription());
-
-            TextView length = (TextView) convertView.findViewById(R.id.programLength);
-            length.setText(item.getLength());
 
             return  convertView;
         }

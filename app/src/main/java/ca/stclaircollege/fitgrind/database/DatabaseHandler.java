@@ -68,7 +68,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final String CREATE_WORKOUTROUTINE_TABLE =
             "CREATE TABLE workout_routine (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
-                "name VARCHAR(100) NOT NULL);";
+                "name VARCHAR(100) NOT NULL, " +
+                "description TEXT NOT NULL);";
 
     private static final String CREATE_EXERCISE_TABLE =
             "CREATE TABLE exercise (" +
@@ -143,7 +144,10 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
 
     // now we wanna create our crud operations in here. We will need a ton
-    
 
+    // Let's start off with the routine method first.
+    public boolean insertRoutine(){
+
+    }
 
 }
