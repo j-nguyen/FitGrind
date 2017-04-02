@@ -1,5 +1,6 @@
 package ca.stclaircollege.fitgrind;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -100,9 +101,7 @@ public class MainActivity extends AppCompatActivity
 //            tran.commit();
 
         } else if (id == R.id.nav_workout_schedule) {
-//            FragmentTransaction tran = fm.beginTransaction();
-//            tran.replace(R.id.content_main, new ());
-//            tran.commit();
+            startActivity(new Intent(MainActivity.this, TabbedActivity.class));
 
         } else if (id == R.id.nav_progress_gallary) {
 //            FragmentTransaction tran = fm.beginTransaction();
