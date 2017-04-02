@@ -1,4 +1,4 @@
-package ca.stclaircollege.fitgrind;
+package ca.stclaircollege.fitgrind.database;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
@@ -13,7 +13,7 @@ import android.database.sqlite.SQLiteOpenHelper;
  */
 public class DatabaseHandler extends SQLiteOpenHelper {
     // database version. Any DB Schema updates will require an increment version
-    private static final int DB_VERSION = 1;
+    private static final int DB_VERSION = 2;
 
     // Follow suit with our db fitgrind name
     private static final String DB_NAME = "fitgrind.db";
@@ -65,25 +65,35 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 "id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
                 "day VARCHAR(9));";
 
-    private static final String CREATE_WORKOUTSTR_TABLE =
-            "CREATE TABLE workout_strength (" +
+    private static final String CREATE_WORKOUTROUTINE_TABLE =
+            "CREATE TABLE workout_routine (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
-                "name TEXT, " +
+                "name VARCHAR(100) NOT NULL);";
+
+    private static final String CREATE_EXERCISE_TABLE =
+            "CREATE TABLE exercise (" +
+                "id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                "name VARCHAR(100) NOT NULL);";
+
+    private static final String CREATE_CARDIOLOG_TABLE =
+            "CREATE TABLE cardio_log (" +
+                "id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                "exercise_id INTEGER REFERENCES exercise(id), " +
+                "time FLOAT);";
+
+    private static final String CREATE_STRENGTHLOG_TABLE =
+            "CREATE TABLE strength_log (" +
+                "id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                "exercise_id INTEGER REFERENCES exercise(id), " +
                 "set INTEGER, " +
                 "rep INTEGER, " +
-                "weight FLOAT);" +
-
-    private static final String CREATE_WORKOUTCARDIO_TABLE =
-            "CREATE TABLE workout_cardio (" +
-                "id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
-                "name TEXT, " +
-                "time FLOAT);";
+                "weight FLOAT);";
 
     private static final String CREATE_WORKOUT_TABLE =
             "CREATE TABLE workout (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
-                "strength_id INTEGER REFERENCES workout_strength(id), " +
-                "cardio_id INTEGER REFERENCES workout_cardio(id), " +
+                "routine_id INTEGER REFERENCES workout_routine(id), " +
+                "exercise_id INTEGER REFERENCES exercise(id), " +
                 "day_id INTEGER REFERENCES workout_day(id));";
 
     public DatabaseHandler(Context context) {
@@ -98,9 +108,19 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.execSQL(CREATE_PROGRESS_TABLE);
         db.execSQL(CREATE_IMAGE_TABLE);
         db.execSQL(CREATE_WORKOUTDAY_TABLE);
-        db.execSQL(CREATE_WORKOUTSTR_TABLE);
-        db.execSQL(CREATE_WORKOUTCARDIO_TABLE);
+        db.execSQL(CREATE_WORKOUTROUTINE_TABLE);
+        db.execSQL(CREATE_EXERCISE_TABLE);
+        db.execSQL(CREATE_CARDIOLOG_TABLE);
+        db.execSQL(CREATE_STRENGTHLOG_TABLE);
         db.execSQL(CREATE_WORKOUT_TABLE);
+        // next we will want to pre-populate the data. This way we know for sure it's there
+        db.execSQL("INSERT INTO workout_day(id, day) VALUES (null, 'Monday');");
+        db.execSQL("INSERT INTO workout_day(id, day) VALUES (null, 'Tuesday');");
+        db.execSQL("INSERT INTO workout_day(id, day) VALUES (null, 'Wednesday');");
+        db.execSQL("INSERT INTO workout_day(id, day) VALUES (null, 'Thursday');");
+        db.execSQL("INSERT INTO workout_day(id, day) VALUES (null, 'Friday');");
+        db.execSQL("INSERT INTO workout_day(id, day) VALUES (null, 'Saturday');");
+        db.execSQL("INSERT INTO workout_day(id, day) VALUES (null, 'Sunday');");
     }
 
     @Override
@@ -112,9 +132,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + CREATE_PROGRESS_TABLE);
         db.execSQL("DROP TABLE IF EXISTS " + CREATE_IMAGE_TABLE);
         db.execSQL("DROP TABLE IF EXISTS " + CREATE_WORKOUTDAY_TABLE);
-        db.execSQL("DROP TABLE IF EXISTS " + CREATE_WORKOUTSTR_TABLE);
-        db.execSQL("DROP TABLE IF EXISTS " + CREATE_WORKOUTCARDIO_TABLE);
+        db.execSQL("DROP TABLE IF EXISTS " + CREATE_WORKOUTROUTINE_TABLE);
+        db.execSQL("DROP TABLE IF EXISTS " + CREATE_EXERCISE_TABLE);
+        db.execSQL("DROP TABLE IF EXISTS " + CREATE_CARDIOLOG_TABLE);
+        db.execSQL("DROP TABLE IF EXISTS " + CREATE_STRENGTHLOG_TABLE);
         db.execSQL("DROP TABLE IF EXISTS " + CREATE_WORKOUT_TABLE);
+
         // relaunch onCreate
         onCreate(db);
     }
