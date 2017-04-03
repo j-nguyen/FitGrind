@@ -4,31 +4,29 @@ package ca.stclaircollege.fitgrind.database;
  * Created by johnnynguyen on 2017-04-02.
  */
 
-public class Cardio {
-    private long id;
-    private String name;
+public class Cardio extends WorkoutType {
+    private long cardioId;
     private double time;
 
-    public Cardio(long id, String name, double time) {
-        this.id = id;
+    public Cardio(long cardioId, String name, double time) {
         this.name = name;
+        this.cardioId = cardioId;
         this.time = time;
     }
 
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
+    public Cardio(long id, String name, long cardioId, double time) {
         this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
         this.name = name;
+        this.cardioId = cardioId;
+        this.time = time;
+    }
+
+    public long getCardioId() {
+        return cardioId;
+    }
+
+    public void setCardioId(long cardioId) {
+        this.cardioId = cardioId;
     }
 
     public double getTime() {

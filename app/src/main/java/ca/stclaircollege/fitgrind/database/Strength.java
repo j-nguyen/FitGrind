@@ -4,15 +4,22 @@ package ca.stclaircollege.fitgrind.database;
  * Created by johnnynguyen on 2017-04-02.
  */
 
-public class Strength {
-    private long id;
-    private String name;
+public class Strength extends WorkoutType {
+    private long strengthId;
     private int set;
     private int reptitions;
     private double weight;
 
-    public Strength(long id, String name, int set, int reptitions, double weight) {
-        this.id = id;
+    public Strength(long strengthId, String name, int set, int reptitions, double weight) {
+        this.strengthId = strengthId;
+        this.name = name;
+        this.set = set;
+        this.reptitions = reptitions;
+        this.weight = weight;
+    }
+
+    public Strength(long id, String name, long strengthId, int set, int reptitions, double weight) {
+        this.strengthId = strengthId;
         this.name = name;
         this.set = set;
         this.reptitions = reptitions;
@@ -26,20 +33,12 @@ public class Strength {
         this.weight = weight;
     }
 
-    public long getId() {
-        return id;
+    public long getStrengthId() {
+        return strengthId;
     }
 
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
+    public void setStrengthId(long strengthId) {
+        this.strengthId = strengthId;
     }
 
     public int getSet() {

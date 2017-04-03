@@ -335,5 +335,29 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         // return specified results
         return results;
     }
-    
+
+    public ArrayList<WorkoutType> selectAllWorkout() {
+        // to find out which one to return, we will use an abstract class in which that it relates to both
+        // get db
+        SQLiteDatabase db = getReadableDatabase();
+        ArrayList<WorkoutType> workoutList = new ArrayList<WorkoutType>();
+        // check for cardio log
+        Cursor cursor = db.rawQuery("SELECT a.* FROM exercise a INNER JOIN cardio_log b ON a.id = b.exercise_id", null);
+        if (cursor.moveToFirst()) {
+            do {
+                // now we can get the info for cardio log
+                workoutList.add(new Cardio(cursor.getInt(0), cursor.getString(1), cursor.getInt(2), cursor.getDouble(3)));
+            } while (cursor.moveToNext());
+        }
+        // now we check for other log
+        cursor = db.rawQuery("SELECT a.* FROM exercise a INNER JOIN strength_log b ON a.id = b.exercise_id", null);
+        if (cursor.moveToFirst()) {
+            do {
+                // add for strength log
+                workoutList.add(new Strength(cursor.getInt(0), cursor.getString(1), cursor.getInt(2), cursor.getInt(3), cursor.getInt(4), cursor.getDouble(5)));
+            } while (cursor.moveToNext());
+        }
+        return workoutList;
+    }
+
 }
