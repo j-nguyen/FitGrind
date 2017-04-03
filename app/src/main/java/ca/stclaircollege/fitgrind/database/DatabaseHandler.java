@@ -28,6 +28,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final String CARDIOLOG_TABLE_NAME = "cardio_log";
     private static final String STRENGTHLOG_TABLE_NAME = "strength_log";
     private static final String WORKOUT_TABLE_NAME = "workout";
+    private static final String IMAGE_TABLE_NAME = "image";
 
     // create our table names
     private static final String CREATE_WEIGHTLOG_TABLE =
@@ -194,6 +195,27 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         values.put("exercise_id", id);
         values.put("day_id", dayId);
         db.insert(WORKOUT_TABLE_NAME, null, values);
+        db.close();
+    }
+
+    /**
+     * Inserts your 'weight-log' picture weekly.
+     * @param progress
+     */
+    public void insertProgress(Progress progress) {
+
+    }
+
+    public void insertImageLocation(long imageId) {
+        // insert an image location
+        SQLiteDatabase db = getWritableDatabase();
+        // Create content values
+        ContentValues values = new ContentValues();
+        // input the values selected
+        values.put("image_id", imageId);
+        // now insert db
+        db.insert(IMAGE_TABLE_NAME, null, values);
+        db.close();
     }
 
     /**
@@ -222,7 +244,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         values.put("exercise_id", id);
         values.put("day_id", dayId);
         db.insert(WORKOUT_TABLE_NAME, null, values);
+        db.close();
     }
+
+    /*
+     * UPDATE METHODS
+     */
 
     /**
      * Updates specific row
@@ -238,6 +265,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         values.put("description", routine.getDescription());
         // update the db
         db.update(WORKOUTROUTINE_TABLE_NAME, values, "id = ?", new String[]{String.valueOf(routine.getId())});
+        db.close();
     }
 
     /**
@@ -259,6 +287,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         values.put("exercise_id", exerciseId);
         values.put("time", cardio.getTime());
         db.update(CARDIOLOG_TABLE_NAME, values, "exercise_id = ?", new String[]{String.valueOf(exerciseId)});
+        db.close();
     }
 
     /**
@@ -281,7 +310,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         values.put("set", strength.getSet());
         values.put("rep", strength.getReptitions());
         values.put("weight", strength.getWeight());
-        db.update(STRENGTHLOG_TABLE_NAME, values, "exercise_id = ?", new String[]{exerciseId});
+        db.update(STRENGTHLOG_TABLE_NAME, values, "exercise_id = ?", new String[]{String.valueOf(exerciseId)});
+        db.close();
     }
 
     /**
@@ -291,6 +321,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public void deleteRoutine(long id) {
         SQLiteDatabase db = getWritableDatabase();
         db.delete(WORKOUTROUTINE_TABLE_NAME, "id = ?", new String[]{String.valueOf(id)});
+        db.close();
     }
 
     /**
@@ -302,6 +333,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.delete(CREATE_WORKOUT_TABLE, "exercise_id = ?", new String[]{String.valueOf(id)});
         db.delete(CARDIOLOG_TABLE_NAME, "exercise_id = ?", new String[]{String.valueOf(id)});
         db.delete(EXERCISE_TABLE_NAME, "id = ?", new String[]{String.valueOf(id)});
+        db.close();
     }
 
     /**
@@ -313,10 +345,13 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.delete(CREATE_WORKOUT_TABLE, "exercise_id = ?", new String[]{String.valueOf(id)});
         db.delete(STRENGTHLOG_TABLE_NAME, "exercise_id = ?", new String[]{String.valueOf(id)});
         db.delete(EXERCISE_TABLE_NAME, "id = ?", new String[]{String.valueOf(id)});
+        db.close();
     }
 
-    // Get select All from
-
+    /**
+     * Gets all the routine available that the person made.
+     * @return an ArrayList of Routine
+     */
     public ArrayList<Routine> selectAllRoutine() {
         // get readable db
         SQLiteDatabase db = getReadableDatabase();
@@ -332,17 +367,22 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 results.add(new Routine(cursor.getInt(0), cursor.getString(1), cursor.getString(2)));
             } while (cursor.moveToNext());
         }
+        db.close();
         // return specified results
         return results;
     }
 
+    /**
+     * Method to retrieve all of the workout.
+     * @return An abstract list of all the workouts. You will need to use polymorphism to find it out
+     */
     public ArrayList<WorkoutType> selectAllWorkout() {
         // to find out which one to return, we will use an abstract class in which that it relates to both
         // get db
         SQLiteDatabase db = getReadableDatabase();
         ArrayList<WorkoutType> workoutList = new ArrayList<WorkoutType>();
         // check for cardio log
-        Cursor cursor = db.rawQuery("SELECT a.* FROM exercise a INNER JOIN cardio_log b ON a.id = b.exercise_id", null);
+        Cursor cursor = db.rawQuery("SELECT * FROM exercise a INNER JOIN cardio_log b ON a.id = b.exercise_id", null);
         if (cursor.moveToFirst()) {
             do {
                 // now we can get the info for cardio log
@@ -350,13 +390,14 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             } while (cursor.moveToNext());
         }
         // now we check for other log
-        cursor = db.rawQuery("SELECT a.* FROM exercise a INNER JOIN strength_log b ON a.id = b.exercise_id", null);
+        cursor = db.rawQuery("SELECT * FROM exercise a INNER JOIN strength_log b ON a.id = b.exercise_id", null);
         if (cursor.moveToFirst()) {
             do {
                 // add for strength log
                 workoutList.add(new Strength(cursor.getInt(0), cursor.getString(1), cursor.getInt(2), cursor.getInt(3), cursor.getInt(4), cursor.getDouble(5)));
             } while (cursor.moveToNext());
         }
+        db.close();
         return workoutList;
     }
 
