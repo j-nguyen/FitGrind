@@ -89,8 +89,8 @@ public class TabbedActivity extends AppCompatActivity implements
 
     private void setupViewPager(ViewPager viewPager) {
         SectionsPagerAdapter adapter = new SectionsPagerAdapter(getSupportFragmentManager());
-        adapter.addFrag(new WorkoutProgramFragment(), "Workout Schedule");
-        adapter.addFrag(new TimeFragment(), "Timer");
+        adapter.addFrag(new WorkoutProgramFragment());
+        adapter.addFrag(new TimeFragment());
         viewPager.setAdapter(adapter);
     }
 
@@ -176,14 +176,8 @@ public class TabbedActivity extends AppCompatActivity implements
             return mFragmentList.size();
         }
 
-        public void addFrag(Fragment fragment, String title) {
+        public void addFrag(Fragment fragment) {
             mFragmentList.add(fragment);
-            mFragmentTitleList.add(title);
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            return  mFragmentTitleList.get(position);
         }
     }
 
