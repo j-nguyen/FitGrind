@@ -1,6 +1,7 @@
 package ca.stclaircollege.fitgrind.api;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +24,7 @@ import java.util.ArrayList;
 import ca.stclaircollege.fitgrind.api.Food;
 import ca.stclaircollege.fitgrind.api.FoodAPI;
 import ca.stclaircollege.fitgrind.api.Nutrient;
+import ca.stclaircollege.fitgrind.database.DatabaseHandler;
 
 /**
  * ViewFoodFragment class handles the viewing process of the food, such as the nutritional values that the food provides, as well
@@ -104,6 +106,8 @@ public class ViewFoodFragment extends Fragment {
                         String serving = foodObj.getString(Food.MEASURE_KEY) + " " + foodObj.getString(Food.WEIGHT_KEY) + "g";
                         // create the food object
                         Food food = new Food(Integer.parseInt(foodObj.getString(NDBNO_KEY)), foodObj.getString(Food.NAME_KEY), serving);
+                        DatabaseHandler db = new DatabaseHandler(getContext());
+                        Log.d("FOOD", db.insertFood(food).toString());
                         // now we want to iterate through the nutrient list json object.
                         JSONArray nutrientObj = foodObj.getJSONArray(NUTRIENT_KEY);
                         for (int i=0; i < nutrientObj.length(); i++) {

@@ -8,6 +8,10 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import java.util.ArrayList;
 
+import ca.stclaircollege.fitgrind.api.Food;
+import ca.stclaircollege.fitgrind.api.FoodAPI;
+import ca.stclaircollege.fitgrind.api.Nutrient;
+
 /**
  * DatabaseClassHandler class.
  * This handles the process of CRUD operations in SQLite, as well as table and data creation.
@@ -29,6 +33,11 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final String STRENGTHLOG_TABLE_NAME = "strength_log";
     private static final String WORKOUT_TABLE_NAME = "workout";
     private static final String IMAGE_TABLE_NAME = "image";
+    private static final String PROGRESS_TABLE_NAME = "progress";
+
+    // put it in a key array for easier access
+    private static final String[] FOOD_KEYS = new String[]{"calories", "sugar", "total_fat", "cholestrol", "sodium", "fiber", "protein",
+                                                           "vitamin_a", "vitamin_c", "calcium", "iron", "potassium"};
 
     // create our table names
     private static final String CREATE_WEIGHTLOG_TABLE =
@@ -98,7 +107,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             "CREATE TABLE strength_log (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
                 "exercise_id INTEGER REFERENCES exercise(id), " +
-                "set INTEGER, " +
+                "sets INTEGER, " +
                 "rep INTEGER, " +
                 "weight FLOAT);";
 
@@ -203,7 +212,14 @@ public class DatabaseHandler extends SQLiteOpenHelper {
      * @param progress
      */
     public void insertProgress(Progress progress) {
-
+        SQLiteDatabase db = getWritableDatabase();
+        // Create the content values
+        ContentValues values = new ContentValues();
+        // input the values
+        values.put("resource", progress.getResource());
+        // insert the db
+        db.insert(PROGRESS_TABLE_NAME, null, values);
+        db.close();
     }
 
     public void insertImageLocation(long imageId) {
@@ -245,6 +261,27 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         values.put("day_id", dayId);
         db.insert(WORKOUT_TABLE_NAME, null, values);
         db.close();
+    }
+
+    /**
+     * Inserts food into db. We need to adjust a few things for the food.
+     * @param food
+     * @return id value
+     */
+    public ContentValues insertFood(Food food) {
+        SQLiteDatabase db = getWritableDatabase();
+        // Create the content values inside
+        ContentValues values = new ContentValues();
+        values.put("name", food.getName());
+        values.put("serving", food.getServingSize());
+        // we now have to iterate through an array to make sure
+        for (int i=0; i < FoodAPI.MAX_NUTRIENTS; i++) {
+            // reference nutrient obj
+            Nutrient nutrient = food.getNutrients().get(i);
+            values.put(FOOD_KEYS[i], nutrient.getNutrient());
+        }
+        return values;
+//        return -1;
     }
 
     /*
@@ -345,6 +382,16 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.delete(CREATE_WORKOUT_TABLE, "exercise_id = ?", new String[]{String.valueOf(id)});
         db.delete(STRENGTHLOG_TABLE_NAME, "exercise_id = ?", new String[]{String.valueOf(id)});
         db.delete(EXERCISE_TABLE_NAME, "id = ?", new String[]{String.valueOf(id)});
+        db.close();
+    }
+
+    /**
+     * Deletes the picture
+     * @param id
+     */
+    public void deleteProgress(long id) {
+        SQLiteDatabase db = getWritableDatabase();
+        db.delete(PROGRESS_TABLE_NAME, "id = ?", new String[]{String.valueOf(id)});
         db.close();
     }
 
