@@ -106,8 +106,6 @@ public class ViewFoodFragment extends Fragment {
                         String serving = foodObj.getString(Food.MEASURE_KEY) + " " + foodObj.getString(Food.WEIGHT_KEY) + "g";
                         // create the food object
                         Food food = new Food(Integer.parseInt(foodObj.getString(NDBNO_KEY)), foodObj.getString(Food.NAME_KEY), serving);
-                        DatabaseHandler db = new DatabaseHandler(getContext());
-                        Log.d("FOOD", db.insertFood(food).toString());
                         // now we want to iterate through the nutrient list json object.
                         JSONArray nutrientObj = foodObj.getJSONArray(NUTRIENT_KEY);
                         for (int i=0; i < nutrientObj.length(); i++) {
@@ -120,6 +118,8 @@ public class ViewFoodFragment extends Fragment {
                         mFoodName.setText(food.getName());
                         mFoodWeight.setText(food.getServingSize());
                         mListView.setAdapter(new CustomAdapter(getContext(), food.getNutrients()));
+                        DatabaseHandler db = new DatabaseHandler(getContext());
+                        Log.d("FOOD", ""+ db.insertFood(food));
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }

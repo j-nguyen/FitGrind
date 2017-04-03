@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import ca.stclaircollege.fitgrind.api.Food;
 import ca.stclaircollege.fitgrind.api.FoodAPI;
@@ -21,12 +22,16 @@ import ca.stclaircollege.fitgrind.api.Nutrient;
  */
 public class DatabaseHandler extends SQLiteOpenHelper {
     // database version. Any DB Schema updates will require an increment version
-    private static final int DB_VERSION = 2;
+    private static final int DB_VERSION = 3;
 
     // Follow suit with our db fitgrind name
     private static final String DB_NAME = "fitgrind.db";
 
     // table name
+    private static final String WEIGHTLOG_TABLE_NAME = "weight_log";
+    private static final String FOOD_TABLE_NAME = "food";
+    private static final String FOODLOG_TABLE_NAME = "food_log";
+    private static final String WORKOUTDAY_TABLE_NAME = "workout_day";
     private static final String WORKOUTROUTINE_TABLE_NAME = "workout_routine";
     private static final String EXERCISE_TABLE_NAME = "exercise";
     private static final String CARDIOLOG_TABLE_NAME = "cardio_log";
@@ -35,9 +40,27 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final String IMAGE_TABLE_NAME = "image";
     private static final String PROGRESS_TABLE_NAME = "progress";
 
-    // put it in a key array for easier access
-    private static final String[] FOOD_KEYS = new String[]{"calories", "sugar", "total_fat", "cholestrol", "sodium", "fiber", "protein",
-                                                           "vitamin_a", "vitamin_c", "calcium", "iron", "potassium"};
+    // put it in a hashmap key
+    private static final HashMap<Integer, String> KEY_MAP = new HashMap<Integer, String>();
+
+    // initialize for our static provider
+    static {
+        KEY_MAP.put(208, "calories");
+        KEY_MAP.put(269, "sugar");
+        KEY_MAP.put(204, "total_fat");
+        KEY_MAP.put(205, "carbohydrate");
+        KEY_MAP.put(606, "saturated_fat");
+        KEY_MAP.put(605, "trans_fat");
+        KEY_MAP.put(601, "cholesterol");
+        KEY_MAP.put(307, "sodium");
+        KEY_MAP.put(291, "fiber");
+        KEY_MAP.put(203, "protein");
+        KEY_MAP.put(320, "vitamin_a");
+        KEY_MAP.put(401, "vitamin_c");
+        KEY_MAP.put(301, "calcium");
+        KEY_MAP.put(303, "iron");
+        KEY_MAP.put(306, "potassium");
+    }
 
     // create our table names
     private static final String CREATE_WEIGHTLOG_TABLE =
@@ -54,6 +77,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 "calories FLOAT, " +
                 "sugar FLOAT, " +
                 "total_fat FLOAT, " +
+                "carbohydrate FLOAT, " +
+                "saturated_fat FLOAT, " +
                 "cholesterol FLOAT, " +
                 "sodium FLOAT, " +
                 "fiber FLOAT, " +
@@ -148,17 +173,17 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // drop the table if it exists
-        db.execSQL("DROP TABLE IF EXISTS " + CREATE_WEIGHTLOG_TABLE);
-        db.execSQL("DROP TABLE IF EXISTS " + CREATE_FOOD_TABLE);
-        db.execSQL("DROP TABLE IF EXISTS " + CREATE_FOODLOG_TABLE);
-        db.execSQL("DROP TABLE IF EXISTS " + CREATE_PROGRESS_TABLE);
-        db.execSQL("DROP TABLE IF EXISTS " + CREATE_IMAGE_TABLE);
-        db.execSQL("DROP TABLE IF EXISTS " + CREATE_WORKOUTDAY_TABLE);
-        db.execSQL("DROP TABLE IF EXISTS " + CREATE_WORKOUTROUTINE_TABLE);
-        db.execSQL("DROP TABLE IF EXISTS " + CREATE_EXERCISE_TABLE);
-        db.execSQL("DROP TABLE IF EXISTS " + CREATE_CARDIOLOG_TABLE);
-        db.execSQL("DROP TABLE IF EXISTS " + CREATE_STRENGTHLOG_TABLE);
-        db.execSQL("DROP TABLE IF EXISTS " + CREATE_WORKOUT_TABLE);
+        db.execSQL("DROP TABLE IF EXISTS " + WEIGHTLOG_TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + FOOD_TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + FOODLOG_TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + PROGRESS_TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + IMAGE_TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + WORKOUTDAY_TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + WORKOUTROUTINE_TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + EXERCISE_TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + CARDIOLOG_TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + STRENGTHLOG_TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + WORKOUT_TABLE_NAME);
         // relaunch onCreate
         onCreate(db);
     }
@@ -268,7 +293,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
      * @param food
      * @return id value
      */
-    public ContentValues insertFood(Food food) {
+    public void insertFood(Food food) {
         SQLiteDatabase db = getWritableDatabase();
         // Create the content values inside
         ContentValues values = new ContentValues();
@@ -278,10 +303,10 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         for (int i=0; i < FoodAPI.MAX_NUTRIENTS; i++) {
             // reference nutrient obj
             Nutrient nutrient = food.getNutrients().get(i);
-            values.put(FOOD_KEYS[i], nutrient.getNutrient());
+            // we can reference the map using a dictionary for accesss
+            values.put(KEY_MAP.get(nutrient.getNutrientId()), nutrient.getValue());
         }
-        return values;
-//        return -1;
+
     }
 
     /*
