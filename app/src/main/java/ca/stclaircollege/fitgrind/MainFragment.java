@@ -11,6 +11,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import ca.stclaircollege.fitgrind.database.DatabaseHandler;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -58,6 +60,10 @@ public class MainFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        DatabaseHandler db = new DatabaseHandler(getContext());
+        db.getCalorieLogWeek();
+
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);

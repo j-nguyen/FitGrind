@@ -22,7 +22,7 @@ import ca.stclaircollege.fitgrind.api.Nutrient;
  */
 public class DatabaseHandler extends SQLiteOpenHelper {
     // database version. Any DB Schema updates will require an increment version
-    private static final int DB_VERSION = 3;
+    private static final int DB_VERSION = 8;
 
     // Follow suit with our db fitgrind name
     private static final String DB_NAME = "fitgrind.db";
@@ -37,7 +37,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final String CARDIOLOG_TABLE_NAME = "cardio_log";
     private static final String STRENGTHLOG_TABLE_NAME = "strength_log";
     private static final String WORKOUT_TABLE_NAME = "workout";
-    private static final String IMAGE_TABLE_NAME = "image";
     private static final String PROGRESS_TABLE_NAME = "progress";
 
     // put it in a hashmap key
@@ -79,6 +78,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 "total_fat FLOAT, " +
                 "carbohydrate FLOAT, " +
                 "saturated_fat FLOAT, " +
+                "trans_fat FLOAT, " +
                 "cholesterol FLOAT, " +
                 "sodium FLOAT, " +
                 "fiber FLOAT, " +
@@ -93,18 +93,13 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             "CREATE TABLE food_log (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
                 "food_id INTEGER REFERENCES food(id), " +
-                "DATE TIMESTAMP DEFAULT CURRENT_TIMESTAMP);";
+                "date TIMESTAMP DEFAULT CURRENT_TIMESTAMP);";
 
     private static final String CREATE_PROGRESS_TABLE =
             "CREATE TABLE progress (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
-                "resource TEXT);";
-
-    private static final String CREATE_IMAGE_TABLE =
-            "CREATE TABLE image (" +
-                "id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
-                "image_id INTEGER REFERENCES progress(id), " +
-                "DATE TIMESTAMP DEFAULT CURRENT_TIMESTAMP);";
+                "resource TEXT, " +
+                "date TIMESTAMP DEFAULT CURRENT_TIMESTAMP);";
 
     private static final String CREATE_WORKOUTDAY_TABLE =
             "CREATE TABLE workout_day (" +
@@ -153,7 +148,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.execSQL(CREATE_FOOD_TABLE);
         db.execSQL(CREATE_FOODLOG_TABLE);
         db.execSQL(CREATE_PROGRESS_TABLE);
-        db.execSQL(CREATE_IMAGE_TABLE);
         db.execSQL(CREATE_WORKOUTDAY_TABLE);
         db.execSQL(CREATE_WORKOUTROUTINE_TABLE);
         db.execSQL(CREATE_EXERCISE_TABLE);
@@ -177,7 +171,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + FOOD_TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + FOODLOG_TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + PROGRESS_TABLE_NAME);
-        db.execSQL("DROP TABLE IF EXISTS " + IMAGE_TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + WORKOUTDAY_TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + WORKOUTROUTINE_TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + EXERCISE_TABLE_NAME);
@@ -247,18 +240,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.close();
     }
 
-    public void insertImageLocation(long imageId) {
-        // insert an image location
-        SQLiteDatabase db = getWritableDatabase();
-        // Create content values
-        ContentValues values = new ContentValues();
-        // input the values selected
-        values.put("image_id", imageId);
-        // now insert db
-        db.insert(IMAGE_TABLE_NAME, null, values);
-        db.close();
-    }
-
     /**
      * Inserts workout with strength object
      * @param strength
@@ -293,7 +274,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
      * @param food
      * @return id value
      */
-    public void insertFood(Food food) {
+    public long insertFood(Food food) {
         SQLiteDatabase db = getWritableDatabase();
         // Create the content values inside
         ContentValues values = new ContentValues();
@@ -306,7 +287,25 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             // we can reference the map using a dictionary for accesss
             values.put(KEY_MAP.get(nutrient.getNutrientId()), nutrient.getValue());
         }
+        // now finally insert from the values
+        long id = db.insert(FOOD_TABLE_NAME, null, values);
+        db.close();
+        return id;
+    }
 
+    /**
+     * Inserts from the food log
+     * @param foodId
+     */
+    public long insertFoodLog(long foodId) {
+        SQLiteDatabase db = getWritableDatabase();
+        // create the content values
+        ContentValues values = new ContentValues();
+        values.put("food_id", foodId);
+        // now insert
+        long id = db.insert(FOODLOG_TABLE_NAME, null, values);
+        db.close();
+        return id;
     }
 
     /*
@@ -471,6 +470,29 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         }
         db.close();
         return workoutList;
+    }
+
+
+    /**
+     * Retrieves a log of food, from the past 7 days.
+     * @return A 2d arraylist. We know the exact amount the size of the outer, which is 7 for 7 days.
+     */
+    public void getCalorieLogWeek() {
+        SQLiteDatabase db = getReadableDatabase();
+        // Make ArrayList Result
+        ArrayList<ArrayList<Food>> res = null;
+        // We want to get the last 7 days, so we'll build the sqlite query ourselves.
+        String sql = "SELECT food_log.date, COUNT(food_log.id) AS numFood, food.* FROM food_log INNER JOIN food ON food_log.food_id = food.id " +
+                "WHERE food_log.date > DATE('now','-7 days') GROUP BY food_log.date ORDER BY food_log.date DESC;";
+        // attempt to query
+        Cursor cursor = db.rawQuery(sql, null);
+        if (cursor.moveToFirst()) {
+            do {
+                System.out.println(cursor.getString(0) + "," + cursor.getString(1) + "," + cursor.getString(2) + " " + cursor.getString(3));
+            } while(cursor.moveToNext());
+        }
+
+
     }
 
 }
