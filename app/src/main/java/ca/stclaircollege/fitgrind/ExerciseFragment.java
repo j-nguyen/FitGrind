@@ -7,7 +7,11 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
+
+import java.util.ArrayList;
 
 
 /**
@@ -27,6 +31,8 @@ public class ExerciseFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+
+    ListView list;
 
     private OnFragmentInteractionListener mListener;
 
@@ -66,12 +72,53 @@ public class ExerciseFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_exercise, container, false);
+
+        list = (ListView) view.findViewById(R.id.exerciselist);
+        final ArrayList<Exercise> exercisesList = new ArrayList<Exercise>();
+        exercisesList.add(new Exercise("text", "test", "test"));
+        exercisesList.add(new Exercise("text", "test", "test"));
+        exercisesList.add(new Exercise("text", "test", "test"));
+        exercisesList.add(new Exercise("text", "test", "test"));
+        exercisesList.add(new Exercise("text", "test", "test"));
+        exercisesList.add(new Exercise("text", "test", "test"));
+        exercisesList.add(new Exercise("text", "test", "test"));
+        exercisesList.add(new Exercise("text", "test", "test"));
+        exercisesList.add(new Exercise("text", "test", "test"));
+        final ExerciseFragment.CustomAdapter adapter = new ExerciseFragment.CustomAdapter(getContext(), exercisesList);
+        list.setAdapter(adapter);
+
+
         if(mParam1 != null){
             TextView text = (TextView) view.findViewById(R.id.day);
             text.setText(mParam1);
         }
 
         return view;
+    }
+
+    public class CustomAdapter extends ArrayAdapter<Exercise> {
+        public CustomAdapter(Context context, ArrayList<Exercise> items) {
+            super(context, 0, items);
+        }
+        //get each item and assign a view to it
+        public View getView(int position, View convertView, ViewGroup parent){
+            final Exercise item = getItem(position);
+            if(convertView == null){
+                convertView = LayoutInflater.from(getContext()).inflate(R.layout.exercise_view, parent, false);
+            }
+
+            //set the listview items
+            TextView exerciseName = (TextView) convertView.findViewById(R.id.exerciseName);
+            exerciseName.setText(item.getName());
+
+            TextView set = (TextView) convertView.findViewById(R.id.exerciseSet);
+            set.setText(item.getSet());
+
+            TextView length = (TextView) convertView.findViewById(R.id.exerciseRep);
+            length.setText(item.getRep());
+
+            return  convertView;
+        }
     }
 
     // TODO: Rename method, update argument and hook method into UI event

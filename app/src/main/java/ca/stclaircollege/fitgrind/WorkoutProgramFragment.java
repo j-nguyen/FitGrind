@@ -73,7 +73,7 @@ public class WorkoutProgramFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_workout_program, container, false);
-        list = (ListView) view.findViewById(R.id.workoutList);
+        list = (ListView) view.findViewById(R.id.workoutProgramList);
         final ArrayList<Program> programsList = new ArrayList<Program>();
         programsList.add(new Program("text", "test", "test"));
         programsList.add(new Program("text", "test", "test"));
