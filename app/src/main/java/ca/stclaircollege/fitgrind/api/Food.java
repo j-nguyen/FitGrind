@@ -1,6 +1,9 @@
 package ca.stclaircollege.fitgrind.api;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -37,7 +40,14 @@ public class Food {
         this.id = id;
         this.name = name;
         this.servingSize = servingSize;
-        this.logDate = logDate;
+        try {
+            final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            Date d = sdf.parse(logDate);
+            this.logDate = new SimpleDateFormat("yyyy-MM-dd K:mm a").format(d);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            this.logDate = logDate;
+        }
         this.nutrients = new ArrayList<Nutrient>();
     }
 

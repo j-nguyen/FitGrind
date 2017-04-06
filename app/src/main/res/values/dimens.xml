@@ -12,6 +12,9 @@
     <dimen name="listview_font_size">18sp</dimen>
     <dimen name="elevation">2dp</dimen>
     <dimen name="cardview_margin">5dp</dimen>
+    <dimen name="cardview_calorie_margin">8dp</dimen>
     <dimen name="view_food_label">16sp</dimen>
     <dimen name="title_label_font_size">18sp</dimen>
+    <dimen name="recorded_date_margin">-10dp</dimen>
+    <dimen name="food_title_font_size">22sp</dimen>
 </resources>
