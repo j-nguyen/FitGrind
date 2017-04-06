@@ -1,8 +1,11 @@
 package ca.stclaircollege.fitgrind;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.Preference;
+import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
@@ -33,6 +36,11 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        // SharedPrefences Test
+        SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(this);
+        String gender = SP.getString("gender_keys", "Male");
+        System.out.println(gender);
 
         // set the layout here
         FragmentTransaction trans = fm.beginTransaction();
@@ -75,7 +83,9 @@ public class MainActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            return true;
+            // setup intent
+            Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
+            startActivity(intent);
         }
 
         return super.onOptionsItemSelected(item);
