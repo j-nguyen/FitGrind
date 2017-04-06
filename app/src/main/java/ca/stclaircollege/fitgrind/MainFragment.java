@@ -10,6 +10,18 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
+import android.widget.TextView;
+
+import org.w3c.dom.Text;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Locale;
+
+import ca.stclaircollege.fitgrind.database.DatabaseHandler;
+import ca.stclaircollege.fitgrind.database.FoodLog;
 
 
 /**
@@ -31,6 +43,9 @@ public class MainFragment extends Fragment {
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
+
+    private TextView mCurrentDate, mLastLoggedCalories, mLastLoggedWeight, mCaloriesGoal, mWeightGoal;
+    private ListView mListView;
 
     // connect from the xml layout here
     private FloatingActionButton fab;
@@ -58,6 +73,7 @@ public class MainFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
@@ -69,6 +85,26 @@ public class MainFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_main, container, false);
+
+        // connect
+        mCurrentDate = (TextView) view.findViewById(R.id.currentDate);
+        mLastLoggedCalories = (TextView) view.findViewById(R.id.lastLoggedCalories);
+        mLastLoggedWeight = (TextView) view.findViewById(R.id.lastLoggedWeight);
+        mCaloriesGoal = (TextView) view.findViewById(R.id.calories_goal);
+        mWeightGoal = (TextView) view.findViewById(R.id.weight_goal);
+
+        // Create a database
+        DatabaseHandler db = new DatabaseHandler(getContext());
+        // retrieve a food log
+        ArrayList<FoodLog> foodLog = db.selectCalorieLogWeek();
+
+        // we want to set the text view for last logged weight, last calories and calories goal
+        Calendar cal = Calendar.getInstance(Locale.getDefault());
+        mCurrentDate.setText(new SimpleDateFormat("yyyy-MM-dd").format(cal.getTime()));
+
+        // set up for last logged, we'll need to db this one
+        mLastLoggedCalories.setText("Last Logged Calorie: " + db.lastRecordedCalorieLog());
+        if (db.lastRecordedWeightLog() != null) mLastLoggedWeight.setText("Last Logged Weight: " + db.lastRecordedWeightLog());
 
         // connect layout
         fab = (FloatingActionButton) view.findViewById(R.id.fab);

@@ -27,6 +27,11 @@ public class Nutrient {
         this.value = (value.equals("--")) ? 0 : Double.parseDouble(value);
     }
 
+    public Nutrient(String nutrient, double value) {
+        this.nutrient = nutrient;
+        this.value = value;
+    }
+
     public int getNutrientId() {
         return nutrientId;
     }
