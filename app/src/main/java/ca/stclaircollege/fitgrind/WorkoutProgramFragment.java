@@ -4,6 +4,8 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -69,6 +71,7 @@ public class WorkoutProgramFragment extends Fragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
     }
+    FragmentManager fm;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -76,6 +79,7 @@ public class WorkoutProgramFragment extends Fragment {
         // Inflate the layout for this fragment
 
         View view = inflater.inflate(R.layout.fragment_workout_program, container, false);
+        fm = getActivity().getSupportFragmentManager();
         list = (ListView) view.findViewById(R.id.workoutProgramList);
         final ArrayList<Routine> programsList = new ArrayList<Routine>();
         programsList.add(new Routine("text", "test"));
@@ -89,7 +93,16 @@ public class WorkoutProgramFragment extends Fragment {
         programsList.add(new Routine("text", "test"));
         final CustomAdapter adapter = new CustomAdapter(getContext(), programsList);
         list.setAdapter(adapter);
-        
+
+        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                FragmentTransaction tran = fm.beginTransaction();
+                tran.replace(R.id.content_main, new ExerciseFragment());
+                tran.commit();
+            }
+        });
+
         //remove each list
         list.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override

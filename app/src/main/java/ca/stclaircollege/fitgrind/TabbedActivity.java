@@ -25,7 +25,9 @@ import java.util.List;
 
 public class TabbedActivity extends AppCompatActivity implements
     WorkoutProgramFragment.OnFragmentInteractionListener,
-    TimeFragment.OnFragmentInteractionListener{
+    TimeFragment.OnFragmentInteractionListener,
+    WorkoutExerciseFragment.OnFragmentInteractionListener,
+    ExerciseFragment.OnFragmentInteractionListener{
 
     private Toolbar toolbar;
     private TabLayout tabLayout;
