@@ -11,7 +11,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.ArrayList;
+
 import ca.stclaircollege.fitgrind.database.DatabaseHandler;
+import ca.stclaircollege.fitgrind.database.FoodLog;
 
 
 /**
@@ -61,9 +64,6 @@ public class MainFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        DatabaseHandler db = new DatabaseHandler(getContext());
-        db.getCalorieLogWeek();
-
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
@@ -75,6 +75,9 @@ public class MainFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_main, container, false);
+
+        DatabaseHandler db = new DatabaseHandler(getContext());
+        ArrayList<FoodLog> foodLog = db.selectCalorieLogWeek();
 
         // connect layout
         fab = (FloatingActionButton) view.findViewById(R.id.fab);

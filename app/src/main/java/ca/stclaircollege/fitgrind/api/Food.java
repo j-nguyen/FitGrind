@@ -12,18 +12,33 @@ public class Food {
     public static final String WEIGHT_KEY = "weight";
     public static final String MEASURE_KEY = "measure";
 
-    private int ndbno;
+    private long id;
+    private String logDate;
     private String name;
     private String servingSize;
     // always set it by default to max nutrients. This is great
     private ArrayList<Nutrient> nutrients;
 
-    public Food(int ndbno, String name, String servingSize) {
-        this.ndbno = ndbno;
-        this.name = name;
+    public Food(String name, String servingSize) {
+        this.name = (name.indexOf(", UPC") != -1) ? name.substring(0, name.indexOf(", UPC")) : name;
         this.servingSize = servingSize;
         // instantiate new array list
         nutrients = new ArrayList<Nutrient>();
+    }
+
+    public Food(long id, String name, String servingSize, ArrayList<Nutrient> nutrients) {
+        this.id = id;
+        this.name = name;
+        this.servingSize = servingSize;
+        this.nutrients = nutrients;
+    }
+
+    public Food(long id, String name, String servingSize, String logDate) {
+        this.id = id;
+        this.name = name;
+        this.servingSize = servingSize;
+        this.logDate = logDate;
+        this.nutrients = new ArrayList<Nutrient>();
     }
 
     public void addNutrient(Nutrient nutrient) {
@@ -36,6 +51,14 @@ public class Food {
 
     public String getServingSize() {
         return servingSize;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public String getLogDate() {
+        return logDate;
     }
 
     public ArrayList<Nutrient> getNutrients() {

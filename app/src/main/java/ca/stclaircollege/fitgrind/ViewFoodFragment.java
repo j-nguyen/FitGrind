@@ -110,7 +110,7 @@ public class ViewFoodFragment extends Fragment {
                         // Create a tmp variable for better storage organize
                         String serving = foodObj.getString(Food.MEASURE_KEY) + " " + foodObj.getString(Food.WEIGHT_KEY) + "g";
                         // create the food object
-                        currFood = new Food(Integer.parseInt(foodObj.getString(NDBNO_KEY)), foodObj.getString(Food.NAME_KEY), serving);
+                        currFood = new Food(foodObj.getString(Food.NAME_KEY), serving);
                         // now we want to iterate through the nutrient list json object.
                         JSONArray nutrientObj = foodObj.getJSONArray(NUTRIENT_KEY);
                         for (int i=0; i < nutrientObj.length(); i++) {

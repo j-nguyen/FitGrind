@@ -6,8 +6,13 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
+import java.util.TimeZone;
 
 import ca.stclaircollege.fitgrind.api.Food;
 import ca.stclaircollege.fitgrind.api.FoodAPI;
@@ -22,7 +27,7 @@ import ca.stclaircollege.fitgrind.api.Nutrient;
  */
 public class DatabaseHandler extends SQLiteOpenHelper {
     // database version. Any DB Schema updates will require an increment version
-    private static final int DB_VERSION = 8;
+    private static final int DB_VERSION = 13;
 
     // Follow suit with our db fitgrind name
     private static final String DB_NAME = "fitgrind.db";
@@ -65,8 +70,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final String CREATE_WEIGHTLOG_TABLE =
             "CREATE TABLE weight_log (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
-                "WEIGHT FLOAT, " +
-                "DATE TIMESTAMP DEFAULT CURRENT_TIMESTAMP);";
+                "weight FLOAT, " +
+                "date DATETIME DEFAULT (DATETIME(CURRENT_TIMESTAMP, 'LOCALTIME')));";
 
     private static final String CREATE_FOOD_TABLE =
             "CREATE TABLE food (" +
@@ -93,13 +98,13 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             "CREATE TABLE food_log (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
                 "food_id INTEGER REFERENCES food(id), " +
-                "date TIMESTAMP DEFAULT CURRENT_TIMESTAMP);";
+                "date DATETIME DEFAULT (DATETIME(CURRENT_TIMESTAMP, 'LOCALTIME')));";
 
     private static final String CREATE_PROGRESS_TABLE =
             "CREATE TABLE progress (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
                 "resource TEXT, " +
-                "date TIMESTAMP DEFAULT CURRENT_TIMESTAMP);";
+                "date DATETIME DEFAULT (DATETIME(CURRENT_TIMESTAMP, 'LOCALTIME')));";
 
     private static final String CREATE_WORKOUTDAY_TABLE =
             "CREATE TABLE workout_day (" +
@@ -453,7 +458,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         SQLiteDatabase db = getReadableDatabase();
         ArrayList<WorkoutType> workoutList = new ArrayList<WorkoutType>();
         // check for cardio log
-        Cursor cursor = db.rawQuery("SELECT * FROM exercise a INNER JOIN cardio_log b ON a.id = b.exercise_id", null);
+        Cursor cursor = db.rawQuery("SELECT * FROM exercise INNER JOIN cardio_log ON exercise.id = cardio_log.exercise_id", null);
         if (cursor.moveToFirst()) {
             do {
                 // now we can get the info for cardio log
@@ -461,7 +466,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             } while (cursor.moveToNext());
         }
         // now we check for other log
-        cursor = db.rawQuery("SELECT * FROM exercise a INNER JOIN strength_log b ON a.id = b.exercise_id", null);
+        cursor = db.rawQuery("SELECT * FROM exercise INNER JOIN strength_log ON exercise.id = strength.exercise_id", null);
         if (cursor.moveToFirst()) {
             do {
                 // add for strength log
@@ -472,27 +477,46 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return workoutList;
     }
 
+    public ArrayList<FoodLog> selectCalorieLogWeek() {
+        ArrayList<FoodLog> results = new ArrayList<FoodLog>();
+        for (int i=0; i < 7; i++) results.add(selectCalorieLogAt(i));
+        return results;
+    }
+
 
     /**
-     * Retrieves a log of food, from the past 7 days.
+     * Retrieves a log of food, from the past x days.
      * @return A 2d arraylist. We know the exact amount the size of the outer, which is 7 for 7 days.
      */
-    public void getCalorieLogWeek() {
+    public FoodLog selectCalorieLogAt(int day) {
+        FoodLog foodLog = null;
+        ArrayList<Food> foodList = new ArrayList<Food>();
+        // get db
         SQLiteDatabase db = getReadableDatabase();
-        // Make ArrayList Result
-        ArrayList<ArrayList<Food>> res = null;
-        // We want to get the last 7 days, so we'll build the sqlite query ourselves.
-        String sql = "SELECT food_log.date, COUNT(food_log.id) AS numFood, food.* FROM food_log INNER JOIN food ON food_log.food_id = food.id " +
-                "WHERE food_log.date > DATE('now','-7 days') GROUP BY food_log.date ORDER BY food_log.date DESC;";
-        // attempt to query
-        Cursor cursor = db.rawQuery(sql, null);
+        // create the dates
+        String now = getCurrDateMinus(day);
+        String sql = "SELECT food_log.date, food.* FROM food_log INNER JOIN food ON food_log.food_id = food.id " +
+                "WHERE food_log.date BETWEEN ? AND ?;";
+        Cursor cursor = db.rawQuery(sql, new String[]{now + " 00:00:00", now + "23:59:59"});
+        // check
         if (cursor.moveToFirst()) {
             do {
-                System.out.println(cursor.getString(0) + "," + cursor.getString(1) + "," + cursor.getString(2) + " " + cursor.getString(3));
-            } while(cursor.moveToNext());
+                Food food = new Food(cursor.getLong(1), cursor.getString(2), cursor.getString(3), cursor.getString(0));
+                // we'll be forced to iterate through the hash map to get the key values
+                for (String key : KEY_MAP.values()) food.addNutrient(new Nutrient(key, cursor.getDouble(cursor.getColumnIndex(key))));
+                foodList.add(food);
+            } while (cursor.moveToNext());
+            // return food log
+            foodLog = new FoodLog(now, foodList);
         }
+        // return null if nothing
+        return foodLog;
+    }
 
-
+    private String getCurrDateMinus(int day) {
+        final Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.DATE, -day);
+        return new SimpleDateFormat("yyyy-MM-dd").format(cal.getTime());
     }
 
 }
