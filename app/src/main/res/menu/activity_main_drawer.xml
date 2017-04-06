@@ -15,6 +15,10 @@
             android:icon="@drawable/ic_food"
             android:title="@string/add_food" />
         <item
+            android:id="@+id/nav_add_custom_food"
+            android:icon="@drawable/ic_food"
+            android:title="@string/add_custom_food" />
+        <item
             android:id="@+id/nav_weight_log"
             android:icon="@drawable/ic_scale_bathroom"
             android:title="@string/weight_log" />

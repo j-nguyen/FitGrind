@@ -27,7 +27,7 @@ public class MainActivity extends AppCompatActivity
                     WorkoutExerciseFragment.OnFragmentInteractionListener,
                     ExerciseFragment.OnFragmentInteractionListener,
                     ViewCalorieLogFragment.OnFragmentInteractionListener, ViewCalorieDayLogFragment.OnFragmentInteractionListener,
-                    EditFoodFragment.OnFragmentInteractionListener {
+                    EditFoodFragment.OnFragmentInteractionListener, AddCustomFoodFragment.OnFragmentInteractionListener {
 
     // create fragment manager
     FragmentManager fm = getSupportFragmentManager();
@@ -108,6 +108,12 @@ public class MainActivity extends AppCompatActivity
 
             FragmentTransaction trans = fm.beginTransaction();
             trans.replace(R.id.content_main, new ViewCalorieLogFragment());
+            trans.commit();
+
+        } else if (id == R.id.nav_add_custom_food) {
+
+            FragmentTransaction trans = fm.beginTransaction();
+            trans.replace(R.id.content_main, new AddCustomFoodFragment());
             trans.commit();
 
         } else if (id == R.id.nav_add_food) {
