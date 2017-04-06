@@ -13,6 +13,11 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
+import ca.stclaircollege.fitgrind.database.DatabaseHandler;
+import ca.stclaircollege.fitgrind.database.FoodLog;
+
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
@@ -50,23 +55,37 @@ public class ViewCalorieLogFragment extends Fragment {
         // set-up the view pager
         mPagerAdapter = new SectionPagerAdapter(getChildFragmentManager());
         mViewPager.setAdapter(mPagerAdapter);
+        // now we wanna set the current page, and we want it to be today
+        mViewPager.setCurrentItem(0);
 
         return view;
     }
 
     // For this specific page adapter, we want it to have:
-    // Tomorrow's date, Yesterday's Date, and Today's Date.
+    // Today, Yesterday, and then 2 days ago.
     public class SectionPagerAdapter extends FragmentPagerAdapter {
         public SectionPagerAdapter(FragmentManager fm){
             super(fm);
         }
-        public Fragment getItem(int position){
+        public Fragment getItem(int position) {
+            // set-up a database query
+            DatabaseHandler db = new DatabaseHandler(getContext());
+            ArrayList<FoodLog> foodLog = new ArrayList<FoodLog>();
+            // add log for yesterday
+            foodLog.add(db.selectCalorieLogAt(1));
+            // add log for today
+            foodLog.add(db.selectCalorieLogAt(0));
+            // add log for 2 days ago
+            foodLog.add(db.selectCalorieLogAt(2));
+            // iterate through to check
             switch(position) {
-                
+                case 0: return ViewCalorieDayLogFragment.newInstance(foodLog.get(0));
+                case 1: return ViewCalorieDayLogFragment.newInstance(foodLog.get(1));
+                default: return ViewCalorieDayLogFragment.newInstance(foodLog.get(2));
             }
         }
         public int getCount(){
-            return 7;
+            return 3;
         }
 
     }

@@ -486,7 +486,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     /**
      * Retrieves a log of food, from the past x days.
-     * @return A 2d arraylist. We know the exact amount the size of the outer, which is 7 for 7 days.
+     * @return FoodLog object. We know the exact amount the size of the outer, which is 7 for 7 days.
      */
     public FoodLog selectCalorieLogAt(int day) {
         FoodLog foodLog = null;
