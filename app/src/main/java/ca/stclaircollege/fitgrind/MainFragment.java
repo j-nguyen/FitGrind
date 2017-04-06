@@ -102,6 +102,10 @@ public class MainFragment extends Fragment {
         Calendar cal = Calendar.getInstance(Locale.getDefault());
         mCurrentDate.setText(new SimpleDateFormat("yyyy-MM-dd").format(cal.getTime()));
 
+        // set up for last logged, we'll need to db this one
+        mLastLoggedCalories.setText("Last Logged Calorie: " + db.lastRecordedCalorieLog());
+        if (db.lastRecordedWeightLog() != null) mLastLoggedWeight.setText("Last Logged Weight: " + db.lastRecordedWeightLog());
+
         // connect layout
         fab = (FloatingActionButton) view.findViewById(R.id.fab);
 

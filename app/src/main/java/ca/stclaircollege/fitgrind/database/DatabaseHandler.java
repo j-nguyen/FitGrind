@@ -520,4 +520,34 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return new SimpleDateFormat("yyyy-MM-dd").format(cal.getTime());
     }
 
+    // get last record for each category
+
+    /**
+     * Gets the last recorded weight log in the weight log table
+     * @return String date value in ISO format
+     */
+    public String lastRecordedWeightLog() {
+        String result = null;
+        // set up db
+        SQLiteDatabase db = getReadableDatabase();
+        // set up query
+        Cursor cursor = db.rawQuery("SELECT date FROM weight_LOG ORDER BY date DESC LIMIT 1;", null);
+        if (cursor.moveToLast()) result = cursor.getString(0);
+        // return result
+        return result;
+    }
+
+    /**
+     * Gets the last recorded calorie log from the table.
+     * @return String date value
+     */
+    public String lastRecordedCalorieLog() {
+        String result = null;
+        // set up db
+        SQLiteDatabase db = getReadableDatabase();
+        // set up query
+        Cursor cursor = db.rawQuery("SELECT strftime('%Y-%m-%d', date) FROM food_log ORDER by date DESC LIMIT 1;", null);
+        if (cursor.moveToLast()) result = cursor.getString(0);
+        return result;
+    }
 }

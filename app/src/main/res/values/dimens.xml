@@ -13,4 +13,5 @@
     <dimen name="elevation">2dp</dimen>
     <dimen name="cardview_margin">5dp</dimen>
     <dimen name="view_food_label">16sp</dimen>
+    <dimen name="title_label_font_size">18sp</dimen>
 </resources>
