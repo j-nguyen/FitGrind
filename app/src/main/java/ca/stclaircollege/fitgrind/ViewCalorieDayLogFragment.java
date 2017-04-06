@@ -8,6 +8,8 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
+import android.widget.TextView;
 
 import ca.stclaircollege.fitgrind.database.FoodLog;
 
@@ -27,6 +29,9 @@ public class ViewCalorieDayLogFragment extends Fragment {
 
     // TODO: Rename and change types of parameters
     private FoodLog foodLog;
+    private ListView mListView;
+    private TextView noLogText;
+
     private OnFragmentInteractionListener mListener;
 
     public ViewCalorieDayLogFragment() {}
@@ -50,7 +55,7 @@ public class ViewCalorieDayLogFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            foodLog = (FoodLog) getArguments().getParcelable(ARG_PARAM1);
+            foodLog = getArguments().getParcelable(ARG_PARAM1);
         }
     }
 
@@ -60,9 +65,17 @@ public class ViewCalorieDayLogFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_view_calorie_day_log, container, false);
 
+        // connect design
+        mListView = (ListView) view.findViewById(R.id.calorie_listview);
+        noLogText = (TextView) view.findViewById(R.id.no_log_text);
+
         // check if object is able to be passed through
         if (foodLog != null) {
-
+            // 
+        } else {
+            // if it is, we'll show up something, which is the text view indicating that no dates were logged during this time.
+            mListView.setVisibility(View.GONE);
+            noLogText.setVisibility(View.VISIBLE);
         }
 
         return view;

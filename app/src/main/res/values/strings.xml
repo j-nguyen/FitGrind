@@ -33,13 +33,15 @@
     <string name="invalid_info">Something went wrong with gathering food data! Please try again.</string>
     <string name="db_error">Something went wrong with storing data!</string>
     <string name="db_insert_success">Successfully inserted data!</string>
+
+    <!-- Info -->
     <string name="results_title">Calorie Results</string>
     <string name="calorie_goal">Calorie Goal:</string>
     <string name="weight_goal">Weight Goal:</string>
     <string name="not_logged">No Logged Date</string>
-    <string name="title_activity_settings">Settings</string>
 
     <!-- Strings related to Settings -->
+    <string name="title_activity_settings">Settings</string>
     <string name="gender_title_label">Gender</string>
     <string name="gender_summary">Enter your gender (Male or Female)</string>
     <string name="weight_key" />

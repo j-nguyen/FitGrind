@@ -1,13 +1,23 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context="ca.stclaircollege.fitgrind.ViewCalorieDayLogFragment">
 
-    <!-- TODO: Update blank fragment layout -->
+    <!-- Create a ListView to show our food log -->
     <TextView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:id="@+id/no_log_text"
+        android:gravity="center"
+        android:textSize="@dimen/listview_font_size"
+        android:visibility="gone"
+        android:text="@string/not_logged" />
 
-</FrameLayout>
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/calorie_listview" />
+
+</LinearLayout>

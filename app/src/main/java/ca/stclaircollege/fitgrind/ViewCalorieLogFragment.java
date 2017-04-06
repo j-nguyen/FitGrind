@@ -55,8 +55,28 @@ public class ViewCalorieLogFragment extends Fragment {
         // set-up the view pager
         mPagerAdapter = new SectionPagerAdapter(getChildFragmentManager());
         mViewPager.setAdapter(mPagerAdapter);
+
         // now we wanna set the current page, and we want it to be today
-        mViewPager.setCurrentItem(0);
+        mViewPager.setCurrentItem(2);
+        currentDate.setText("Today");
+
+        // set up listeners for viewpager
+        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {}
+
+            @Override
+            public void onPageSelected(int position) {
+                switch (position) {
+                    case 0: currentDate.setText("2 Days Ago"); break;
+                    case 1: currentDate.setText("Yesterday"); break;
+                    default: currentDate.setText("Today"); break;
+                }
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {}
+        });
 
         return view;
     }
@@ -64,20 +84,17 @@ public class ViewCalorieLogFragment extends Fragment {
     // For this specific page adapter, we want it to have:
     // Today, Yesterday, and then 2 days ago.
     public class SectionPagerAdapter extends FragmentPagerAdapter {
-        public SectionPagerAdapter(FragmentManager fm){
+        private ArrayList<FoodLog> foodLog = new ArrayList<FoodLog>();
+
+        public SectionPagerAdapter(FragmentManager fm) {
             super(fm);
+            // try using the db context in here
+            DatabaseHandler db = new DatabaseHandler(getContext());
+            foodLog.add(db.selectCalorieLogAt(2));
+            foodLog.add(db.selectCalorieLogAt(1));
+            foodLog.add(db.selectCalorieLogAt(0));
         }
         public Fragment getItem(int position) {
-            // set-up a database query
-            DatabaseHandler db = new DatabaseHandler(getContext());
-            ArrayList<FoodLog> foodLog = new ArrayList<FoodLog>();
-            // add log for yesterday
-            foodLog.add(db.selectCalorieLogAt(1));
-            // add log for today
-            foodLog.add(db.selectCalorieLogAt(0));
-            // add log for 2 days ago
-            foodLog.add(db.selectCalorieLogAt(2));
-            // iterate through to check
             switch(position) {
                 case 0: return ViewCalorieDayLogFragment.newInstance(foodLog.get(0));
                 case 1: return ViewCalorieDayLogFragment.newInstance(foodLog.get(1));
@@ -85,7 +102,7 @@ public class ViewCalorieLogFragment extends Fragment {
             }
         }
         public int getCount(){
-            return 3;
+            return foodLog.size();
         }
 
     }

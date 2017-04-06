@@ -26,7 +26,7 @@ public class MainActivity extends AppCompatActivity
                     ViewFoodFragment.OnFragmentInteractionListener,
                     WorkoutExerciseFragment.OnFragmentInteractionListener,
                     ExerciseFragment.OnFragmentInteractionListener,
-                    ViewCalorieLogFragment.OnFragmentInteractionListener {
+                    ViewCalorieLogFragment.OnFragmentInteractionListener, ViewCalorieDayLogFragment.OnFragmentInteractionListener {
 
     // create fragment manager
     FragmentManager fm = getSupportFragmentManager();
@@ -99,9 +99,9 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_home) {
-//            FragmentTransaction tran = fm.beginTransaction();
-//            tran.replace(R.id.content_main, new ());
-//            tran.commit();
+            FragmentTransaction tran = fm.beginTransaction();
+            tran.replace(R.id.content_main, new MainFragment());
+            tran.commit();
 
         } else if (id == R.id.nav_diary) {
 
@@ -110,8 +110,8 @@ public class MainActivity extends AppCompatActivity
             trans.commit();
 
         } else if (id == R.id.nav_add_food) {
-//            FragmentTransaction tran = fm.beginTransaction();
-//            tran.replace(R.id.content_main, new ());
+//            FragmentTransaction trans = fm.beginTransaction();
+//            tran.replace(R.id.content_main, new );
 //            tran.commit();
 
         } else if (id == R.id.nav_weight_log) {
