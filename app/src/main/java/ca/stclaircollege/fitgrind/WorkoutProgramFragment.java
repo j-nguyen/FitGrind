@@ -1,6 +1,7 @@
 package ca.stclaircollege.fitgrind;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -97,9 +98,11 @@ public class WorkoutProgramFragment extends Fragment {
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                FragmentTransaction tran = fm.beginTransaction();
-                tran.replace(R.id.content_main, new ExerciseFragment());
-                tran.commit();
+//                FragmentTransaction tran = fm.beginTransaction();
+//                tran.replace(R.id.test, new WorkoutExerciseFragment());
+//                tran.commit();
+                Intent intent = new Intent(getActivity(), WorkoutExerciseActivity.class);
+                startActivity(intent);
             }
         });
 
