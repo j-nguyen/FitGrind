@@ -10,6 +10,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -20,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
 
+import ca.stclaircollege.fitgrind.api.Food;
 import ca.stclaircollege.fitgrind.database.DatabaseHandler;
 import ca.stclaircollege.fitgrind.database.FoodLog;
 
@@ -92,11 +94,13 @@ public class MainFragment extends Fragment {
         mLastLoggedWeight = (TextView) view.findViewById(R.id.lastLoggedWeight);
         mCaloriesGoal = (TextView) view.findViewById(R.id.calories_goal);
         mWeightGoal = (TextView) view.findViewById(R.id.weight_goal);
+        mListView = (ListView) view.findViewById(R.id.calorie_listview);
 
         // Create a database
         DatabaseHandler db = new DatabaseHandler(getContext());
         // retrieve a food log
-        ArrayList<FoodLog> foodLog = db.selectCalorieLogWeek();
+        ArrayList<Food> recentFood = db.selectRecentFoodLog();
+        if (recentFood != null) mListView.setAdapter(new CustomAdapter(getContext(), db.selectRecentFoodLog()));
 
         // we want to set the text view for last logged weight, last calories and calories goal
         Calendar cal = Calendar.getInstance(Locale.getDefault());
@@ -121,6 +125,36 @@ public class MainFragment extends Fragment {
         });
 
         return view;
+    }
+
+    // we need to create a custom adapter
+    public class CustomAdapter extends ArrayAdapter<Food> {
+
+        public CustomAdapter(Context context, ArrayList<Food> foodList) {
+            super(context, 0, foodList);
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            // Get the data item for this position
+            Food food = getItem(position);
+            // Check if an existing view is being reused, otherwise inflate the view
+            if (convertView == null) convertView = LayoutInflater.from(getContext()).inflate(R.layout.view_calorie_log, parent, false);
+
+            TextView name = (TextView) convertView.findViewById(R.id.calorie_food_name);
+            TextView serving = (TextView) convertView.findViewById(R.id.calorie_serving);
+            TextView recordedDate = (TextView) convertView.findViewById(R.id.recorded_date);
+            TextView calories = (TextView) convertView.findViewById(R.id.calorie_calories);
+
+            name.setText(food.getName());
+            serving.setText(food.getServingSize());
+            recordedDate.setText(food.getLogDate());
+            calories.setText(food.getNutrients().get(0).getValue() + " " + food.getNutrients().get(0).getNutrient());
+
+            // Return the completed view to render on screen
+            return convertView;
+        }
+
     }
 
     // TODO: Rename method, update argument and hook method into UI event
