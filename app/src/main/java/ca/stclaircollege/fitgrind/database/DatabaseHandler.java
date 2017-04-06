@@ -509,6 +509,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             // return food log
             foodLog = new FoodLog(now, foodList);
         }
+        db.close();
         // return null if nothing
         return foodLog;
     }
