@@ -1,14 +1,25 @@
 package ca.stclaircollege.fitgrind;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.TextView;
+
+import java.util.ArrayList;
 
 import ca.stclaircollege.fitgrind.api.Food;
+import ca.stclaircollege.fitgrind.api.Nutrient;
 import ca.stclaircollege.fitgrind.database.DatabaseHandler;
 
 
@@ -25,8 +36,8 @@ public class EditFoodFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
 
-    // TODO: Rename and change types of parameters
     private int foodId;
+    private ListView mListView;
 
     private OnFragmentInteractionListener mListener;
 
@@ -62,16 +73,82 @@ public class EditFoodFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_edit_food, container, false);
-
+        mListView = (ListView) view.findViewById(R.id.edit_food_listview);
+        System.out.println(foodId);
         // we can instantiate a food object here
         if (foodId != 0) {
             DatabaseHandler db = new DatabaseHandler(getContext());
             Food food = db.selectFood(foodId);
             db.close();
             // now we want to set it up, there is going to be a list view, and then if you click it'll open a dialog.
+            // connect the adapter
+            mListView.setAdapter(new CustomAdapter(getContext(), food.getNutrients()));
+
+            // now we also want to edit by using the long item click listener
+            mListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+                @Override
+                public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+                    // create a dialog
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                    builder.setTitle("Title");
+
+                    // Set up the input
+                    final EditText input = new EditText(getContext());
+
+                    // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+                    input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                    builder.setView(input);
+
+                    // Set up the buttons
+                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            System.out.println("chicken");
+                        }
+                    });
+                    builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                        }
+                    });
+                    builder.show();
+                    return true;
+                }
+            });
+        } else {
+            System.out.println("Noooooo");
         }
 
         return view;
+    }
+
+    public class CustomAdapter extends ArrayAdapter<Nutrient> {
+
+        public CustomAdapter(Context context, ArrayList<Nutrient> nutrients) {
+            super(context, 0, nutrients);
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            // Get the data item for this position
+            Nutrient nutrient = getItem(position);
+            // Check if an existing view is being reused, otherwise inflate the view
+            if (convertView == null)
+                convertView = LayoutInflater.from(getContext()).inflate(R.layout.view_food_item, parent, false);
+
+            // connect Text View
+            TextView nutrientName = (TextView) convertView.findViewById(R.id.nutrient_name);
+            TextView nutrientValue = (TextView) convertView.findViewById(R.id.nutrient_value);
+
+            // set the text view
+            nutrientName.setText(nutrient.getNutrient());
+            nutrientValue.setText(nutrient.getValue() + nutrient.getUnit());
+
+            // Return the completed view to render on screen
+            return convertView;
+        }
+
     }
 
     // TODO: Rename method, update argument and hook method into UI event

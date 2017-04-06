@@ -117,7 +117,11 @@ public class MainFragment extends Fragment {
             @Override
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
                 // our int i is our id, so we can pass it on to our EditFoodFragment
-                return false;
+                FragmentTransaction trans = getActivity().getSupportFragmentManager().beginTransaction();
+                trans.replace(R.id.content_main, EditFoodFragment.newInstance(i+1));
+                trans.addToBackStack(null);
+                trans.commit();
+                return true;
             }
         });
 

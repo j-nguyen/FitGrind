@@ -46,6 +46,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     // put it in a hashmap key
     private static final HashMap<Integer, String> KEY_MAP = new HashMap<Integer, String>();
+    private static final HashMap<String, String> CALORIE_KEY = new HashMap<String, String>();
 
     // initialize for our static provider
     static {
@@ -64,6 +65,22 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         KEY_MAP.put(301, "calcium");
         KEY_MAP.put(303, "iron");
         KEY_MAP.put(306, "potassium");
+        // now do it for CALORIE_KEY map
+        CALORIE_KEY.put("calories", "Calories");
+        CALORIE_KEY.put("sugar", "Sugar");
+        CALORIE_KEY.put("total_fat", "Total Fat");
+        CALORIE_KEY.put("carbohydrate", "Carbohydrate");
+        CALORIE_KEY.put("trans_fat", "Trans Fat");
+        CALORIE_KEY.put("cholesterol", "Cholesterol");
+        CALORIE_KEY.put("sodium", "Sodium");
+        CALORIE_KEY.put("fiber", "Fiber");
+        CALORIE_KEY.put("protein", "Protein");
+        CALORIE_KEY.put("vitamin_a", "Vitamin A");
+        CALORIE_KEY.put("vitamin_c", "Vitamin C");
+        CALORIE_KEY.put("calcium", "Calcium");
+        CALORIE_KEY.put("iron", "Iron");
+        CALORIE_KEY.put("potassium", "Potassium");
+        CALORIE_KEY.put("saturated_fat", "Saturated Fat");
     }
 
     // create our table names
@@ -493,7 +510,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             // long id, String name, String servingSize, ArrayList<Nutrient> nutrients
             food = new Food(cursor.getLong(0), cursor.getString(1), cursor.getString(2));
             // iterate the hashmap (not good) but we'll need it
-            for (String key : KEY_MAP.values()) food.addNutrient(new Nutrient(key, cursor.getDouble(cursor.getColumnIndex(key))));
+            for (String key : KEY_MAP.values()) food.addNutrient(new Nutrient(CALORIE_KEY.get(key), cursor.getDouble(cursor.getColumnIndex(key))));
         }
         return food;
     }

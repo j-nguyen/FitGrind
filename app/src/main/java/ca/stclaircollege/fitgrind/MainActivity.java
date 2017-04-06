@@ -26,7 +26,8 @@ public class MainActivity extends AppCompatActivity
                     ViewFoodFragment.OnFragmentInteractionListener,
                     WorkoutExerciseFragment.OnFragmentInteractionListener,
                     ExerciseFragment.OnFragmentInteractionListener,
-                    ViewCalorieLogFragment.OnFragmentInteractionListener, ViewCalorieDayLogFragment.OnFragmentInteractionListener {
+                    ViewCalorieLogFragment.OnFragmentInteractionListener, ViewCalorieDayLogFragment.OnFragmentInteractionListener,
+                    EditFoodFragment.OnFragmentInteractionListener {
 
     // create fragment manager
     FragmentManager fm = getSupportFragmentManager();
