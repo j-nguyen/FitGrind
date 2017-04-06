@@ -38,7 +38,7 @@ public class EditFoodFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
 
-    private int foodId;
+    private long foodId;
     private Food food;
     private ListView mListView;
 
@@ -53,12 +53,13 @@ public class EditFoodFragment extends Fragment {
      * this fragment using the provided parameters.
      *
      * @return A new instance of fragment EditFoodFragment.
+     * @param id
      */
     // TODO: Rename and change types and number of parameters
-    public static EditFoodFragment newInstance(int id) {
+    public static EditFoodFragment newInstance(long id) {
         EditFoodFragment fragment = new EditFoodFragment();
         Bundle args = new Bundle();
-        args.putInt(ARG_PARAM1, id);
+        args.putLong(ARG_PARAM1, id);
         fragment.setArguments(args);
         return fragment;
     }
@@ -67,7 +68,7 @@ public class EditFoodFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            foodId = getArguments().getInt(ARG_PARAM1);
+            foodId = getArguments().getLong(ARG_PARAM1);
         }
     }
 
@@ -82,58 +83,61 @@ public class EditFoodFragment extends Fragment {
             DatabaseHandler db = new DatabaseHandler(getContext());
             food = db.selectFood(foodId);
             db.close();
-            // now we want to set it up, there is going to be a list view, and then if you click it'll open a dialog.
-            // connect the adapter
-            mListView.setAdapter(new CustomAdapter(getContext(), food.getNutrients()));
+            // check to make sure if food is correctly grabbed
+            if (food != null) {
+                // now we want to set it up, there is going to be a list view, and then if you click it'll open a dialog.
+                // connect the adapter
+                mListView.setAdapter(new CustomAdapter(getContext(), food.getNutrients()));
 
-            // now we also want to edit by using the long item click listener
-            mListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-                @Override
-                public boolean onItemLongClick(AdapterView<?> adapterView, View view, final int i, long l) {
-                    // create a dialog
-                    AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                    // setup title
-                    Nutrient nutrient = (Nutrient) mListView.getItemAtPosition(i);
-                    builder.setTitle("Edit " + nutrient.getNutrient() + " Value");
+                // now we also want to edit by using the long item click listener
+                mListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+                    @Override
+                    public boolean onItemLongClick(AdapterView<?> adapterView, View view, final int i, long l) {
+                        // create a dialog
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                        // setup title
+                        Nutrient nutrient = (Nutrient) mListView.getItemAtPosition(i);
+                        builder.setTitle("Edit " + nutrient.getNutrient() + " Value");
 
-                    // Set up the input
-                    final EditText input = new EditText(getContext());
+                        // Set up the input
+                        final EditText input = new EditText(getContext());
 
-                    // set the text to equal what nutrient it was
-                    input.setText(""+ nutrient.getValue());
+                        // set the text to equal what nutrient it was
+                        input.setText("" + nutrient.getValue());
 
-                    // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
-                    input.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
-                    builder.setView(input);
+                        // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+                        input.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+                        builder.setView(input);
 
-                    // Set up the buttons
-                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            // if it clicked ok, we need to create a db instance and make sure it goes through and works
-                            DatabaseHandler db = new DatabaseHandler(getContext());
-                            // we can use Food Id
-                            food.setId(foodId);
-                            // updaet the nutrient too
-                            food.getNutrients().get(i).setValue(Double.parseDouble(input.getText().toString()));
-                            // start the query
-                            if (db.updateFood(food)) {
-                                ((BaseAdapter) mListView.getAdapter()).notifyDataSetChanged();
-                                Toast.makeText(getContext(), R.string.db_update_success, Toast.LENGTH_SHORT).show();
+                        // Set up the buttons
+                        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                // if it clicked ok, we need to create a db instance and make sure it goes through and works
+                                DatabaseHandler db = new DatabaseHandler(getContext());
+                                // we can use Food Id
+                                food.setId(foodId);
+                                // updaet the nutrient too
+                                food.getNutrients().get(i).setValue(Double.parseDouble(input.getText().toString()));
+                                // start the query
+                                if (db.updateFood(food)) {
+                                    ((BaseAdapter) mListView.getAdapter()).notifyDataSetChanged();
+                                    Toast.makeText(getContext(), R.string.db_update_success, Toast.LENGTH_SHORT).show();
+                                }
+
                             }
-
-                        }
-                    });
-                    builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.cancel();
-                        }
-                    });
-                    builder.show();
-                    return true;
-                }
-            });
+                        });
+                        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                            }
+                        });
+                        builder.show();
+                        return true;
+                    }
+                });
+            }
         }
 
         return view;

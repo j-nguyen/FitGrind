@@ -26,8 +26,7 @@
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/calorie_day_layout"
-            android:elevation="@dimen/cardview_default_elevation">
+            android:id="@+id/calorie_day_layout">
 
             <LinearLayout
                 android:orientation="horizontal"

@@ -32,8 +32,9 @@
     <string name="item_not_exist">Food or Drink you entered does not exist.</string>
     <string name="invalid_info">Something went wrong with gathering food data! Please try again.</string>
     <string name="db_error">Something went wrong with storing data!</string>
-    <string name="db_insert_success">Successfully inserted data!</string>
-    <string name="db_update_success">Successfully updated data!</string>
+    <string name="db_insert_success">Successfully inserted!</string>
+    <string name="db_update_success">Successfully updated!</string>
+    <string name="db_delete_success">Successfully deleted!</string>
 
     <!-- Info -->
     <string name="results_title">Calorie Results</string>

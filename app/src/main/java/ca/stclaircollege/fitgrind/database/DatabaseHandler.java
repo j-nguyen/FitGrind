@@ -320,12 +320,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         values.put("name", food.getName());
         values.put("serving", food.getServingSize());
         // we now have to iterate through an array to make sure
-        for (int i=0; i < FoodAPI.MAX_NUTRIENTS; i++) {
-            // reference nutrient obj
-            Nutrient nutrient = food.getNutrients().get(i);
-            // we can reference the map using a dictionary for accesss
-            values.put(KEY_MAP.get(nutrient.getNutrientId()), nutrient.getValue());
-        }
+        // we can reference the map using a dictionary for access
+        for (Nutrient nutrient : food.getNutrients()) values.put(KEY_MAP.get(nutrient.getNutrientId()), nutrient.getValue());
         // now finally insert from the values
         long id = db.insert(FOOD_TABLE_NAME, null, values);
         db.close();
@@ -472,6 +468,18 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
 
     /**
+     * Deletes the food based on id
+     * @param id
+     * @return true if successful
+     */
+    public boolean deleteFood(long id) {
+        SQLiteDatabase db = getWritableDatabase();
+        // deletes both of them and checks if both are deleted
+        return db.delete(FOOD_TABLE_NAME, "id = ?", new String[]{String.valueOf(id)}) > 0 &&
+                db.delete(FOODLOG_TABLE_NAME, "id = ?", new String[]{String.valueOf(id)}) > 0;
+    }
+
+    /**
      * Gets all the routine available that the person made.
      * @return an ArrayList of Routine
      */
@@ -529,7 +537,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
      * @param id
      * @return
      */
-    public Food selectFood(int id) {
+    public Food selectFood(long id) {
         SQLiteDatabase db = getReadableDatabase();
         // create Food Object
         Food food = null;

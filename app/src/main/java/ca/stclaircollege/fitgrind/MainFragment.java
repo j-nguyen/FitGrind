@@ -14,8 +14,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.w3c.dom.Text;
 
@@ -102,8 +104,8 @@ public class MainFragment extends Fragment {
         // Create a database
         DatabaseHandler db = new DatabaseHandler(getContext());
         // retrieve a food log
-        ArrayList<Food> recentFood = db.selectRecentFoodLog();
-        if (recentFood != null) mListView.setAdapter(new CustomAdapter(getContext(), db.selectRecentFoodLog()));
+        final ArrayList<Food> recentFood = db.selectRecentFoodLog();
+        if (recentFood != null) mListView.setAdapter(new CustomAdapter(getContext(), recentFood));
 
         // we want to set the text view for last logged weight, last calories and calories goal
         Calendar cal = Calendar.getInstance(Locale.getDefault());
@@ -112,13 +114,14 @@ public class MainFragment extends Fragment {
         // set up for last logged, we'll need to db this one
         mLastLoggedCalories.setText("Recent food log: " + db.lastRecordedCalorieLog());
         if (db.lastRecordedWeightLog() != null) mLastLoggedWeight.setText("Recent weight log: " + db.lastRecordedWeightLog());
-
+        db.close();
 
         // set a long lcick for mlistview
         mListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, final int i, long l) {
-                // our int i is our id, so we can pass it on to our EditFoodFragment
+                // use the id
+                final Food food = (Food) mListView.getItemAtPosition(i);
                 CharSequence colors[] = new CharSequence[] {"Edit", "Delete"};
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
@@ -129,9 +132,18 @@ public class MainFragment extends Fragment {
                        // 0 indicating edit, and 1 indicating delete
                         if (which == 0) {
                             FragmentTransaction trans = getActivity().getSupportFragmentManager().beginTransaction();
-                            trans.replace(R.id.content_main, EditFoodFragment.newInstance(i+1));
+                            trans.replace(R.id.content_main, EditFoodFragment.newInstance(food.getId()));
                             trans.addToBackStack(null);
                             trans.commit();
+                        } else {
+                            DatabaseHandler db = new DatabaseHandler(getContext());
+                            if (db.deleteFood(food.getId())) {
+                                recentFood.remove(i);
+                                // we also wanna make a notify update
+                                ((BaseAdapter) mListView.getAdapter()).notifyDataSetChanged();
+                                Toast.makeText(getContext(), R.string.db_delete_success, Toast.LENGTH_SHORT).show();
+                            }
+                            db.close();
                         }
                     }
                 });
