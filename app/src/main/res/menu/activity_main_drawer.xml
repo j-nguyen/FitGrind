@@ -20,8 +20,12 @@
             android:title="@string/workout_schedule" />
         <item
             android:id="@+id/nav_progress_gallary"
-            android:icon="@drawable/ic_menu_slideshow"
+            android:icon="@drawable/ic_menu_gallery"
             android:title="@string/progress_gallary" />
+        <item
+            android:id="@+id/nav_test"
+            android:icon="@drawable/ic_menu_send"
+            android:title="test" />
     </group>
 
     <!--<item android:title="Communicate">-->
