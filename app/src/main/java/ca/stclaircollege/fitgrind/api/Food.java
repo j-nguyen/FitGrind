@@ -32,11 +32,11 @@ public class Food implements Parcelable {
         nutrients = new ArrayList<Nutrient>();
     }
 
-    public Food(long id, String name, String servingSize, ArrayList<Nutrient> nutrients) {
+    public Food(long id, String name, String servingSize) {
         this.id = id;
         this.name = name;
         this.servingSize = servingSize;
-        this.nutrients = nutrients;
+        this.nutrients = new ArrayList<Nutrient>();
     }
 
     public Food(long id, String name, String servingSize, String logDate) {

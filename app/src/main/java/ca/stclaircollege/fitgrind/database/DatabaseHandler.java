@@ -477,12 +477,26 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return workoutList;
     }
 
-    public ArrayList<FoodLog> selectCalorieLogWeek() {
-        ArrayList<FoodLog> results = new ArrayList<FoodLog>();
-        for (int i=0; i < 7; i++) results.add(selectCalorieLogAt(i));
-        return results;
+    /**
+     * Selects food based on id
+     * @param id
+     * @return
+     */
+    public Food selectFood(int id) {
+        SQLiteDatabase db = getReadableDatabase();
+        // create Food Object
+        Food food = null;
+        // and now create sql
+        Cursor cursor = db.rawQuery("SELECT * FROM food WHERE id = ?", new String[]{String.valueOf(id)});
+        // check if successful
+        if (cursor.moveToFirst()) {
+            // long id, String name, String servingSize, ArrayList<Nutrient> nutrients
+            food = new Food(cursor.getLong(0), cursor.getString(1), cursor.getString(2));
+            // iterate the hashmap (not good) but we'll need it
+            for (String key : KEY_MAP.values()) food.addNutrient(new Nutrient(key, cursor.getDouble(cursor.getColumnIndex(key))));
+        }
+        return food;
     }
-
 
     /**
      * Retrieves a log of food, from the past x days.
