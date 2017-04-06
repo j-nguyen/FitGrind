@@ -32,4 +32,5 @@
     <string name="invalid_info">Something went wrong with gathering food data! Please try again.</string>
     <string name="db_error">Something went wrong with storing data!</string>
     <string name="db_insert_success">Successfully inserted data!</string>
+    <string name="results_title">Calorie Results</string>
 </resources>
