@@ -33,6 +33,7 @@
     <string name="invalid_info">Something went wrong with gathering food data! Please try again.</string>
     <string name="db_error">Something went wrong with storing data!</string>
     <string name="db_insert_success">Successfully inserted data!</string>
+    <string name="db_update_success">Successfully updated data!</string>
 
     <!-- Info -->
     <string name="results_title">Calorie Results</string>
@@ -60,8 +61,7 @@
     <string name="lifestyle_summary">Your activity lifestyle.</string>
     <string name="gender_default_value">Male</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+
     <string name="calories_obtained">Calories Obtained</string>
 
 </resources>

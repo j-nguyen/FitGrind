@@ -54,6 +54,10 @@ public class Food implements Parcelable {
         this.nutrients = new ArrayList<Nutrient>();
     }
 
+    public void setId(long id) {
+        this.id = id;
+    }
+
     public void addNutrient(Nutrient nutrient) {
         nutrients.add(nutrient);
     }

@@ -12,9 +12,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -37,6 +39,7 @@ public class EditFoodFragment extends Fragment {
     private static final String ARG_PARAM1 = "param1";
 
     private int foodId;
+    private Food food;
     private ListView mListView;
 
     private OnFragmentInteractionListener mListener;
@@ -74,11 +77,10 @@ public class EditFoodFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_edit_food, container, false);
         mListView = (ListView) view.findViewById(R.id.edit_food_listview);
-        System.out.println(foodId);
         // we can instantiate a food object here
         if (foodId != 0) {
             DatabaseHandler db = new DatabaseHandler(getContext());
-            Food food = db.selectFood(foodId);
+            food = db.selectFood(foodId);
             db.close();
             // now we want to set it up, there is going to be a list view, and then if you click it'll open a dialog.
             // connect the adapter
@@ -87,23 +89,39 @@ public class EditFoodFragment extends Fragment {
             // now we also want to edit by using the long item click listener
             mListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
                 @Override
-                public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+                public boolean onItemLongClick(AdapterView<?> adapterView, View view, final int i, long l) {
                     // create a dialog
                     AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                    builder.setTitle("Title");
+                    // setup title
+                    Nutrient nutrient = (Nutrient) mListView.getItemAtPosition(i);
+                    builder.setTitle("Edit " + nutrient.getNutrient() + " Value");
 
                     // Set up the input
                     final EditText input = new EditText(getContext());
 
+                    // set the text to equal what nutrient it was
+                    input.setText(""+ nutrient.getValue());
+
                     // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
-                    input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                    input.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
                     builder.setView(input);
 
                     // Set up the buttons
                     builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            System.out.println("chicken");
+                            // if it clicked ok, we need to create a db instance and make sure it goes through and works
+                            DatabaseHandler db = new DatabaseHandler(getContext());
+                            // we can use Food Id
+                            food.setId(foodId);
+                            // updaet the nutrient too
+                            food.getNutrients().get(i).setValue(Double.parseDouble(input.getText().toString()));
+                            // start the query
+                            if (db.updateFood(food)) {
+                                ((BaseAdapter) mListView.getAdapter()).notifyDataSetChanged();
+                                Toast.makeText(getContext(), R.string.db_update_success, Toast.LENGTH_SHORT).show();
+                            }
+
                         }
                     });
                     builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -116,8 +134,6 @@ public class EditFoodFragment extends Fragment {
                     return true;
                 }
             });
-        } else {
-            System.out.println("Noooooo");
         }
 
         return view;

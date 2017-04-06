@@ -77,6 +77,10 @@ public class Nutrient implements Parcelable {
         return value;
     }
 
+    public void setValue(double value) {
+        this.value = value;
+    }
+
     @Override
     public int describeContents() {
         return 0;

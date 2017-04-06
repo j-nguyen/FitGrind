@@ -47,6 +47,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     // put it in a hashmap key
     private static final HashMap<Integer, String> KEY_MAP = new HashMap<Integer, String>();
     private static final HashMap<String, String> CALORIE_KEY = new HashMap<String, String>();
+    private static final HashMap<String, String> CALORIE_VALUES = new HashMap<String, String>();
 
     // initialize for our static provider
     static {
@@ -81,6 +82,22 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         CALORIE_KEY.put("iron", "Iron");
         CALORIE_KEY.put("potassium", "Potassium");
         CALORIE_KEY.put("saturated_fat", "Saturated Fat");
+        // now do it for CALORIE_KEY map
+        CALORIE_VALUES.put("Calories", "calories");
+        CALORIE_VALUES.put("Sugar", "sugar");
+        CALORIE_VALUES.put("Total Fat", "total_fat");
+        CALORIE_VALUES.put("Carbohydrate", "carbohydrate");
+        CALORIE_VALUES.put("Trans Fat", "trans_fat");
+        CALORIE_VALUES.put("Cholesterol", "cholesterol");
+        CALORIE_VALUES.put("Sodium", "sodium");
+        CALORIE_VALUES.put("Fiber", "fiber");
+        CALORIE_VALUES.put("Protein", "protein");
+        CALORIE_VALUES.put("Vitamin A", "vitamin_a");
+        CALORIE_VALUES.put("Vitamin C", "vitamin_c");
+        CALORIE_VALUES.put("Calcium", "calcium");
+        CALORIE_VALUES.put("Iron", "iron");
+        CALORIE_VALUES.put("Potassium", "potassium");
+        CALORIE_VALUES.put("Saturated Fat", "saturated_fat");
     }
 
     // create our table names
@@ -395,6 +412,19 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         values.put("weight", strength.getWeight());
         db.update(STRENGTHLOG_TABLE_NAME, values, "exercise_id = ?", new String[]{String.valueOf(exerciseId)});
         db.close();
+    }
+
+    public boolean updateFood(Food food) {
+        // Create db
+        SQLiteDatabase db = getReadableDatabase();
+        // Create the content values
+        ContentValues values = new ContentValues();
+        // we'll just go through every list, but we'll need to get the hash map entry set again
+        for (Nutrient nutrient : food.getNutrients()) values.put(CALORIE_VALUES.get(nutrient.getNutrient()), nutrient.getValue());
+        // get the rows affected
+        int rows = db.update(FOOD_TABLE_NAME, values, "id = ?", new String[]{String.valueOf(food.getId())});
+        db.close();
+        return rows > 0;
     }
 
     /**
