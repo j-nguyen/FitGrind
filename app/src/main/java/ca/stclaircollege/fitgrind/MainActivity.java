@@ -1,12 +1,12 @@
 package ca.stclaircollege.fitgrind;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -16,17 +16,13 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.loopj.android.http.JsonHttpResponseHandler;
-
-import org.json.JSONObject;
-
-import cz.msebera.android.httpclient.Header;
-
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
                     MainFragment.OnFragmentInteractionListener,
                     AddFoodFragment.OnFragmentInteractionListener,
-                    ViewFoodFragment.OnFragmentInteractionListener {
+                    ViewFoodFragment.OnFragmentInteractionListener,
+                    WorkoutExerciseFragment.OnFragmentInteractionListener,
+                    ExerciseFragment.OnFragmentInteractionListener{
 
     // create fragment manager
     FragmentManager fm = getSupportFragmentManager();
@@ -107,14 +103,17 @@ public class MainActivity extends AppCompatActivity
 //            tran.commit();
 
         } else if (id == R.id.nav_workout_schedule) {
-//            FragmentTransaction tran = fm.beginTransaction();
-//            tran.replace(R.id.content_main, new ());
-//            tran.commit();
+            startActivity(new Intent(MainActivity.this, TabbedActivity.class));
 
         } else if (id == R.id.nav_progress_gallary) {
 //            FragmentTransaction tran = fm.beginTransaction();
 //            tran.replace(R.id.content_main, new ());
 //            tran.commit();
+
+        } else if (id == R.id.nav_test) {
+            FragmentTransaction tran = fm.beginTransaction();
+            tran.replace(R.id.content_main, new WorkoutExerciseFragment());
+            tran.commit();
 
         }
 

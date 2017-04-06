@@ -9,31 +9,24 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.TextView;
-
-import com.loopj.android.http.JsonHttpResponseHandler;
-
+import android.widget.Toast;
+import com.androidnetworking.error.ANError;
+import com.androidnetworking.interfaces.JSONObjectRequestListener;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.util.ArrayList;
-
-import cz.msebera.android.httpclient.Header;
-
+import ca.stclaircollege.fitgrind.api.FoodAPI;
+import ca.stclaircollege.fitgrind.api.Item;
 
 /**
  * AddFoodFragment class handles the search and view aspects of the food item you've searched for.
@@ -41,15 +34,15 @@ import cz.msebera.android.httpclient.Header;
  */
 public class AddFoodFragment extends Fragment {
 
-    // create PRIVATE Constants. This is better practice, and avoids mis-spelling
     private static final String LIST_KEY = "list";
-    private static final String TOTAL_KEY = "total";
+    private static final String ERRORS_KEY = "errors";
+    private static final String ERROR_KEY = "error";
+    private static final String MESSAGE_KEY = "message";
+    private static final String ITEM_KEY = "item";
+    // -------------------------------------------
     private static final String START_KEY = "start";
     private static final String END_KEY = "end";
-    private static final String NDB_KEY = "ndbno";
-    private static final String GROUP_KEY = "group";
-    private static final String NAME_KEY = "name";
-    private static final String ITEM_KEY = "item";
+    private static final String TOTAL_KEY = "total";
 
     private OnFragmentInteractionListener mListener;
 
@@ -60,22 +53,22 @@ public class AddFoodFragment extends Fragment {
 
     // Recycler View
     private RecyclerView mRecyclerView;
-    private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
 
     // set-up private API key
     // search for the food based on searchField text
     private FoodAPI foodApi;
 
+    // Instead of creating a class for this, we can set up private variables for start, end, and total for the result returned
+    private int start, end, total;
+
     public AddFoodFragment() {}
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         // create api here
-        foodApi = new FoodAPI(getString(R.string.API_KEY));
-
+        foodApi = new FoodAPI(getActivity().getApplicationContext(), getString(R.string.API_KEY));
     }
 
     @Override
@@ -144,37 +137,48 @@ public class AddFoodFragment extends Fragment {
     /**
      * This method searches for food
      */
-    private void searchFood() {
-        foodApi.searchFood(searchField.getText().toString(), new JsonHttpResponseHandler() {
+    private void searchFood(){
+        // show progress
+        progressBar.setVisibility(View.VISIBLE);
+        foodApi.foodSearch(searchField.getText().toString(), new JSONObjectRequestListener() {
             @Override
-            public void onStart() {
-                // Show loading screen on empty recycler view
-                progressBar.setVisibility(View.VISIBLE);
-            }
-
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+            public void onResponse(JSONObject response) {
+                // If a response occurs we search
                 progressBar.setVisibility(View.GONE);
-                // Get the food in food store
                 try {
-                    JSONObject list = response.getJSONObject(LIST_KEY);
-                    // now we can retrieve data
-                    FoodStore foodStore = new FoodStore(list.getInt(TOTAL_KEY), list.getInt(START_KEY), list.getInt(END_KEY));
-                    // now that foodstore has been retrieved, we can set it up!
-                    JSONArray items = list.getJSONArray(ITEM_KEY);
-                    // iterate
-                    for (int i = 0; i < items.length(); i++) {
-                        // get json object
-                        JSONObject obj = items.getJSONObject(i);
-                        // add food
-                        foodStore.addFood(new Food(obj.getString(GROUP_KEY), obj.getString(NAME_KEY), Integer.parseInt(obj.getString(NDB_KEY))));
+                    // check to make sure if we have a result, if not, then who care
+                    if (response.has(LIST_KEY)) {
+                        // We now want to only get the items, so we can display it on the listview
+                        JSONObject list = response.getJSONObject(LIST_KEY);
+                        // we need this for later to gather when Recycler View is scrolling down.
+                        start = list.getInt(START_KEY);
+                        end = list.getInt(END_KEY);
+                        total = list.getInt(TOTAL_KEY);
+                        JSONArray jsonArray = list.getJSONArray(ITEM_KEY);
+                        // create a new item list to start
+                        ArrayList<Item> itemList = new ArrayList<Item>();
+                        // iterate in a for loop
+                        for (int i=0; i< jsonArray.length(); i++) {
+                            JSONObject obj = jsonArray.getJSONObject(i);
+                            itemList.add(new Item(obj.getString(Item.GROUP_KEY), obj.getString(Item.NAME_KEY), Integer.parseInt(obj.getString(Item.NDBNO_KEY))));
+                        }
+                        // set the adapter
+                        mRecyclerView.setAdapter(new MyAdapter(itemList));
+                    } else {
+                        // if we don't we make a text view
+                        JSONArray result = response.getJSONObject(ERRORS_KEY).getJSONArray(ERROR_KEY);
+                        String message = (String) ((JSONObject) result.get(0)).get(MESSAGE_KEY);
+                        Toast.makeText(getContext(),  message, Toast.LENGTH_LONG).show();
                     }
-                    // set adapter
-                    mAdapter = new MyAdapter(foodStore.getFoods());
-                    mRecyclerView.setAdapter(mAdapter);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+            }
+
+            @Override
+            public void onError(ANError anError) {
+                progressBar.setVisibility(View.GONE);
+                Toast.makeText(getContext(), R.string.invalid_search, Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -183,7 +187,7 @@ public class AddFoodFragment extends Fragment {
      * Our adapter class for RecyclerView. This handles the layout issues on what it needs to have.
      */
     public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
-        private ArrayList<Food> mDataset;
+        private ArrayList<Item> mDataset;
 
         // Provide a reference to the views for each data item
         // Complex data items may need more than one view per item, and
@@ -205,7 +209,7 @@ public class AddFoodFragment extends Fragment {
         }
 
         // Provide a suitable constructor (depends on the kind of dataset)
-        public MyAdapter(ArrayList<Food> myDataset) {
+        public MyAdapter(ArrayList<Item> myDataset) {
             mDataset = myDataset;
         }
 
@@ -220,6 +224,8 @@ public class AddFoodFragment extends Fragment {
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    searchField.setText("");
+                    searchField.clearFocus();
                     // we wanna get the position of where it is
                     int position = mRecyclerView.indexOfChild(v);
                     // we can reference from the mDataset, and launch a new fragment
@@ -227,7 +233,7 @@ public class AddFoodFragment extends Fragment {
                     FragmentManager fm = getActivity().getSupportFragmentManager();
                     FragmentTransaction trans = fm.beginTransaction();
                     // get the position and reference mDataset to add
-                    trans.replace(R.id.content_main, ViewFoodFragment.newInstance(mDataset.get(position)));
+                    trans.replace(R.id.content_main, ViewFoodFragment.newInstance(mDataset.get(position).getNdbno()));
                     trans.addToBackStack(null);
                     trans.commit();
                 }
