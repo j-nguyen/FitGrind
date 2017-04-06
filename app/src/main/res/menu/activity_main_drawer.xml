@@ -7,6 +7,10 @@
             android:icon="@drawable/ic_home_black_24dp"
             android:title="@string/home" />
         <item
+            android:id="@+id/nav_diary"
+            android:icon="@drawable/ic_assignment_black_24dp"
+            android:title="@string/calorie_log" />
+        <item
             android:id="@+id/nav_add_food"
             android:icon="@drawable/ic_food"
             android:title="@string/add_food" />
@@ -24,7 +28,6 @@
             android:title="@string/progress_gallary" />
         <item
             android:id="@+id/nav_test"
-            android:icon="@drawable/ic_menu_send"
             android:title="test" />
     </group>
 
