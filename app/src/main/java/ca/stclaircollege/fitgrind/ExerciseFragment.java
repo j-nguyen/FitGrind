@@ -7,25 +7,22 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 
-import ca.stclaircollege.fitgrind.database.Routine;
-
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link WorkoutFragment.OnFragmentInteractionListener} interface
+ * {@link ExerciseFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link WorkoutFragment#newInstance} factory method to
+ * Use the {@link ExerciseFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class WorkoutFragment extends Fragment {
+public class ExerciseFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -39,7 +36,7 @@ public class WorkoutFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    public WorkoutFragment() {
+    public ExerciseFragment() {
         // Required empty public constructor
     }
 
@@ -49,11 +46,11 @@ public class WorkoutFragment extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment WorkoutFragment.
+     * @return A new instance of fragment ExerciseFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static WorkoutFragment newInstance(String param1, String param2) {
-        WorkoutFragment fragment = new WorkoutFragment();
+    public static ExerciseFragment newInstance(String param1, String param2) {
+        ExerciseFragment fragment = new ExerciseFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -74,51 +71,51 @@ public class WorkoutFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_workout, container, false);
-        list = (ListView) view.findViewById(R.id.workoutList);
-        final ArrayList<Routine> programsList = new ArrayList<Routine>();
-        programsList.add(new Routine("text", "test"));
-        programsList.add(new Routine("text", "test"));
-        programsList.add(new Routine("text", "test"));
-        programsList.add(new Routine("text", "test"));
-        programsList.add(new Routine("text", "test"));
-        programsList.add(new Routine("text", "test"));
-        programsList.add(new Routine("text", "test"));
-        programsList.add(new Routine("text", "test"));
-        programsList.add(new Routine("text", "test"));
-        final CustomAdapter adapter = new CustomAdapter(getContext(), programsList);
+        View view = inflater.inflate(R.layout.fragment_exercise, container, false);
+
+        list = (ListView) view.findViewById(R.id.exerciselist);
+        final ArrayList<Exercise> exercisesList = new ArrayList<Exercise>();
+        exercisesList.add(new Exercise("text", "test", "test"));
+        exercisesList.add(new Exercise("text", "test", "test"));
+        exercisesList.add(new Exercise("text", "test", "test"));
+        exercisesList.add(new Exercise("text", "test", "test"));
+        exercisesList.add(new Exercise("text", "test", "test"));
+        exercisesList.add(new Exercise("text", "test", "test"));
+        exercisesList.add(new Exercise("text", "test", "test"));
+        exercisesList.add(new Exercise("text", "test", "test"));
+        exercisesList.add(new Exercise("text", "test", "test"));
+        final ExerciseFragment.CustomAdapter adapter = new ExerciseFragment.CustomAdapter(getContext(), exercisesList);
         list.setAdapter(adapter);
-        
-        //remove each list
-        list.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                programsList.remove(position);
-                adapter.notifyDataSetChanged();
-                return false;
-            }
-        });
+
+
+        if(mParam1 != null){
+            TextView text = (TextView) view.findViewById(R.id.day);
+            text.setText(mParam1);
+        }
+
         return view;
     }
 
-
-    public class CustomAdapter extends ArrayAdapter<Routine> {
-        public CustomAdapter(Context context, ArrayList<Routine> items) {
+    public class CustomAdapter extends ArrayAdapter<Exercise> {
+        public CustomAdapter(Context context, ArrayList<Exercise> items) {
             super(context, 0, items);
         }
         //get each item and assign a view to it
         public View getView(int position, View convertView, ViewGroup parent){
-            final Routine item = getItem(position);
+            final Exercise item = getItem(position);
             if(convertView == null){
-                convertView = LayoutInflater.from(getContext()).inflate(R.layout.program_view, parent, false);
+                convertView = LayoutInflater.from(getContext()).inflate(R.layout.exercise_view, parent, false);
             }
 
             //set the listview items
-            TextView name = (TextView) convertView.findViewById(R.id.programName);
-            name.setText(item.getName());
+            TextView exerciseName = (TextView) convertView.findViewById(R.id.exerciseName);
+            exerciseName.setText(item.getName());
 
-            TextView description = (TextView) convertView.findViewById(R.id.programDescription);
-            description.setText(item.getDescription());
+            TextView set = (TextView) convertView.findViewById(R.id.exerciseSet);
+            set.setText(item.getSet());
+
+            TextView length = (TextView) convertView.findViewById(R.id.exerciseRep);
+            length.setText(item.getRep());
 
             return  convertView;
         }
