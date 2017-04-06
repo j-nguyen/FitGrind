@@ -4,10 +4,14 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -23,6 +27,7 @@ import java.util.ArrayList;
 import ca.stclaircollege.fitgrind.api.Food;
 import ca.stclaircollege.fitgrind.api.FoodAPI;
 import ca.stclaircollege.fitgrind.api.Nutrient;
+import ca.stclaircollege.fitgrind.database.DatabaseHandler;
 
 /**
  * ViewFoodFragment class handles the viewing process of the food, such as the nutritional values that the food provides, as well
@@ -39,6 +44,7 @@ public class ViewFoodFragment extends Fragment {
 
     // Get the unique Id from the previous fragment
     private int currNdbno;
+    private Food currFood;
 
     // get the food api class again
     private FoodAPI foodApi;
@@ -47,6 +53,7 @@ public class ViewFoodFragment extends Fragment {
     private LinearLayout progressView;
     private ListView mListView;
     private TextView mFoodName, mFoodWeight;
+    private Button mAddFoodButton;
 
     public ViewFoodFragment() {}
 
@@ -84,7 +91,7 @@ public class ViewFoodFragment extends Fragment {
         mListView = (ListView) view.findViewById(R.id.listview);
         mFoodName = (TextView) view.findViewById(R.id.food_title);
         mFoodWeight = (TextView) view.findViewById(R.id.food_weight);
-
+        mAddFoodButton = (Button) view.findViewById(R.id.addButton);
 
         // check to make sure we can get the food
         if (currNdbno != 0) {
@@ -103,19 +110,19 @@ public class ViewFoodFragment extends Fragment {
                         // Create a tmp variable for better storage organize
                         String serving = foodObj.getString(Food.MEASURE_KEY) + " " + foodObj.getString(Food.WEIGHT_KEY) + "g";
                         // create the food object
-                        Food food = new Food(Integer.parseInt(foodObj.getString(NDBNO_KEY)), foodObj.getString(Food.NAME_KEY), serving);
+                        currFood = new Food(foodObj.getString(Food.NAME_KEY), serving);
                         // now we want to iterate through the nutrient list json object.
                         JSONArray nutrientObj = foodObj.getJSONArray(NUTRIENT_KEY);
                         for (int i=0; i < nutrientObj.length(); i++) {
                             JSONObject obj = nutrientObj.getJSONObject(i);
                             // add new nutrient
-                            food.addNutrient(new Nutrient(Integer.parseInt(obj.getString(Nutrient.ID_KEY)), obj.getString(Nutrient.NUTRIENT_KEY),
+                            currFood.addNutrient(new Nutrient(Integer.parseInt(obj.getString(Nutrient.ID_KEY)), obj.getString(Nutrient.NUTRIENT_KEY),
                                     obj.getString(Nutrient.UNIT_KEY), obj.getString(Nutrient.VALUE_KEY)));
                         }
                         // set adapter and food name as well as the serving
-                        mFoodName.setText(food.getName());
-                        mFoodWeight.setText(food.getServingSize());
-                        mListView.setAdapter(new CustomAdapter(getContext(), food.getNutrients()));
+                        mFoodName.setText(currFood.getName());
+                        mFoodWeight.setText(currFood.getServingSize());
+                        mListView.setAdapter(new CustomAdapter(getContext(), currFood.getNutrients()));
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -128,6 +135,27 @@ public class ViewFoodFragment extends Fragment {
                 }
             });
         }
+
+        // now attempt to create a button action listener
+        mAddFoodButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Open up the database and add
+                DatabaseHandler db = new DatabaseHandler(getContext());
+                // Check to make sure we inserted properly
+                long foodId = db.insertFood(currFood);
+                if (foodId != -1 && db.insertFoodLog(foodId) != -1) {
+                    // we want to go back to home
+                    FragmentManager fm = getActivity().getSupportFragmentManager();
+                    FragmentTransaction trans = fm.beginTransaction();
+                    trans.replace(R.id.content_main, new MainFragment());
+                    trans.commit();
+                    Toast.makeText(getContext(), R.string.db_insert_success, Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(getContext(), R.string.db_error, Toast.LENGTH_LONG).show();
+                }
+            }
+        });
 
         return view;
     }

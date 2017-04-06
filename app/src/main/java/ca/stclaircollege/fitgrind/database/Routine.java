@@ -1,18 +1,31 @@
-package ca.stclaircollege.fitgrind;
+package ca.stclaircollege.fitgrind.database;
 
 /**
  * Created by Allan on 4/1/2017.
  */
 
-public class Program {
+public class Routine {
+    private long id;
     private String name;
     private String description;
-    private String length;
 
-    public Program(String name, String description, String length){
+    public Routine(String name, String description) {
         this.name = name;
         this.description = description;
-        this.length = length;
+    }
+
+    public Routine(long id, String name, String description) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -29,14 +42,6 @@ public class Program {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public String getLength() {
-        return length;
-    }
-
-    public void setLength(String length) {
-        this.length = length;
     }
 
     public String toString() {
