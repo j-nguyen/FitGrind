@@ -55,5 +55,6 @@
     <string name="weight_goal_summary">Enter in the desired weight you wish to be</string>
     <string name="lifestyle_title">Enter your active lifestyle</string>
     <string name="lifestyle_summary">Your activity lifestyle.</string>
+    <string name="gender_default_value">Male</string>
 
 </resources>
