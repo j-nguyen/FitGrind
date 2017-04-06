@@ -226,7 +226,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
      * Inserts routine into sqlite db. Parameters include the routine object.
      * @param routine
      */
-    public void insertRoutine(Routine routine) {
+    public boolean insertRoutine(Routine routine) {
         // Create the writeable DB
         SQLiteDatabase db = getWritableDatabase();
         // Use contentvalues
@@ -234,14 +234,14 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         // put name and desc
         values.put("name", routine.getName());
         values.put("description", routine.getDescription());
-        db.insert(WORKOUTROUTINE_TABLE_NAME, null, values);
+        return db.insert(WORKOUTROUTINE_TABLE_NAME, null, values) > 0;
     }
 
     /**
      * Inserts a workout, with the cardio object
      * @param cardio
      */
-    public void insertWorkout(Cardio cardio, long routineId, long dayId) {
+    public boolean insertWorkout(Cardio cardio, long routineId, long dayId) {
         // writeable db
         SQLiteDatabase db = getWritableDatabase();
         // create content values
@@ -254,36 +254,35 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         values.clear(); // clear
         values.put("exercise_id", id);
         values.put("time", cardio.getTime());
-        db.insert(CARDIOLOG_TABLE_NAME, null, values);
+        long row = db.insert(CARDIOLOG_TABLE_NAME, null, values);
         // now we finally want to insert the final workout
         values.clear();
         values.put("routine_id", routineId);
         values.put("exercise_id", id);
         values.put("day_id", dayId);
-        db.insert(WORKOUT_TABLE_NAME, null, values);
-        db.close();
+        long secondRow = db.insert(WORKOUT_TABLE_NAME, null, values);
+        return row > 0 && secondRow > 0;
     }
 
     /**
      * Inserts your 'weight-log' picture weekly.
      * @param progress
      */
-    public void insertProgress(Progress progress) {
+    public boolean insertProgress(Progress progress) {
         SQLiteDatabase db = getWritableDatabase();
         // Create the content values
         ContentValues values = new ContentValues();
         // input the values
         values.put("resource", progress.getResource());
         // insert the db
-        db.insert(PROGRESS_TABLE_NAME, null, values);
-        db.close();
+        return db.insert(PROGRESS_TABLE_NAME, null, values) > 0;
     }
 
     /**
      * Inserts workout with strength object
      * @param strength
      */
-    public void insertWorkout(Strength strength, long routineId, long dayId) {
+    public boolean insertWorkout(Strength strength, long routineId, long dayId) {
         // create db
         SQLiteDatabase db = getWritableDatabase();
         // create the content values
@@ -298,14 +297,14 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         values.put("set", strength.getSet());
         values.put("rep", strength.getReptitions());
         values.put("weight", strength.getWeight());
-        db.insert(STRENGTHLOG_TABLE_NAME, null, values);
+        long row = db.insert(STRENGTHLOG_TABLE_NAME, null, values);
         // now we finally want to insert the final workout
         values.clear();
         values.put("routine_id", routineId);
         values.put("exercise_id", id);
         values.put("day_id", dayId);
-        db.insert(WORKOUT_TABLE_NAME, null, values);
-        db.close();
+        long secondRow = db.insert(WORKOUT_TABLE_NAME, null, values);
+        return row > 0 && secondRow > 0;
     }
 
     /**
@@ -351,7 +350,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
      * Updates specific row
      * @param routine
      */
-    public void updateRoutine(Routine routine) {
+    public boolean updateRoutine(Routine routine) {
         // create db
         SQLiteDatabase db = getWritableDatabase();
         // setup content values
@@ -360,8 +359,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         values.put("name", routine.getName());
         values.put("description", routine.getDescription());
         // update the db
-        db.update(WORKOUTROUTINE_TABLE_NAME, values, "id = ?", new String[]{String.valueOf(routine.getId())});
-        db.close();
+        return db.update(WORKOUTROUTINE_TABLE_NAME, values, "id = ?", new String[]{String.valueOf(routine.getId())}) > 0;
     }
 
     /**
@@ -369,7 +367,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
      * @param cardio
      * @param exerciseId
      */
-    public void updateWorkout(Cardio cardio, long exerciseId) {
+    public boolean updateWorkout(Cardio cardio, long exerciseId) {
         // writeable db
         SQLiteDatabase db = getWritableDatabase();
         // create content values
@@ -377,13 +375,13 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         // input the values
         values.put("name", cardio.getName());
         // update db
-        db.update(EXERCISE_TABLE_NAME, values, "id = ?", new String[]{String.valueOf(cardio.getId())});
+        int row = db.update(EXERCISE_TABLE_NAME, values, "id = ?", new String[]{String.valueOf(cardio.getId())});
         // now update on this workout
         values.clear(); // clear
         values.put("exercise_id", exerciseId);
         values.put("time", cardio.getTime());
-        db.update(CARDIOLOG_TABLE_NAME, values, "exercise_id = ?", new String[]{String.valueOf(exerciseId)});
-        db.close();
+        int secondRow = db.update(CARDIOLOG_TABLE_NAME, values, "exercise_id = ?", new String[]{String.valueOf(exerciseId)});
+        return row > 0 && secondRow > 0;
     }
 
     /**
@@ -391,7 +389,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
      * @param strength
      * @param exerciseId
      */
-    public void updateWorkout(Strength strength, long exerciseId) {
+    public boolean updateWorkout(Strength strength, long exerciseId) {
         // create db
         SQLiteDatabase db = getWritableDatabase();
         // create the content values
@@ -399,15 +397,15 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         // input the name and insert.
         values.put("name", strength.getName());
         // insert and retrieve the id
-        db.update(EXERCISE_TABLE_NAME, values, "id = ?", new String[]{String.valueOf(strength.getId())});
+        int row = db.update(EXERCISE_TABLE_NAME, values, "id = ?", new String[]{String.valueOf(strength.getId())});
         // update on this field
         values.clear();
         values.put("exercise_id", exerciseId);
         values.put("set", strength.getSet());
         values.put("rep", strength.getReptitions());
         values.put("weight", strength.getWeight());
-        db.update(STRENGTHLOG_TABLE_NAME, values, "exercise_id = ?", new String[]{String.valueOf(exerciseId)});
-        db.close();
+        int secondRow = db.update(STRENGTHLOG_TABLE_NAME, values, "exercise_id = ?", new String[]{String.valueOf(exerciseId)});
+        return row > 0 && secondRow > 0;
     }
 
     public boolean updateFood(Food food) {
@@ -418,53 +416,49 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         // we'll just go through every list, but we'll need to get the hash map entry set again
         for (Nutrient nutrient : food.getNutrients()) values.put(CALORIE_VALUES.get(nutrient.getNutrient()), nutrient.getValue());
         // get the rows affected
-        int rows = db.update(FOOD_TABLE_NAME, values, "id = ?", new String[]{String.valueOf(food.getId())});
-        db.close();
-        return rows > 0;
+        return db.update(FOOD_TABLE_NAME, values, "id = ?", new String[]{String.valueOf(food.getId())}) > 0;
     }
 
     /**
      * delete routine
      * @param id
      */
-    public void deleteRoutine(long id) {
+    public boolean deleteRoutine(long id) {
         SQLiteDatabase db = getWritableDatabase();
-        db.delete(WORKOUTROUTINE_TABLE_NAME, "id = ?", new String[]{String.valueOf(id)});
-        db.close();
+        return db.delete(WORKOUTROUTINE_TABLE_NAME, "id = ?", new String[]{String.valueOf(id)}) > 0 ;
     }
 
     /**
      * Deletes the cardio workout from 3 tables
      * @param id
      */
-    public void deleteCardioWorkout(long id) {
+    public boolean deleteCardioWorkout(long id) {
         SQLiteDatabase db = getWritableDatabase();
-        db.delete(CREATE_WORKOUT_TABLE, "exercise_id = ?", new String[]{String.valueOf(id)});
-        db.delete(CARDIOLOG_TABLE_NAME, "exercise_id = ?", new String[]{String.valueOf(id)});
-        db.delete(EXERCISE_TABLE_NAME, "id = ?", new String[]{String.valueOf(id)});
-        db.close();
+        int fRow = db.delete(CREATE_WORKOUT_TABLE, "exercise_id = ?", new String[]{String.valueOf(id)});
+        int sRow = db.delete(CARDIOLOG_TABLE_NAME, "exercise_id = ?", new String[]{String.valueOf(id)});
+        int tRow = db.delete(EXERCISE_TABLE_NAME, "id = ?", new String[]{String.valueOf(id)});
+        return fRow > 0 && sRow > 0 && tRow > 0;
     }
 
     /**
      * Deletes the strength/weights workout from 3 tables.
      * @param id
      */
-    public void deleteStrengthWorkout(long id) {
+    public boolean deleteStrengthWorkout(long id) {
         SQLiteDatabase db = getWritableDatabase();
-        db.delete(CREATE_WORKOUT_TABLE, "exercise_id = ?", new String[]{String.valueOf(id)});
-        db.delete(STRENGTHLOG_TABLE_NAME, "exercise_id = ?", new String[]{String.valueOf(id)});
-        db.delete(EXERCISE_TABLE_NAME, "id = ?", new String[]{String.valueOf(id)});
-        db.close();
+        int fRow = db.delete(CREATE_WORKOUT_TABLE, "exercise_id = ?", new String[]{String.valueOf(id)});
+        int sRow = db.delete(STRENGTHLOG_TABLE_NAME, "exercise_id = ?", new String[]{String.valueOf(id)});
+        int tRow = db.delete(EXERCISE_TABLE_NAME, "id = ?", new String[]{String.valueOf(id)});
+        return fRow > 0 && sRow > 0 && tRow > 0;
     }
 
     /**
      * Deletes the picture
      * @param id
      */
-    public void deleteProgress(long id) {
+    public boolean deleteProgress(long id) {
         SQLiteDatabase db = getWritableDatabase();
-        db.delete(PROGRESS_TABLE_NAME, "id = ?", new String[]{String.valueOf(id)});
-        db.close();
+        return db.delete(PROGRESS_TABLE_NAME, "id = ?", new String[]{String.valueOf(id)}) > 0;
     }
 
     /**
