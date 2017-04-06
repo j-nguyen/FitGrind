@@ -1,12 +1,14 @@
 package ca.stclaircollege.fitgrind;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -115,12 +117,25 @@ public class MainFragment extends Fragment {
         // set a long lcick for mlistview
         mListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
-            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, final int i, long l) {
                 // our int i is our id, so we can pass it on to our EditFoodFragment
-                FragmentTransaction trans = getActivity().getSupportFragmentManager().beginTransaction();
-                trans.replace(R.id.content_main, EditFoodFragment.newInstance(i+1));
-                trans.addToBackStack(null);
-                trans.commit();
+                CharSequence colors[] = new CharSequence[] {"Edit", "Delete"};
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                builder.setTitle("Food Options");
+                builder.setItems(colors, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                       // 0 indicating edit, and 1 indicating delete
+                        if (which == 0) {
+                            FragmentTransaction trans = getActivity().getSupportFragmentManager().beginTransaction();
+                            trans.replace(R.id.content_main, EditFoodFragment.newInstance(i+1));
+                            trans.addToBackStack(null);
+                            trans.commit();
+                        }
+                    }
+                });
+                builder.show();
                 return true;
             }
         });
