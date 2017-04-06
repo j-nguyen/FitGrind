@@ -12,9 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
-
 import java.util.ArrayList;
-
 import ca.stclaircollege.fitgrind.database.DatabaseHandler;
 import ca.stclaircollege.fitgrind.database.FoodLog;
 
@@ -93,6 +91,7 @@ public class ViewCalorieLogFragment extends Fragment {
             foodLog.add(db.selectCalorieLogAt(2));
             foodLog.add(db.selectCalorieLogAt(1));
             foodLog.add(db.selectCalorieLogAt(0));
+            db.close();
         }
         public Fragment getItem(int position) {
             switch(position) {

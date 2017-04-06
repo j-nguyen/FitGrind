@@ -8,9 +8,13 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
+import ca.stclaircollege.fitgrind.api.Food;
 import ca.stclaircollege.fitgrind.database.FoodLog;
 
 
@@ -71,14 +75,44 @@ public class ViewCalorieDayLogFragment extends Fragment {
 
         // check if object is able to be passed through
         if (foodLog != null) {
-            // 
+
         } else {
-            // if it is, we'll show up something, which is the text view indicating that no dates were logged during this time.
-            mListView.setVisibility(View.GONE);
+            // if it is, we'll show up the textview
             noLogText.setVisibility(View.VISIBLE);
         }
 
         return view;
+    }
+
+    // we need to create a custom adapter.
+    // here we can display our food.
+    public class CustomAdapter extends ArrayAdapter<Food> {
+
+        public CustomAdapter(Context context, ArrayList<Food> foodList) {
+            super(context, 0, foodList);
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            // Get the data item for this position
+            Food food = getItem(position);
+            // Check if an existing view is being reused, otherwise inflate the view
+            if (convertView == null) convertView = LayoutInflater.from(getContext()).inflate(R.layout.view_calorie_log, parent, false);
+
+            TextView name = (TextView) convertView.findViewById(R.id.calorie_food_name);
+            TextView serving = (TextView) convertView.findViewById(R.id.calorie_serving);
+            TextView recordedDate = (TextView) convertView.findViewById(R.id.recorded_date);
+            TextView calories = (TextView) convertView.findViewById(R.id.calorie_calories);
+
+            name.setText(food.getName());
+            serving.setText(food.getServingSize());
+            recordedDate.setText(food.getLogDate());
+            calories.setText(food.getNutrients().get(0).getValue() + " " + food.getNutrients().get(0).getNutrient());
+
+            // Return the completed view to render on screen
+            return convertView;
+        }
+
     }
 
     // TODO: Rename method, update argument and hook method into UI event

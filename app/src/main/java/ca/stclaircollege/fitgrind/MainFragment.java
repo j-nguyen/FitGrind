@@ -10,6 +10,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -107,8 +108,18 @@ public class MainFragment extends Fragment {
         mCurrentDate.setText(new SimpleDateFormat("yyyy-MM-dd").format(cal.getTime()));
 
         // set up for last logged, we'll need to db this one
-        mLastLoggedCalories.setText("Last Logged Calorie: " + db.lastRecordedCalorieLog());
-        if (db.lastRecordedWeightLog() != null) mLastLoggedWeight.setText("Last Logged Weight: " + db.lastRecordedWeightLog());
+        mLastLoggedCalories.setText("Recent food log: " + db.lastRecordedCalorieLog());
+        if (db.lastRecordedWeightLog() != null) mLastLoggedWeight.setText("Recent weight log: " + db.lastRecordedWeightLog());
+
+
+        // set a long lcick for mlistview
+        mListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+                // our int i is our id, so we can pass it on to our EditFoodFragment
+                return false;
+            }
+        });
 
         // connect layout
         fab = (FloatingActionButton) view.findViewById(R.id.fab);
