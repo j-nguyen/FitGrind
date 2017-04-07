@@ -30,6 +30,7 @@
     <!-- Invalid Information -->
     <string name="invalid_search">Could not search! Invalid Search.</string>
     <string name="item_not_exist">Food or Drink you entered does not exist.</string>
+    <string name="invalid_nutrients">Could not retrieve nutrients.</string>
     <string name="invalid_info">Something went wrong with gathering food data! Please try again.</string>
     <string name="db_error">Something went wrong with storing data!</string>
     <string name="db_insert_success">Successfully inserted!</string>
@@ -38,30 +39,29 @@
 
     <!-- Info -->
     <string name="results_title">Calorie Results</string>
-    <string name="calorie_goal">Calorie Goal:</string>
-    <string name="weight_goal">Weight Goal:</string>
+    <string name="calorie_goal">Calorie Goal</string>
+    <string name="weight_goal">Weight Goal</string>
     <string name="not_logged">No Logged Date</string>
 
     <!-- Strings related to Settings -->
     <string name="title_activity_settings">Settings</string>
     <string name="gender_title_label">Gender</string>
     <string name="gender_summary">Enter your gender (Male or Female)</string>
-    <string name="weight_key" />
-    <string name="weight_label_title">Current Weight (lbs)</string>
-    <string name="weight_description">Enter in your current weight in lbs</string>
-    <string name="height_key" />
-    <string name="height_title">Enter your height</string>
-    <string name="height_summary">Enter in your height (Example: 5\'11)</string>
-    <string name="age_key" />
+    <string name="weight_key">weight</string>
+    <string name="weight_label_title">Current Weight (kg)</string>
+    <string name="weight_description">Enter in your current weight in kg</string>
+    <string name="height_key">height</string>
+    <string name="height_title">Enter your height (cm)</string>
+    <string name="height_summary">Enter in your height (Example: 186 cm)</string>
+    <string name="age_key">age</string>
     <string name="age_title">Enter in your age</string>
     <string name="age_summary">Enter in your current age. (Example: 15)</string>
-    <string name="weight_goal_key" />
+    <string name="weight_goal_key">weight_goal</string>
     <string name="weight_goal_title">Enter your desired weight goal</string>
     <string name="weight_goal_summary">Enter in the desired weight you wish to be</string>
     <string name="lifestyle_title">Enter your active lifestyle</string>
     <string name="lifestyle_summary">Your activity lifestyle.</string>
     <string name="gender_default_value">Male</string>
-
 
     <string name="calories_obtained">Calories Obtained</string>
 
