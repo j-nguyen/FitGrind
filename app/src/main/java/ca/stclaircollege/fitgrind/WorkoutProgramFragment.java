@@ -4,9 +4,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +18,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-import ca.stclaircollege.fitgrind.database.Routine;
+import ca.stclaircollege.fitgrind.database.Program;
 
 
 /**
@@ -78,29 +79,36 @@ public class WorkoutProgramFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-
         View view = inflater.inflate(R.layout.fragment_workout_program, container, false);
+
+        FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fabProgram);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+            }
+        });
+
         fm = getActivity().getSupportFragmentManager();
         list = (ListView) view.findViewById(R.id.workoutProgramList);
-        final ArrayList<Routine> programsList = new ArrayList<Routine>();
-        programsList.add(new Routine("text", "test"));
-        programsList.add(new Routine("text", "test"));
-        programsList.add(new Routine("text", "test"));
-        programsList.add(new Routine("text", "test"));
-        programsList.add(new Routine("text", "test"));
-        programsList.add(new Routine("text", "test"));
-        programsList.add(new Routine("text", "test"));
-        programsList.add(new Routine("text", "test"));
-        programsList.add(new Routine("text", "test"));
+        final ArrayList<Program> programsList = new ArrayList<Program>();
+        programsList.add(new Program("text", "test"));
+        programsList.add(new Program("text", "test"));
+        programsList.add(new Program("text", "test"));
+        programsList.add(new Program("text", "test"));
+        programsList.add(new Program("text", "test"));
+        programsList.add(new Program("text", "test"));
+        programsList.add(new Program("text", "test"));
+        programsList.add(new Program("text", "test"));
+        programsList.add(new Program("text", "test"));
         final CustomAdapter adapter = new CustomAdapter(getContext(), programsList);
         list.setAdapter(adapter);
 
+        //launch to new activity
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                FragmentTransaction tran = fm.beginTransaction();
-//                tran.replace(R.id.test, new WorkoutExerciseFragment());
-//                tran.commit();
                 Intent intent = new Intent(getActivity(), WorkoutExerciseActivity.class);
                 startActivity(intent);
             }
@@ -119,13 +127,13 @@ public class WorkoutProgramFragment extends Fragment {
     }
 
 
-    public class CustomAdapter extends ArrayAdapter<Routine> {
-        public CustomAdapter(Context context, ArrayList<Routine> items) {
+    public class CustomAdapter extends ArrayAdapter<Program> {
+        public CustomAdapter(Context context, ArrayList<Program> items) {
             super(context, 0, items);
         }
         //get each item and assign a view to it
         public View getView(int position, View convertView, ViewGroup parent){
-            final Routine item = getItem(position);
+            final Program item = getItem(position);
             if(convertView == null){
                 convertView = LayoutInflater.from(getContext()).inflate(R.layout.program_view, parent, false);
             }

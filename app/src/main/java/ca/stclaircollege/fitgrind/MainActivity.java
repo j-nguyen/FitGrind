@@ -110,11 +110,6 @@ public class MainActivity extends AppCompatActivity
 //            tran.replace(R.id.content_main, new ());
 //            tran.commit();
 
-        } else if (id == R.id.nav_test) {
-            FragmentTransaction tran = fm.beginTransaction();
-            tran.replace(R.id.content_main, new WorkoutExerciseFragment());
-            tran.commit();
-
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
