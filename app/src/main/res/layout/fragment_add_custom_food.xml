@@ -17,7 +17,8 @@
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:id="@+id/food_name_layout">
 
                 <TextView
                     android:text="@string/custom_food_name_label"
@@ -40,7 +41,8 @@
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:id="@+id/serving_layout">
 
                 <TextView
                     android:text="@string/custom_serving_label"
@@ -63,7 +65,8 @@
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:id="@+id/calorie_layout">
 
                 <TextView
                     android:text="@string/custom_calories"
@@ -86,7 +89,8 @@
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:id="@+id/sugar_layout">
 
                 <TextView
                     android:text="@string/custom_sugar"
@@ -98,7 +102,7 @@
 
                 <EditText
                     android:layout_height="wrap_content"
-                    android:inputType="textPersonName"
+                    android:inputType="number|numberDecimal"
                     android:ems="10"
                     android:id="@+id/sugar_field"
                     android:layout_weight="1"
@@ -109,7 +113,8 @@
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:id="@+id/totalfat_layout">
 
                 <TextView
                     android:text="@string/custom_totalfat"
@@ -122,9 +127,9 @@
                 <EditText
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:inputType="textPersonName"
+                    android:inputType="number|numberDecimal"
                     android:ems="10"
-                    android:id="@+id/editText"
+                    android:id="@+id/totalfat_field"
                     android:layout_weight="1"
                     android:hint="@string/totalfat_hint" />
             </LinearLayout>
@@ -132,223 +137,300 @@
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:id="@+id/carbohydrate_layout">
 
                 <TextView
-                    android:text="TextView"
-                    android:layout_width="wrap_content"
+                    android:text="@string/carbohydrate_label"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:id="@+id/textView2"
+                    android:id="@+id/carbohydrate_label"
+                    android:gravity="center_horizontal"
                     android:layout_weight="1" />
 
                 <EditText
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:inputType="textPersonName"
-                    android:text="Name"
                     android:ems="10"
-                    android:id="@+id/editText"
+                    android:id="@+id/carbohydrate_field"
+                    android:layout_weight="1"
+                    android:inputType="number|numberDecimal"
+                    android:hint="@string/carbohydrate_hint" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/saturatedfat_layout">
+
+                <TextView
+                    android:text="@string/saturatedfat_label"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/saturatedfat_label"
+                    android:gravity="center_horizontal"
+                    android:layout_weight="1" />
+
+                <EditText
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:id="@+id/saturatedfat_field"
+                    android:layout_weight="1"
+                    android:inputType="number|numberDecimal"
+                    android:hint="@string/saturatedfat_hint" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/transfat_layout">
+
+                <TextView
+                    android:text="@string/transfat_label"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/transfat_label"
+                    android:gravity="center_horizontal"
+                    android:layout_weight="1" />
+
+                <EditText
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:id="@+id/transfat_field"
+                    android:layout_weight="1"
+                    android:inputType="number|numberDecimal"
+                    android:hint="@string/transfat_hint" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/cholesterol_layout">
+
+                <TextView
+                    android:text="@string/cholesterol_label"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/cholesterol_label"
+                    android:gravity="center_horizontal"
+                    android:layout_weight="1" />
+
+                <EditText
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:id="@+id/cholesterol_field"
+                    android:layout_weight="1"
+                    android:inputType="number|numberDecimal"
+                    android:hint="@string/cholesterol_hint" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/sodium_layout">
+
+                <TextView
+                    android:text="@string/sodium_label"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/sodium_label"
+                    android:gravity="center_horizontal"
+                    android:layout_weight="1" />
+
+                <EditText
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:id="@+id/sodium_field"
+                    android:layout_weight="1"
+                    android:inputType="number|numberDecimal"
+                    android:hint="@string/sodium_hint" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/fiber_layout">
+
+                <TextView
+                    android:text="@string/fiber_label"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/fiber_label"
+                    android:gravity="center_horizontal"
+                    android:layout_weight="1" />
+
+                <EditText
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:inputType="number|numberDecimal"
+                    android:ems="10"
+                    android:id="@+id/fiber_field"
+                    android:layout_weight="1"
+                    android:hint="@string/fiber_hint" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/protein_layout">
+
+                <TextView
+                    android:text="@string/protein_label"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/protein_label"
+                    android:gravity="center_horizontal"
+                    android:layout_weight="1" />
+
+                <EditText
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:id="@+id/protein_field"
+                    android:layout_weight="1"
+                    android:inputType="number|numberDecimal"
+                    android:hint="@string/protein_hint" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/vitamina_layout">
+
+                <TextView
+                    android:text="@string/vitamina_label"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/vitamina_label"
+                    android:gravity="center_horizontal"
+                    android:layout_weight="1" />
+
+                <EditText
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:inputType="number|numberDecimal"
+                    android:ems="10"
+                    android:id="@+id/vitamina_field"
+                    android:layout_weight="1"
+                    android:hint="@string/vitamina_hint" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/vitaminc_layout">
+
+                <TextView
+                    android:text="@string/vitaminc_label"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/vitaminc_label"
+                    android:gravity="center_horizontal"
+                    android:layout_weight="1" />
+
+                <EditText
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:inputType="number|numberDecimal"
+                    android:ems="10"
+                    android:id="@+id/vitaminc_field"
+                    android:layout_weight="1"
+                    android:hint="@string/vitaminc_hint" />
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/calcium_layout">
+
+                <TextView
+                    android:text="@string/calcium_label"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/calcium_label"
+                    android:gravity="center_horizontal"
+                    android:layout_weight="1" />
+
+                <EditText
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:inputType="number|numberDecimal"
+                    android:hint="@string/calcium_hint"
+                    android:ems="10"
+                    android:id="@+id/calcium_field"
                     android:layout_weight="1" />
             </LinearLayout>
 
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:id="@+id/iron_layout">
 
                 <TextView
-                    android:text="TextView"
-                    android:layout_width="wrap_content"
+                    android:text="@string/iron_label"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:id="@+id/textView2"
+                    android:id="@+id/iron_label"
+                    android:gravity="center_horizontal"
                     android:layout_weight="1" />
 
                 <EditText
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:inputType="textPersonName"
-                    android:text="Name"
+                    android:inputType="number|numberDecimal"
+                    android:hint="@string/iron_hint"
                     android:ems="10"
-                    android:id="@+id/editText"
+                    android:id="@+id/iron_field"
                     android:layout_weight="1" />
             </LinearLayout>
 
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:id="@+id/potassium_layout">
 
                 <TextView
-                    android:text="TextView"
-                    android:layout_width="wrap_content"
+                    android:text="@string/potassium_label"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:id="@+id/textView2"
+                    android:id="@+id/potassium_label"
+                    android:gravity="center_horizontal"
                     android:layout_weight="1" />
 
                 <EditText
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:inputType="textPersonName"
-                    android:text="Name"
+                    android:inputType="number|numberDecimal"
+                    android:hint="@string/potassium_hint"
                     android:ems="10"
-                    android:id="@+id/editText"
+                    android:id="@+id/potassium_field"
                     android:layout_weight="1" />
             </LinearLayout>
 
-            <LinearLayout
-                android:orientation="horizontal"
+            <!-- finally a submit button -->
+            <Button
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:text="TextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/textView2"
-                    android:layout_weight="1" />
-
-                <EditText
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:inputType="textPersonName"
-                    android:text="Name"
-                    android:ems="10"
-                    android:id="@+id/editText"
-                    android:layout_weight="1" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:text="TextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/textView2"
-                    android:layout_weight="1" />
-
-                <EditText
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:inputType="textPersonName"
-                    android:text="Name"
-                    android:ems="10"
-                    android:id="@+id/editText"
-                    android:layout_weight="1" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:text="TextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/textView2"
-                    android:layout_weight="1" />
-
-                <EditText
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:inputType="textPersonName"
-                    android:text="Name"
-                    android:ems="10"
-                    android:id="@+id/editText"
-                    android:layout_weight="1" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:text="TextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/textView2"
-                    android:layout_weight="1" />
-
-                <EditText
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:inputType="textPersonName"
-                    android:text="Name"
-                    android:ems="10"
-                    android:id="@+id/editText"
-                    android:layout_weight="1" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:text="TextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/textView2"
-                    android:layout_weight="1" />
-
-                <EditText
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:inputType="textPersonName"
-                    android:text="Name"
-                    android:ems="10"
-                    android:id="@+id/editText"
-                    android:layout_weight="1" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:text="TextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/textView2"
-                    android:layout_weight="1" />
-
-                <EditText
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:inputType="textPersonName"
-                    android:text="Name"
-                    android:ems="10"
-                    android:id="@+id/editText"
-                    android:layout_weight="1" />
-            </LinearLayout>
-
-
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:text="TextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/textView2"
-                    android:layout_weight="1" />
-
-                <EditText
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:inputType="textPersonName"
-                    android:text="Name"
-                    android:ems="10"
-                    android:id="@+id/editText"
-                    android:layout_weight="1" />
-            </LinearLayout>
+                android:layout_height="wrap_content"
+                android:id="@+id/submitButton"
+                android:text="Submit"
+                android:layout_gravity="right"
+                android:layout_margin="@dimen/submit_margin" />
 
         </LinearLayout>
     </ScrollView>

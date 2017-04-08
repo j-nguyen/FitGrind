@@ -80,5 +80,29 @@
     <string name="totalfat_hint">Food\'s Total Fat</string>
     <string name="weight_week_label">Weight Per Week</string>
     <string name="weight_week_summary">Select how much weight you want to lose or gain per week.</string>
+    <string name="carbohydrate_label">Carbohydrate</string>
+    <string name="carbohydrate_hint">Enter the food\'s carbohydrate</string>
+    <string name="saturatedfat_label">Saturated Fat:</string>
+    <string name="saturatedfat_hint">Enter the food\'s saturated fat</string>
+    <string name="transfat_label">Trans Fat:</string>
+    <string name="transfat_hint">Enter food\'s transfat</string>
+    <string name="cholesterol_label">Cholesterol:</string>
+    <string name="cholesterol_hint">Enter food\'s cholesterol</string>
+    <string name="sodium_label">Sodium:</string>
+    <string name="sodium_hint">Enter sodium value</string>
+    <string name="fiber_label">Fiber:</string>
+    <string name="fiber_hint">Enter fiber content value</string>
+    <string name="protein_label">Protein:</string>
+    <string name="protein_hint">Enter protein value</string>
+    <string name="vitamina_label">Vitamin A:</string>
+    <string name="vitamina_hint">Enter Vitamin A content value</string>
+    <string name="vitaminc_label">Vitamin C:</string>
+    <string name="vitaminc_hint">Enter Vitamin C value</string>
+    <string name="calcium_label">Calcium:</string>
+    <string name="calcium_hint">Enter calcium value</string>
+    <string name="potassium_label">Potassium:</string>
+    <string name="potassium_hint">Enter potassium value</string>
+    <string name="iron_hint">Enter Iron value</string>
+    <string name="iron_label">Iron:</string>
 
 </resources>
