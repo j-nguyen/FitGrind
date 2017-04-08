@@ -9,10 +9,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.Locale;
-import java.util.TimeZone;
 
 import ca.stclaircollege.fitgrind.api.Food;
 import ca.stclaircollege.fitgrind.api.FoodAPI;
@@ -190,16 +187,16 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     /**
      * Inserts routine into sqlite db. Parameters include the routine object.
-     * @param routine
+     * @param program
      */
-    public void insertRoutine(Routine routine) {
+    public void insertProgram(Program program) {
         // Create the writeable DB
         SQLiteDatabase db = getWritableDatabase();
         // Use contentvalues
         ContentValues values = new ContentValues();
         // put name and desc
-        values.put("name", routine.getName());
-        values.put("description", routine.getDescription());
+        values.put("name", program.getName());
+        values.put("description", program.getDescription());
         db.insert(WORKOUTROUTINE_TABLE_NAME, null, values);
     }
 
@@ -319,18 +316,18 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     /**
      * Updates specific row
-     * @param routine
+     * @param program
      */
-    public void updateRoutine(Routine routine) {
+    public void updateRoutine(Program program) {
         // create db
         SQLiteDatabase db = getWritableDatabase();
         // setup content values
         ContentValues values = new ContentValues();
         // update the values
-        values.put("name", routine.getName());
-        values.put("description", routine.getDescription());
+        values.put("name", program.getName());
+        values.put("description", program.getDescription());
         // update the db
-        db.update(WORKOUTROUTINE_TABLE_NAME, values, "id = ?", new String[]{String.valueOf(routine.getId())});
+        db.update(WORKOUTROUTINE_TABLE_NAME, values, "id = ?", new String[]{String.valueOf(program.getId())});
         db.close();
     }
 
@@ -426,21 +423,21 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     /**
      * Gets all the routine available that the person made.
-     * @return an ArrayList of Routine
+     * @return an ArrayList of Program
      */
-    public ArrayList<Routine> selectAllRoutine() {
+    public ArrayList<Program> selectAllRoutine() {
         // get readable db
         SQLiteDatabase db = getReadableDatabase();
         // create results
-        ArrayList<Routine> results = null;
+        ArrayList<Program> results = null;
         // CREATE A QUERY
         Cursor cursor = db.rawQuery("SELECT * FROM " + WORKOUTROUTINE_TABLE_NAME, null);
         if (cursor.moveToFirst()) {
-            results = new ArrayList<Routine>();
+            results = new ArrayList<Program>();
             // go through a do-while
             do {
                 // get the required string
-                results.add(new Routine(cursor.getInt(0), cursor.getString(1), cursor.getString(2)));
+                results.add(new Program(cursor.getInt(0), cursor.getString(1), cursor.getString(2)));
             } while (cursor.moveToNext());
         }
         db.close();

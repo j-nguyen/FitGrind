@@ -26,6 +26,7 @@
             android:name=".TabbedActivity"
             android:label="@string/title_activity_tabbed"
             android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".WorkoutExerciseActivity"></activity>
 
         <activity
             android:name=".SettingsActivity"
