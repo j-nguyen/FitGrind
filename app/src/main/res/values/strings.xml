@@ -68,5 +68,15 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="custom_food_name_label">Food Name</string>
+    <string name="food_hint_name">Enter in your food name</string>
+    <string name="custom_serving_label">Serving Size:</string>
+    <string name="servingsize_hint">Enter your food\'s serving size</string>
+    <string name="calories_hint">Enter food calories/energy</string>
+    <string name="custom_calories">Calories:</string>
+    <string name="custom_sugar">Sugar:</string>
+    <string name="sugar_hint">Food Sugar Content</string>
+    <string name="custom_totalfat">Total Fat:</string>
+    <string name="totalfat_hint">Food\'s Total Fat</string>
 
 </resources>
