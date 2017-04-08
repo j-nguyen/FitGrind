@@ -1,6 +1,7 @@
 package ca.stclaircollege.fitgrind;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -84,8 +85,12 @@ public class AddProgramFragment extends Fragment {
                 DatabaseHandler db = new DatabaseHandler(getContext());
                 db.insertProgram(program);
                 db.close();
+                Intent intent = new Intent();
+                intent.putExtra("program", program);
+                getActivity().setResult(1, intent);
                 fm = getActivity().getSupportFragmentManager();
                 fm.popBackStack();
+                getActivity().finish();
             }
         });
 

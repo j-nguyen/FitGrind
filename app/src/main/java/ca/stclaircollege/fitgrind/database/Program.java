@@ -1,10 +1,13 @@
 package ca.stclaircollege.fitgrind.database;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * Created by Allan on 4/1/2017.
  */
 
-public class Program {
+public class Program implements Parcelable {
     private long id;
     private String name;
     private String description;
@@ -47,4 +50,34 @@ public class Program {
     public String toString() {
         return getName();
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    protected Program(Parcel in) {
+        id = in.readLong();
+        name = in.readString();
+        description = in.readString();
+    }
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(id);
+        dest.writeString(name);
+        dest.writeString(description);
+    }
+
+    @SuppressWarnings("unused")
+    public static final Parcelable.Creator<Program> CREATOR = new Parcelable.Creator<Program>() {
+        @Override
+        public Program createFromParcel(Parcel in) {
+            return new Program(in);
+        }
+
+        @Override
+        public Program[] newArray(int size) {
+            return new Program[size];
+        }
+    };
 }
