@@ -100,15 +100,6 @@ public class ViewCalorieDayLogFragment extends Fragment {
             calorieGoal.setText(weightCalculator.getCalorieGoal());
             caloreObtained.setText("" + caloriesLeft);
 
-            // create event click listener
-//            mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//                @Override
-//                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                    // we will just pass it to the fragment
-//                }
-//            });
-
-
         } else {
             // if it is, we'll show up the textview
             noLogText.setVisibility(View.VISIBLE);
