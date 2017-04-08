@@ -50,6 +50,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final HashMap<String, String> CALORIE_VALUES = new HashMap<String, String>();
 
     // initialize for our static provider
+    // TODO: Fix this horror at some point
     static {
         KEY_MAP.put(208, "calories");
         KEY_MAP.put(269, "sugar");
@@ -323,7 +324,22 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         for (Nutrient nutrient : food.getNutrients()) values.put(KEY_MAP.get(nutrient.getNutrientId()), nutrient.getValue());
         // now finally insert from the values
         long id = db.insert(FOOD_TABLE_NAME, null, values);
-        db.close();
+        return id;
+    }
+
+    /**
+     * Inserts a custom type of food. A few things need to be adjusted.
+     * @param food
+     * @return
+     */
+    public long insertCustomFood(Food food) {
+        SQLiteDatabase db = getWritableDatabase();
+        // create content values
+        ContentValues values = new ContentValues();
+        values.put("name", food.getName());
+        values.put("serving", food.getServingSize());
+        for (Nutrient nutrient : food.getNutrients()) values.put(nutrient.getNutrient(), nutrient.getValue());
+        long id = db.insert(FOOD_TABLE_NAME, null, values);
         return id;
     }
 

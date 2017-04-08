@@ -12,7 +12,8 @@
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:padding="@dimen/padding">
 
             <LinearLayout
                 android:orientation="horizontal"
@@ -23,10 +24,10 @@
                 <TextView
                     android:text="@string/custom_food_name_label"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:id="@+id/food_name_label"
                     android:layout_weight="1"
-                    android:gravity="center_horizontal" />
+                    android:gravity="center" />
 
                 <EditText
                     android:layout_width="wrap_content"
@@ -47,10 +48,10 @@
                 <TextView
                     android:text="@string/custom_serving_label"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:id="@+id/custom_serving_label"
                     android:layout_weight="1"
-                    android:gravity="center_horizontal" />
+                    android:gravity="center" />
 
                 <EditText
                     android:layout_width="wrap_content"
@@ -71,10 +72,10 @@
                 <TextView
                     android:text="@string/custom_calories"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:id="@+id/calories_custom_label"
                     android:layout_weight="1"
-                    android:gravity="center_horizontal" />
+                    android:gravity="center" />
 
                 <EditText
                     android:layout_width="wrap_content"
@@ -95,10 +96,10 @@
                 <TextView
                     android:text="@string/custom_sugar"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:id="@+id/custom_sugar_label"
-                    android:gravity="center_horizontal" />
+                    android:gravity="center" />
 
                 <EditText
                     android:layout_height="wrap_content"
@@ -119,10 +120,10 @@
                 <TextView
                     android:text="@string/custom_totalfat"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:id="@+id/totalfat_label"
                     android:layout_weight="1"
-                    android:gravity="center_horizontal" />
+                    android:gravity="center" />
 
                 <EditText
                     android:layout_width="wrap_content"
@@ -143,9 +144,9 @@
                 <TextView
                     android:text="@string/carbohydrate_label"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:id="@+id/carbohydrate_label"
-                    android:gravity="center_horizontal"
+                    android:gravity="center"
                     android:layout_weight="1" />
 
                 <EditText
@@ -167,9 +168,9 @@
                 <TextView
                     android:text="@string/saturatedfat_label"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:id="@+id/saturatedfat_label"
-                    android:gravity="center_horizontal"
+                    android:gravity="center"
                     android:layout_weight="1" />
 
                 <EditText
@@ -191,9 +192,9 @@
                 <TextView
                     android:text="@string/transfat_label"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:id="@+id/transfat_label"
-                    android:gravity="center_horizontal"
+                    android:gravity="center"
                     android:layout_weight="1" />
 
                 <EditText
@@ -215,9 +216,9 @@
                 <TextView
                     android:text="@string/cholesterol_label"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:id="@+id/cholesterol_label"
-                    android:gravity="center_horizontal"
+                    android:gravity="center"
                     android:layout_weight="1" />
 
                 <EditText
@@ -239,9 +240,9 @@
                 <TextView
                     android:text="@string/sodium_label"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:id="@+id/sodium_label"
-                    android:gravity="center_horizontal"
+                    android:gravity="center"
                     android:layout_weight="1" />
 
                 <EditText
@@ -263,9 +264,9 @@
                 <TextView
                     android:text="@string/fiber_label"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:id="@+id/fiber_label"
-                    android:gravity="center_horizontal"
+                    android:gravity="center"
                     android:layout_weight="1" />
 
                 <EditText
@@ -287,9 +288,9 @@
                 <TextView
                     android:text="@string/protein_label"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:id="@+id/protein_label"
-                    android:gravity="center_horizontal"
+                    android:gravity="center"
                     android:layout_weight="1" />
 
                 <EditText
@@ -311,9 +312,9 @@
                 <TextView
                     android:text="@string/vitamina_label"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:id="@+id/vitamina_label"
-                    android:gravity="center_horizontal"
+                    android:gravity="center"
                     android:layout_weight="1" />
 
                 <EditText
@@ -335,9 +336,9 @@
                 <TextView
                     android:text="@string/vitaminc_label"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:id="@+id/vitaminc_label"
-                    android:gravity="center_horizontal"
+                    android:gravity="center"
                     android:layout_weight="1" />
 
                 <EditText
@@ -360,9 +361,9 @@
                 <TextView
                     android:text="@string/calcium_label"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:id="@+id/calcium_label"
-                    android:gravity="center_horizontal"
+                    android:gravity="center"
                     android:layout_weight="1" />
 
                 <EditText
@@ -384,9 +385,9 @@
                 <TextView
                     android:text="@string/iron_label"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:id="@+id/iron_label"
-                    android:gravity="center_horizontal"
+                    android:gravity="center"
                     android:layout_weight="1" />
 
                 <EditText
@@ -408,9 +409,9 @@
                 <TextView
                     android:text="@string/potassium_label"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:id="@+id/potassium_label"
-                    android:gravity="center_horizontal"
+                    android:gravity="center"
                     android:layout_weight="1" />
 
                 <EditText
