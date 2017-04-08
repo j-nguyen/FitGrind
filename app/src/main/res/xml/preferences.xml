@@ -11,24 +11,28 @@
     <EditTextPreference
         android:selectAllOnFocus="true"
         android:singleLine="true"
+        android:inputType="number"
         android:title="@string/age_title"
         android:key="@string/age_key"
         android:summary="@string/age_summary" />
     <EditTextPreference
         android:selectAllOnFocus="true"
         android:singleLine="true"
+        android:inputType="number|numberDecimal"
         android:title="@string/height_title"
         android:key="@string/height_key"
         android:summary="@string/height_summary" />
     <EditTextPreference
         android:selectAllOnFocus="true"
         android:singleLine="true"
+        android:inputType="number|numberDecimal"
         android:title="@string/weight_label_title"
         android:key="@string/weight_key"
         android:summary="@string/weight_description" />
     <EditTextPreference
         android:selectAllOnFocus="true"
         android:singleLine="true"
+        android:inputType="number|numberDecimal"
         android:title="@string/weight_goal_title"
         android:key="@string/weight_goal_key"
         android:summary="@string/weight_goal_summary" />
@@ -39,4 +43,11 @@
         android:entryValues="@array/activity_value"
         android:key="lifestyle_key"
         android:summary="@string/lifestyle_summary" />
+    <ListPreference
+        android:defaultValue="500"
+        android:title="@string/weight_week_label"
+        android:entries="@array/weight_key"
+        android:entryValues="@array/weight_value"
+        android:key="weight_per_week"
+        android:summary="@string/weight_week_summary" />
 </PreferenceScreen>

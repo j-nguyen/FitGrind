@@ -1,6 +1,9 @@
 package ca.stclaircollege.fitgrind.api;
 
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * This class retreives information from the Item class. By getting the NDBNo, we can retreive
  * nutrition value from the food.
@@ -8,7 +11,7 @@ package ca.stclaircollege.fitgrind.api;
  * @version 1.0
  */
 
-public class Nutrient {
+public class Nutrient implements Parcelable {
     public static final String ID_KEY = "nutrient_id";
     public static final String NUTRIENT_KEY = "nutrient";
     public static final String UNIT_KEY = "unit";
@@ -16,7 +19,7 @@ public class Nutrient {
 
     private int nutrientId;
     private String nutrient;
-    private String unit;
+    private String unit = "g"; // default
     private double value;
 
     public Nutrient(int nutrientId, String nutrient, String unit, String value) {
@@ -30,6 +33,32 @@ public class Nutrient {
     public Nutrient(String nutrient, double value) {
         this.nutrient = nutrient;
         this.value = value;
+
+        // this is using db so we can check for units in this case. There are only a select few that uses different units
+        // TODO: Fix something better than this, this is awful
+        switch (nutrient) {
+            case "Vitamin A":
+                this.unit =  "\u03bcg";
+                break;
+            case "Calcium":
+            case "Vitamin C":
+            case "Iron":
+            case "Cholesterol":
+            case "Potassium":
+            case "Sodium":
+                this.unit = "mg";
+                break;
+            case "Calories":
+                this.unit = "kcal";
+                break;
+        }
+    }
+
+    protected Nutrient(Parcel in) {
+        nutrientId = in.readInt();
+        nutrient = in.readString();
+        unit = in.readString();
+        value = in.readDouble();
     }
 
     public int getNutrientId() {
@@ -47,4 +76,34 @@ public class Nutrient {
     public double getValue() {
         return value;
     }
+
+    public void setValue(double value) {
+        this.value = value;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(nutrientId);
+        dest.writeString(nutrient);
+        dest.writeString(unit);
+        dest.writeDouble(value);
+    }
+
+    @SuppressWarnings("unused")
+    public static final Parcelable.Creator<Nutrient> CREATOR = new Parcelable.Creator<Nutrient>() {
+        @Override
+        public Nutrient createFromParcel(Parcel in) {
+            return new Nutrient(in);
+        }
+
+        @Override
+        public Nutrient[] newArray(int size) {
+            return new Nutrient[size];
+        }
+    };
 }
