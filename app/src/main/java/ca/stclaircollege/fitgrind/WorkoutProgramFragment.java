@@ -87,10 +87,8 @@ public class WorkoutProgramFragment extends Fragment {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                FragmentTransaction ft = fm.beginTransaction();
-                ft.addToBackStack(null);
-                ft.replace(R.id.content_main, new AddProgramFragment());
-                ft.commit();
+                Intent intent = new Intent(getActivity(), AddProgramActivity.class);
+                startActivity(intent);
             }
         });
         list = (ListView) view.findViewById(R.id.workoutProgramList);
@@ -115,6 +113,10 @@ public class WorkoutProgramFragment extends Fragment {
         list.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                DatabaseHandler db = new DatabaseHandler(getContext());
+                Program program = programsList.get(position);
+                db.deleteRoutine(program.getId());
+                db.close();
                 programsList.remove(position);
                 adapter.notifyDataSetChanged();
                 return false;

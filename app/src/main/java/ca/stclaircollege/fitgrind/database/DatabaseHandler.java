@@ -429,11 +429,10 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         // get readable db
         SQLiteDatabase db = getReadableDatabase();
         // create results
-        ArrayList<Program> results = null;
+        ArrayList<Program> results = new ArrayList<Program>();
         // CREATE A QUERY
         Cursor cursor = db.rawQuery("SELECT * FROM " + WORKOUTROUTINE_TABLE_NAME, null);
         if (cursor.moveToFirst()) {
-            results = new ArrayList<Program>();
             // go through a do-while
             do {
                 // get the required string
