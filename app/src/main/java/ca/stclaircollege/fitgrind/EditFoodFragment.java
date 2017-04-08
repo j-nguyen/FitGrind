@@ -90,13 +90,13 @@ public class EditFoodFragment extends Fragment {
                 mListView.setAdapter(new CustomAdapter(getContext(), food.getNutrients()));
 
                 // now we also want to edit by using the long item click listener
-                mListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+                mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
-                    public boolean onItemLongClick(AdapterView<?> adapterView, View view, final int i, long l) {
+                    public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
                         // create a dialog
                         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
                         // setup title
-                        Nutrient nutrient = (Nutrient) mListView.getItemAtPosition(i);
+                        Nutrient nutrient = (Nutrient) mListView.getItemAtPosition(position);
                         builder.setTitle("Edit " + nutrient.getNutrient() + " Value");
 
                         // Set up the input
@@ -118,7 +118,7 @@ public class EditFoodFragment extends Fragment {
                                 // we can use Food Id
                                 food.setId(foodId);
                                 // updaet the nutrient too
-                                food.getNutrients().get(i).setValue(Double.parseDouble(input.getText().toString()));
+                                food.getNutrients().get(position).setValue(Double.parseDouble(input.getText().toString()));
                                 // start the query
                                 if (db.updateFood(food)) {
                                     ((BaseAdapter) mListView.getAdapter()).notifyDataSetChanged();
@@ -134,7 +134,6 @@ public class EditFoodFragment extends Fragment {
                             }
                         });
                         builder.show();
-                        return true;
                     }
                 });
             }
@@ -155,7 +154,7 @@ public class EditFoodFragment extends Fragment {
             Nutrient nutrient = getItem(position);
             // Check if an existing view is being reused, otherwise inflate the view
             if (convertView == null)
-                convertView = LayoutInflater.from(getContext()).inflate(R.layout.view_food_item, parent, false);
+                convertView = LayoutInflater.from(getContext()).inflate(R.layout.view_edited_food_item, parent, false);
 
             // connect Text View
             TextView nutrientName = (TextView) convertView.findViewById(R.id.nutrient_name);
