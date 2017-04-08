@@ -27,4 +27,17 @@
     </string-array>
 
 
+    <string-array name="weight_key">
+        <item>Maintain weight</item>
+        <item>0.5 pounds per week</item>
+        <item>1 pounds per week</item>
+        <item>1.5 pounds per week</item>
+    </string-array>
+
+    <string-array name="weight_value">
+        <item>0</item>
+        <item>250</item>
+        <item>500</item>
+        <item>750</item>
+    </string-array>
 </resources>

@@ -49,11 +49,11 @@
     <string name="gender_title_label">Gender</string>
     <string name="gender_summary">Enter your gender (Male or Female)</string>
     <string name="weight_key">weight</string>
-    <string name="weight_label_title">Current Weight (kg)</string>
-    <string name="weight_description">Enter in your current weight in kg</string>
+    <string name="weight_label_title">Current Weight (lbs)</string>
+    <string name="weight_description">Enter in your current weight in lbs</string>
     <string name="height_key">height</string>
-    <string name="height_title">Enter your height (cm)</string>
-    <string name="height_summary">Enter in your height (Example: 186 cm)</string>
+    <string name="height_title">Enter your height (in)</string>
+    <string name="height_summary">Enter in your height (Example: 53 in)</string>
     <string name="age_key">age</string>
     <string name="age_title">Enter in your age</string>
     <string name="age_summary">Enter in your current age. (Example: 15)</string>
@@ -78,5 +78,7 @@
     <string name="sugar_hint">Food Sugar Content</string>
     <string name="custom_totalfat">Total Fat:</string>
     <string name="totalfat_hint">Food\'s Total Fat</string>
+    <string name="weight_week_label">Weight Per Week</string>
+    <string name="weight_week_summary">Select how much weight you want to lose or gain per week.</string>
 
 </resources>

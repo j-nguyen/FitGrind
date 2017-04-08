@@ -59,11 +59,9 @@ public class MainFragment extends Fragment {
     private ListView mListView;
     private ArrayList<Food> recentFood;
 
-    // formula
-    private double BMR;
-
     // connect from the xml layout here
     private FloatingActionButton fab;
+    private WeightCalculator weightCalculator;
 
     public MainFragment() {}
 
@@ -90,29 +88,7 @@ public class MainFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         // Create our shared preferences here
-        SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        String gender = SP.getString("gender_keys", "Male");
-        double age = Double.parseDouble(SP.getString("age", "0"));
-        double height = Double.parseDouble(SP.getString("height", "0"));
-        double weight = Double.parseDouble(SP.getString("weight", "0"));
-        double weight_goal = Double.parseDouble(SP.getString("weight_goal", "0"));
-        double lifestyle = Double.parseDouble(SP.getString("lifestyle_key", "1.2"));
-
-        // now we check and calculate BMR formula based on given results.
-        if (gender.equals("Male")) {
-            BMR = (66 + (13.7 * weight) + (5 * height) - (6.8 * age)) * lifestyle;
-        } else {
-            // now do it for female
-            BMR = (655 + (9.6 * weight) + (1.8 * height) - (4.7 * age)) * lifestyle;
-        }
-
-        if (weight_goal > weight) {
-            BMR += 500;
-        } else {
-            BMR -= 500;
-        }
-
-        System.out.println(BMR);
+        weightCalculator = new WeightCalculator(getActivity());
     }
 
     @Override
@@ -128,6 +104,10 @@ public class MainFragment extends Fragment {
         mCaloriesGoal = (TextView) view.findViewById(R.id.calories_goal);
         mWeightGoal = (TextView) view.findViewById(R.id.weight_goal);
         mListView = (ListView) view.findViewById(R.id.calorie_listview);
+
+        // let's set up calories and weight goal
+        mCaloriesGoal.setText(weightCalculator.getCalorieGoal());
+        mWeightGoal.setText(weightCalculator.getWeightGoal());
 
         // Create a database
         DatabaseHandler db = new DatabaseHandler(getContext());
