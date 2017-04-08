@@ -588,9 +588,27 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             // return food log
             foodLog = new FoodLog(now, foodList);
         }
-        db.close();
         // return null if nothing
         return foodLog;
+    }
+
+    public double selectCaloriesAt(int day) {
+        double calories = -1;
+        // get db
+        SQLiteDatabase db = getReadableDatabase();
+        // create the dates
+        String now = getCurrDateMinus(day);
+        String sql = "SELECT SUM(food.calories) FROM food_log INNER JOIN food ON food_log.food_id = food.id " +
+                "WHERE food_log.date BETWEEN ? AND ?;";
+        Cursor cursor = db.rawQuery(sql, new String[]{now + " 00:00:00", now + "23:59:59"});
+        // check
+        if (cursor.moveToFirst()) {
+            cursor.moveToLast();
+            // and now get the value
+            calories =  cursor.getDouble(0);
+        }
+        // return -1
+        return calories;
     }
 
     /**

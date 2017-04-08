@@ -65,7 +65,7 @@
     <string name="lifestyle_summary">Your activity lifestyle.</string>
     <string name="gender_default_value">Male</string>
 
-    <string name="calories_obtained">Calories Obtained</string>
+    <string name="calories_obtained">Calories Left</string>
 
     <string name="custom_food_name_label">Food Name</string>
     <string name="food_hint_name">Enter in your food name</string>

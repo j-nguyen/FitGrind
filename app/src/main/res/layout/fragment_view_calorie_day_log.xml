@@ -33,11 +33,12 @@
                     android:layout_weight="1">
 
                     <TextView
-                        android:text="TextView"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:id="@+id/textView4"
-                        android:gravity="center_horizontal" />
+                        android:id="@+id/calorie_goal_label"
+                        android:gravity="center_horizontal"
+                        android:textStyle="normal|bold"
+                        android:text="--" />
 
                     <TextView
                         android:text="@string/calorie_goal"
@@ -55,12 +56,13 @@
                     android:layout_weight="1">
 
                     <TextView
-                        android:text="TextView"
+                        android:text="--"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:id="@+id/textView6"
+                        android:id="@+id/calorie_obtained_label"
                         android:layout_weight="1"
-                        android:gravity="center_horizontal" />
+                        android:gravity="center_horizontal"
+                        android:textStyle="normal|bold" />
 
                     <TextView
                         android:text="@string/calories_obtained"
@@ -87,6 +89,8 @@
     <ListView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/calorie_listview" />
+        android:id="@+id/calorie_listview"
+        android:divider="@android:color/transparent"
+        android:dividerHeight="@dimen/padding" />
 
 </LinearLayout>

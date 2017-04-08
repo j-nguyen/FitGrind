@@ -48,6 +48,10 @@ public class WeightCalculator {
         BMR = (weightgoal > weight) ? BMR + deficit : BMR - deficit;
     }
 
+    public double getBMR() {
+        return Math.floor(BMR);
+    }
+
     public String getCalorieGoal() {
         // let's round it down automatically, instead of rounding up to be safe.
         return String.format("%.0f", Math.floor(this.BMR));

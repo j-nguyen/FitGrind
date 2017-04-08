@@ -82,6 +82,13 @@ public class Food implements Parcelable {
         return nutrients;
     }
 
+    public Nutrient getNutrient(String name) {
+        for (Nutrient nutrient : nutrients) {
+            if (nutrient.getNutrient().equalsIgnoreCase("calories")) return nutrient;
+        }
+        return null;
+    }
+
     protected Food(Parcel in) {
         id = in.readLong();
         logDate = in.readString();

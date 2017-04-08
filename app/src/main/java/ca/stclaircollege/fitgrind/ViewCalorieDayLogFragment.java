@@ -5,16 +5,25 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v7.widget.PopupMenu;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
 import ca.stclaircollege.fitgrind.api.Food;
+import ca.stclaircollege.fitgrind.database.DatabaseHandler;
 import ca.stclaircollege.fitgrind.database.FoodLog;
 
 
@@ -30,11 +39,13 @@ public class ViewCalorieDayLogFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
+    private static final String ARG_PARAM2 = "param2";
 
     // TODO: Rename and change types of parameters
     private FoodLog foodLog;
+    private double calories;
     private ListView mListView;
-    private TextView noLogText;
+    private TextView noLogText, calorieGoal, caloreObtained;
 
     private OnFragmentInteractionListener mListener;
 
@@ -47,10 +58,11 @@ public class ViewCalorieDayLogFragment extends Fragment {
      * @return A new instance of fragment ViewCalorieDayLogFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static ViewCalorieDayLogFragment newInstance(Parcelable foodLog) {
+    public static ViewCalorieDayLogFragment newInstance(Parcelable foodLog, double calories) {
         ViewCalorieDayLogFragment fragment = new ViewCalorieDayLogFragment();
         Bundle args = new Bundle();
         args.putParcelable(ARG_PARAM1, foodLog);
+        args.putDouble(ARG_PARAM2, calories);
         fragment.setArguments(args);
         return fragment;
     }
@@ -60,6 +72,7 @@ public class ViewCalorieDayLogFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             foodLog = getArguments().getParcelable(ARG_PARAM1);
+            calories = getArguments().getDouble(ARG_PARAM2);
         }
     }
 
@@ -72,9 +85,29 @@ public class ViewCalorieDayLogFragment extends Fragment {
         // connect design
         mListView = (ListView) view.findViewById(R.id.calorie_listview);
         noLogText = (TextView) view.findViewById(R.id.no_log_text);
+        calorieGoal = (TextView) view.findViewById(R.id.calorie_goal_label);
+        caloreObtained = (TextView) view.findViewById(R.id.calorie_obtained_label);
 
         // check if object is able to be passed through
         if (foodLog != null) {
+            // set the adapter
+            CustomAdapter adapter = new CustomAdapter(getActivity(), foodLog.getFoodList());
+            mListView.setAdapter(adapter);
+
+            // We now also want to get the calories obtained during this time and the calorie goal
+            WeightCalculator weightCalculator = new WeightCalculator(getContext());
+            double caloriesLeft = weightCalculator.getBMR() - calories;
+            calorieGoal.setText(weightCalculator.getCalorieGoal());
+            caloreObtained.setText("" + caloriesLeft);
+
+            // create event click listener
+//            mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//                @Override
+//                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//                    // we will just pass it to the fragment
+//                }
+//            });
+
 
         } else {
             // if it is, we'll show up the textview
@@ -93,9 +126,9 @@ public class ViewCalorieDayLogFragment extends Fragment {
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
+        public View getView(final int position, View convertView, ViewGroup parent) {
             // Get the data item for this position
-            Food food = getItem(position);
+            final Food food = getItem(position);
             // Check if an existing view is being reused, otherwise inflate the view
             if (convertView == null) convertView = LayoutInflater.from(getContext()).inflate(R.layout.view_calorie_log, parent, false);
 
@@ -107,7 +140,50 @@ public class ViewCalorieDayLogFragment extends Fragment {
             name.setText(food.getName());
             serving.setText(food.getServingSize());
             recordedDate.setText(food.getLogDate());
-            calories.setText(food.getNutrients().get(0).getValue() + " " + food.getNutrients().get(0).getNutrient());
+            calories.setText(food.getNutrient("calories").getValue() + " " + food.getNutrient("calories").getNutrient());
+
+            // create ImageView
+            final ImageView menuButton = (ImageView) convertView.findViewById(R.id.menuButton);
+
+            // create a listener
+            menuButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // instantiate a pop up menu
+                    PopupMenu menu = new PopupMenu(getContext(), menuButton);
+                    // inflate the pop up menu with the xml
+                    menu.getMenuInflater().inflate(R.menu.popup_menu, menu.getMenu());
+
+                    // create an event listener
+                    menu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                        @Override
+                        public boolean onMenuItemClick(MenuItem item) {
+                            switch (item.getItemId()) {
+                                case R.id.edit:
+                                    FragmentTransaction trans = getActivity().getSupportFragmentManager().beginTransaction();
+                                    trans.replace(R.id.content_main, EditFoodFragment.newInstance(food.getId()));
+                                    trans.addToBackStack(null);
+                                    trans.commit();
+                                    break;
+                                case R.id.delete:
+                                    DatabaseHandler db = new DatabaseHandler(getContext());
+                                    if (db.deleteFood(food.getId())) {
+                                        foodLog.getFoodList().remove(position);
+                                        // we also wanna make a notify update
+                                        ((BaseAdapter) mListView.getAdapter()).notifyDataSetChanged();
+                                        Toast.makeText(getContext(), R.string.db_delete_success, Toast.LENGTH_SHORT).show();
+                                    }
+                                    db.close();
+                                    break;
+                            }
+                            return true;
+                        }
+                    });
+
+                    // finally show the pop up menu
+                    menu.show();
+                }
+            });
 
             // Return the completed view to render on screen
             return convertView;
