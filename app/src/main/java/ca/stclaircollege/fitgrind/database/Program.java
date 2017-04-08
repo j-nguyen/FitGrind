@@ -4,17 +4,17 @@ package ca.stclaircollege.fitgrind.database;
  * Created by Allan on 4/1/2017.
  */
 
-public class Routine {
+public class Program {
     private long id;
     private String name;
     private String description;
 
-    public Routine(String name, String description) {
+    public Program(String name, String description) {
         this.name = name;
         this.description = description;
     }
 
-    public Routine(long id, String name, String description) {
+    public Program(long id, String name, String description) {
         this.id = id;
         this.name = name;
         this.description = description;

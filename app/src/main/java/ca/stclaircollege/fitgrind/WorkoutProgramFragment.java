@@ -1,9 +1,14 @@
 package ca.stclaircollege.fitgrind;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +19,8 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-import ca.stclaircollege.fitgrind.database.Routine;
+import ca.stclaircollege.fitgrind.database.DatabaseHandler;
+import ca.stclaircollege.fitgrind.database.Program;
 
 
 /**
@@ -69,27 +75,42 @@ public class WorkoutProgramFragment extends Fragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
     }
+    FragmentManager fm;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-
         View view = inflater.inflate(R.layout.fragment_workout_program, container, false);
+        fm = getActivity().getSupportFragmentManager();
+        FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fabProgram);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                FragmentTransaction ft = fm.beginTransaction();
+                ft.addToBackStack(null);
+                ft.replace(R.id.content_main, new AddProgramFragment());
+                ft.commit();
+            }
+        });
         list = (ListView) view.findViewById(R.id.workoutProgramList);
-        final ArrayList<Routine> programsList = new ArrayList<Routine>();
-        programsList.add(new Routine("text", "test"));
-        programsList.add(new Routine("text", "test"));
-        programsList.add(new Routine("text", "test"));
-        programsList.add(new Routine("text", "test"));
-        programsList.add(new Routine("text", "test"));
-        programsList.add(new Routine("text", "test"));
-        programsList.add(new Routine("text", "test"));
-        programsList.add(new Routine("text", "test"));
-        programsList.add(new Routine("text", "test"));
+        DatabaseHandler db = new DatabaseHandler(getContext());
+        //final ArrayList<Program> programsList = new ArrayList<Program>();
+        final ArrayList<Program> programsList = db.selectAllRoutine();
+        db.close();
+
         final CustomAdapter adapter = new CustomAdapter(getContext(), programsList);
         list.setAdapter(adapter);
-        
+
+        //launch to new activity
+        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(getActivity(), WorkoutExerciseActivity.class);
+                startActivity(intent);
+            }
+        });
+
         //remove each list
         list.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
@@ -103,13 +124,13 @@ public class WorkoutProgramFragment extends Fragment {
     }
 
 
-    public class CustomAdapter extends ArrayAdapter<Routine> {
-        public CustomAdapter(Context context, ArrayList<Routine> items) {
+    public class CustomAdapter extends ArrayAdapter<Program> {
+        public CustomAdapter(Context context, ArrayList<Program> items) {
             super(context, 0, items);
         }
         //get each item and assign a view to it
         public View getView(int position, View convertView, ViewGroup parent){
-            final Routine item = getItem(position);
+            final Program item = getItem(position);
             if(convertView == null){
                 convertView = LayoutInflater.from(getContext()).inflate(R.layout.program_view, parent, false);
             }
