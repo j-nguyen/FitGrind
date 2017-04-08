@@ -39,4 +39,24 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_settings">Settings</string>
+
+    <!-- Strings related to Settings -->
+    <string name="gender_title_label">Gender</string>
+    <string name="gender_summary">Enter your gender (Male or Female)</string>
+    <string name="weight_key" />
+    <string name="weight_label_title">Current Weight (lbs)</string>
+    <string name="weight_description">Enter in your current weight in lbs</string>
+    <string name="height_key" />
+    <string name="height_title">Enter your height</string>
+    <string name="height_summary">Enter in your height (Example: 5\'11)</string>
+    <string name="age_key" />
+    <string name="age_title">Enter in your age</string>
+    <string name="age_summary">Enter in your current age. (Example: 15)</string>
+    <string name="weight_goal_key" />
+    <string name="weight_goal_title">Enter your desired weight goal</string>
+    <string name="weight_goal_summary">Enter in the desired weight you wish to be</string>
+    <string name="lifestyle_title">Enter your active lifestyle</string>
+    <string name="lifestyle_summary">Your activity lifestyle.</string>
+    <string name="gender_default_value">Male</string>
 </resources>

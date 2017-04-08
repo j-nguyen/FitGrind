@@ -511,6 +511,31 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return foodLog;
     }
 
+    /**
+     * Selects the 10 recent food logs
+     * @return An arrayList of food
+     */
+    public ArrayList<Food> selectRecentFoodLog() {
+        ArrayList<Food> foodList = null;
+        // start db
+        SQLiteDatabase db = getReadableDatabase();
+        // create sql statement
+        String sql = "SELECT food_log.date, food.id, food.name, food.serving, food.calories FROM food_log INNER JOIN food ON food_log.food_id = food.id " +
+                "ORDER BY food_log.date LIMIT 10;";
+        Cursor cursor = db.rawQuery(sql, null);
+        if (cursor.moveToFirst()) {
+            foodList = new ArrayList<Food>();
+            do {
+                Food food = new Food(cursor.getLong(1), cursor.getString(2), cursor.getString(3), cursor.getString(0));
+                // we'll be forced to iterate through the hash map to get the key values
+                food.addNutrient(new Nutrient("calories", cursor.getDouble(cursor.getColumnIndex("calories"))));
+                foodList.add(food);
+
+            } while (cursor.moveToNext());
+        }
+        return foodList;
+    }
+
     private String getCurrDateMinus(int day) {
         final Calendar cal = Calendar.getInstance();
         cal.add(Calendar.DATE, -day);
