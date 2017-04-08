@@ -8,6 +8,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +19,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import ca.stclaircollege.fitgrind.database.DatabaseHandler;
 import ca.stclaircollege.fitgrind.database.Program;
 
 
@@ -80,28 +82,23 @@ public class WorkoutProgramFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_workout_program, container, false);
-
+        fm = getActivity().getSupportFragmentManager();
         FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fabProgram);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                FragmentTransaction ft = fm.beginTransaction();
+                ft.addToBackStack(null);
+                ft.replace(R.id.content_main, new AddProgramFragment());
+                ft.commit();
             }
         });
-
-        fm = getActivity().getSupportFragmentManager();
         list = (ListView) view.findViewById(R.id.workoutProgramList);
-        final ArrayList<Program> programsList = new ArrayList<Program>();
-        programsList.add(new Program("text", "test"));
-        programsList.add(new Program("text", "test"));
-        programsList.add(new Program("text", "test"));
-        programsList.add(new Program("text", "test"));
-        programsList.add(new Program("text", "test"));
-        programsList.add(new Program("text", "test"));
-        programsList.add(new Program("text", "test"));
-        programsList.add(new Program("text", "test"));
-        programsList.add(new Program("text", "test"));
+        DatabaseHandler db = new DatabaseHandler(getContext());
+        //final ArrayList<Program> programsList = new ArrayList<Program>();
+        final ArrayList<Program> programsList = db.selectAllRoutine();
+        db.close();
+
         final CustomAdapter adapter = new CustomAdapter(getContext(), programsList);
         list.setAdapter(adapter);
 
