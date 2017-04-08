@@ -124,6 +124,7 @@ public class ViewFoodFragment extends Fragment {
                         mFoodWeight.setText(currFood.getServingSize());
                         mListView.setAdapter(new CustomAdapter(getContext(), currFood.getNutrients()));
                     } catch (JSONException e) {
+                        Toast.makeText(getContext(), R.string.invalid_nutrients, Toast.LENGTH_SHORT).show();
                         e.printStackTrace();
                     }
                 }
@@ -131,7 +132,7 @@ public class ViewFoodFragment extends Fragment {
                 @Override
                 public void onError(ANError anError) {
                     // output toast text if error
-                    Toast.makeText(getContext(), R.string.invalid_info, Toast.LENGTH_LONG).show();
+                    Toast.makeText(getContext(), R.string.invalid_info, Toast.LENGTH_SHORT).show();
                 }
             });
         }

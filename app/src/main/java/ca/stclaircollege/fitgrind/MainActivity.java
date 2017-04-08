@@ -39,11 +39,6 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        // SharedPrefences Test
-        SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(this);
-        String gender = SP.getString("gender_keys", "Male");
-        System.out.println(gender);
-
         // set the layout here
         FragmentTransaction trans = fm.beginTransaction();
         trans.replace(R.id.content_main, new MainFragment());

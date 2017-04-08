@@ -2,19 +2,24 @@ package ca.stclaircollege.fitgrind;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.PopupMenu;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -46,13 +51,16 @@ public class MainFragment extends Fragment {
     private static final String ARG_PARAM2 = "param2";
 
     // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+
 
     private OnFragmentInteractionListener mListener;
 
     private TextView mCurrentDate, mLastLoggedCalories, mLastLoggedWeight, mCaloriesGoal, mWeightGoal;
     private ListView mListView;
+    private ArrayList<Food> recentFood;
+
+    // formula
+    private double BMR;
 
     // connect from the xml layout here
     private FloatingActionButton fab;
@@ -81,10 +89,30 @@ public class MainFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+        // Create our shared preferences here
+        SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        String gender = SP.getString("gender_keys", "Male");
+        double age = Double.parseDouble(SP.getString("age", "0"));
+        double height = Double.parseDouble(SP.getString("height", "0"));
+        double weight = Double.parseDouble(SP.getString("weight", "0"));
+        double weight_goal = Double.parseDouble(SP.getString("weight_goal", "0"));
+        double lifestyle = Double.parseDouble(SP.getString("lifestyle_key", "1.2"));
+
+        // now we check and calculate BMR formula based on given results.
+        if (gender.equals("Male")) {
+            BMR = (66 + (13.7 * weight) + (5 * height) - (6.8 * age)) * lifestyle;
+        } else {
+            // now do it for female
+            BMR = (655 + (9.6 * weight) + (1.8 * height) - (4.7 * age)) * lifestyle;
         }
+
+        if (weight_goal > weight) {
+            BMR += 500;
+        } else {
+            BMR -= 500;
+        }
+
+        System.out.println(BMR);
     }
 
     @Override
@@ -104,7 +132,7 @@ public class MainFragment extends Fragment {
         // Create a database
         DatabaseHandler db = new DatabaseHandler(getContext());
         // retrieve a food log
-        final ArrayList<Food> recentFood = db.selectRecentFoodLog();
+        recentFood = db.selectRecentFoodLog();
         if (recentFood != null) mListView.setAdapter(new CustomAdapter(getContext(), recentFood));
 
         // we want to set the text view for last logged weight, last calories and calories goal
@@ -112,9 +140,13 @@ public class MainFragment extends Fragment {
         mCurrentDate.setText(new SimpleDateFormat("yyyy-MM-dd").format(cal.getTime()));
 
         // set up for last logged, we'll need to db this one
-        mLastLoggedCalories.setText("Recent food log: " + db.lastRecordedCalorieLog());
-        if (db.lastRecordedWeightLog() != null) mLastLoggedWeight.setText("Recent weight log: " + db.lastRecordedWeightLog());
+        String calorieLogDate = (db.lastRecordedCalorieLog() != null) ? db.lastRecordedCalorieLog() : "";
+        String weightLogDate = (db.lastRecordedWeightLog() != null) ? db.lastRecordedWeightLog() : "";
         db.close();
+
+        // set the text
+        mLastLoggedCalories.setText("Recent food log: " + calorieLogDate);
+        mLastLoggedWeight.setText("Recent weight log: " + weightLogDate);
 
         // set a long lcick for mlistview
         mListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
@@ -177,9 +209,9 @@ public class MainFragment extends Fragment {
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
+        public View getView(final int position, View convertView, ViewGroup parent) {
             // Get the data item for this position
-            Food food = getItem(position);
+            final Food food = getItem(position);
             // Check if an existing view is being reused, otherwise inflate the view
             if (convertView == null) convertView = LayoutInflater.from(getContext()).inflate(R.layout.view_calorie_log, parent, false);
 
@@ -187,6 +219,49 @@ public class MainFragment extends Fragment {
             TextView serving = (TextView) convertView.findViewById(R.id.calorie_serving);
             TextView recordedDate = (TextView) convertView.findViewById(R.id.recorded_date);
             TextView calories = (TextView) convertView.findViewById(R.id.calorie_calories);
+
+            // create ImageView
+            final ImageView menuButton = (ImageView) convertView.findViewById(R.id.menuButton);
+
+            // create a listener
+            menuButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // instantiate a pop up menu
+                    PopupMenu menu = new PopupMenu(getContext(), menuButton);
+                    // inflate the pop up menu with the xml
+                    menu.getMenuInflater().inflate(R.menu.popup_menu, menu.getMenu());
+
+                    // create an event listener
+                    menu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                        @Override
+                        public boolean onMenuItemClick(MenuItem item) {
+                            switch (item.getItemId()) {
+                                case R.id.edit:
+                                    FragmentTransaction trans = getActivity().getSupportFragmentManager().beginTransaction();
+                                    trans.replace(R.id.content_main, EditFoodFragment.newInstance(food.getId()));
+                                    trans.addToBackStack(null);
+                                    trans.commit();
+                                    break;
+                                case R.id.delete:
+                                    DatabaseHandler db = new DatabaseHandler(getContext());
+                                    if (db.deleteFood(food.getId())) {
+                                        recentFood.remove(position);
+                                        // we also wanna make a notify update
+                                        ((BaseAdapter) mListView.getAdapter()).notifyDataSetChanged();
+                                        Toast.makeText(getContext(), R.string.db_delete_success, Toast.LENGTH_SHORT).show();
+                                    }
+                                    db.close();
+                                    break;
+                            }
+                            return true;
+                        }
+                    });
+
+                    // finally show the pop up menu
+                    menu.show();
+                }
+            });
 
             name.setText(food.getName());
             serving.setText(food.getServingSize());
