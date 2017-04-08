@@ -28,7 +28,7 @@
     <string name="food_name_label">Food Name:</string>
     <string name="food_serving_label">Serving Size:</string>
 
-    <!-- Invalid Information -->
+    <!-- Invalid/Valid Information -->
     <string name="invalid_search">Could not search! Invalid Search.</string>
     <string name="item_not_exist">Food or Drink you entered does not exist.</string>
     <string name="invalid_nutrients">Could not retrieve nutrients.</string>
@@ -37,6 +37,7 @@
     <string name="db_insert_success">Successfully inserted!</string>
     <string name="db_update_success">Successfully updated!</string>
     <string name="db_delete_success">Successfully deleted!</string>
+    <string name="invalid_field">Some fields have not been entered! Please enter all the information.</string>
 
     <!-- Info -->
     <string name="results_title">Calorie Results</string>
@@ -66,7 +67,6 @@
 
     <string name="calories_obtained">Calories Obtained</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="custom_food_name_label">Food Name</string>
     <string name="food_hint_name">Enter in your food name</string>
