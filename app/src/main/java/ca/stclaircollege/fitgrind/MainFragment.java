@@ -2,6 +2,7 @@ package ca.stclaircollege.fitgrind;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.net.Uri;
@@ -91,7 +92,40 @@ public class MainFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         // Create our shared preferences here
-        weightCalculator = new WeightCalculator(getActivity());
+        final SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(this.getActivity());
+        // we want to launch an activity once, to ask the user if they've set-up their settings.
+        // If they choose no, then we dont bother with them anymore.
+        boolean isStarted = SP.getBoolean("last_start", false);
+        // if it hasn't been then we can launch dialog
+        if (!isStarted) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+            builder.setTitle("Food Options");
+            builder.setMessage("Please set-up your personalized fitness, to get the full experience!");
+            builder.setPositiveButton("Go to Settings", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    SharedPreferences.Editor edit = SP.edit();
+                    edit.putBoolean("last_start", Boolean.TRUE);
+                    edit.commit();
+                    // start activity here
+                    Intent intent = new Intent(getActivity(), SettingsActivity.class);
+                    startActivity(intent);
+                }
+            });
+            builder.setNegativeButton("I\'ll do it later.", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    SharedPreferences.Editor edit = SP.edit();
+                    edit.putBoolean("last_start", Boolean.TRUE);
+                    edit.commit();
+                }
+            });
+            builder.show();
+        }
+
+
+        // create our weight calculator
+        weightCalculator = new WeightCalculator(SP);
     }
 
     @Override
