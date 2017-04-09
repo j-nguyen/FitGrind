@@ -3,6 +3,7 @@ package ca.stclaircollege.fitgrind;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -55,7 +56,7 @@ public class MainFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    private TextView mCurrentDate, mLastLoggedCalories, mLastLoggedWeight, mCaloriesGoal, mWeightGoal;
+    private TextView mCurrentDate, mLastLoggedCalories, mLastLoggedWeight, mCaloriesGoal, mCaloriesObtained;
     private ListView mListView;
     private ArrayList<Food> recentFood;
 
@@ -102,15 +103,22 @@ public class MainFragment extends Fragment {
         mLastLoggedCalories = (TextView) view.findViewById(R.id.lastLoggedCalories);
         mLastLoggedWeight = (TextView) view.findViewById(R.id.lastLoggedWeight);
         mCaloriesGoal = (TextView) view.findViewById(R.id.calories_goal);
-        mWeightGoal = (TextView) view.findViewById(R.id.weight_goal);
+        mCaloriesObtained = (TextView) view.findViewById(R.id.calories_obtained_title);
         mListView = (ListView) view.findViewById(R.id.calorie_listview);
-
-        // let's set up calories and weight goal
-        mCaloriesGoal.setText(weightCalculator.getCalorieGoal());
-        mWeightGoal.setText(weightCalculator.getWeightGoal());
 
         // Create a database
         DatabaseHandler db = new DatabaseHandler(getContext());
+
+        // let's set up calories and weight goal
+        mCaloriesGoal.setText(weightCalculator.getCalorieGoal());
+        // we will set up a calories obtained, to do this we need to call the db
+        // at zero selects today.
+        double caloriesObtained = db.selectCaloriesAt(0);
+        double caloriesLeft = weightCalculator.getBMR() - caloriesObtained;
+        // set the text colour depending on weight.
+        mCaloriesObtained.setTextColor((caloriesLeft >= 0) ? Color.parseColor("#2ecc71") : Color.parseColor("#e74c3c"));
+        mCaloriesObtained.setText("" + caloriesLeft);
+
         // retrieve a food log
         recentFood = db.selectRecentFoodLog();
         if (recentFood != null) mListView.setAdapter(new CustomAdapter(getContext(), recentFood));

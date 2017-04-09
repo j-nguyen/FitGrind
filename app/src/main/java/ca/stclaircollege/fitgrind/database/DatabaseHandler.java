@@ -42,7 +42,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final String PROGRESS_TABLE_NAME = "progress";
 
     // put it in a hashmap key
-    private static HashMap<String, String> NUTRIENT_KEYS = new HashMap<String, String>();
+    private static final HashMap<String, String> NUTRIENT_KEYS = new HashMap<String, String>();
     private static final HashMap<String, String> CALORIE_KEY = new HashMap<String, String>();
 
     // initialize for our static provider

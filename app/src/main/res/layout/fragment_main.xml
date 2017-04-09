@@ -108,15 +108,15 @@
                                 android:text="0"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:id="@+id/weight_goal"
+                                android:id="@+id/calories_obtained_title"
                                 android:textAlignment="center"
                                 android:textSize="@dimen/title_font_size" />
 
                             <TextView
-                                android:text="@string/weight_goal"
+                                android:text="@string/calories_obtained"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:id="@+id/weight_goal_title"
+                                android:id="@+id/calories_obtained_label"
                                 android:textAlignment="center"
                                 android:textStyle="normal|bold"
                                 android:textSize="@dimen/title_label_font_size" />

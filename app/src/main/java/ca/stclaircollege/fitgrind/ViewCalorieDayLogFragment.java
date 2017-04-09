@@ -1,6 +1,7 @@
 package ca.stclaircollege.fitgrind;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -45,7 +46,7 @@ public class ViewCalorieDayLogFragment extends Fragment {
     private FoodLog foodLog;
     private double calories;
     private ListView mListView;
-    private TextView noLogText, calorieGoal, caloreObtained;
+    private TextView noLogText, calorieGoal, caloriesObtained;
 
     private OnFragmentInteractionListener mListener;
 
@@ -86,7 +87,7 @@ public class ViewCalorieDayLogFragment extends Fragment {
         mListView = (ListView) view.findViewById(R.id.calorie_listview);
         noLogText = (TextView) view.findViewById(R.id.no_log_text);
         calorieGoal = (TextView) view.findViewById(R.id.calorie_goal_label);
-        caloreObtained = (TextView) view.findViewById(R.id.calorie_obtained_label);
+        caloriesObtained = (TextView) view.findViewById(R.id.calorie_obtained_label);
 
         // check if object is able to be passed through
         if (foodLog != null) {
@@ -97,8 +98,12 @@ public class ViewCalorieDayLogFragment extends Fragment {
             // We now also want to get the calories obtained during this time and the calorie goal
             WeightCalculator weightCalculator = new WeightCalculator(getContext());
             double caloriesLeft = weightCalculator.getBMR() - calories;
+            // we can check the caloriesLeft, and set the colour based on if we past the code or not
+            // without using the R.colour, we can set using a hex-value
+            caloriesObtained.setTextColor((caloriesLeft >= 0) ? Color.parseColor("#2ecc71") : Color.parseColor("#e74c3c"));
+            // set the text
             calorieGoal.setText(weightCalculator.getCalorieGoal());
-            caloreObtained.setText("" + caloriesLeft);
+            caloriesObtained.setText("" + caloriesLeft);
 
         } else {
             // if it is, we'll show up the textview
