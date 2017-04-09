@@ -7,6 +7,12 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.TextView;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Locale;
 
 
 /**
@@ -28,6 +34,10 @@ public class WeightLogFragment extends Fragment {
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
+
+    private TextView mRecentDate, mWeightGoal;
+    private Button mAddProgressButton, mViewProgressButton;
+    private WeightCalculator weightCalculator;
 
     public WeightLogFragment() {}
 
@@ -56,6 +66,9 @@ public class WeightLogFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
+        // weight calculator
+        weightCalculator = new WeightCalculator(getActivity());
     }
 
     @Override
@@ -64,7 +77,33 @@ public class WeightLogFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_weight_log, container, false);
 
+        // connect from the layout
+        mRecentDate = (TextView) view.findViewById(R.id.recent_date_label);
+        mWeightGoal = (TextView) view.findViewById(R.id.weight_goal_label);
+        mAddProgressButton = (Button) view.findViewById(R.id.addProgressButton);
+        mViewProgressButton = (Button) view.findViewById(R.id.viewProgressButton);
 
+        // we want to set the text view for last logged weight, last calories and calories goal
+        Calendar cal = Calendar.getInstance(Locale.getDefault());
+        mRecentDate.setText(new SimpleDateFormat("yyyy-MM-dd").format(cal.getTime()));
+
+        // now for weight goal
+        mWeightGoal.setText("Weight Goal: " + weightCalculator.getWeightGoal());
+
+        // now we want to set-up event listeners for the button
+        mViewProgressButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+        mAddProgressButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                
+            }
+        });
 
         return view;
     }
