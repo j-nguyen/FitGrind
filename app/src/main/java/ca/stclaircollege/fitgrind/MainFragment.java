@@ -12,6 +12,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.PopupMenu;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -59,6 +60,7 @@ public class MainFragment extends Fragment {
     private TextView mCurrentDate, mLastLoggedCalories, mLastLoggedWeight, mCaloriesGoal, mCaloriesObtained;
     private ListView mListView;
     private ArrayList<Food> recentFood;
+    private CardView results;
 
     // connect from the xml layout here
     private FloatingActionButton fab;
@@ -105,6 +107,20 @@ public class MainFragment extends Fragment {
         mCaloriesGoal = (TextView) view.findViewById(R.id.calories_goal);
         mCaloriesObtained = (TextView) view.findViewById(R.id.calories_obtained_title);
         mListView = (ListView) view.findViewById(R.id.calorie_listview);
+        results = (CardView) view.findViewById(R.id.results);
+
+        // set up event listener for card view to go to view calorie day log fragment
+        results.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Create a fragmentManager
+                FragmentManager fm = getActivity().getSupportFragmentManager();
+                FragmentTransaction trans = fm.beginTransaction();
+                trans.replace(R.id.content_main, new ViewCalorieLogFragment());
+                trans.addToBackStack(null);
+                trans.commit();
+            }
+        });
 
         // Create a database
         DatabaseHandler db = new DatabaseHandler(getContext());
