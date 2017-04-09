@@ -411,7 +411,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         // Create the content values
         ContentValues values = new ContentValues();
         // we'll just go through every list, but we'll need to get the hash map entry set again
-        for (Nutrient nutrient : food.getNutrients()) values.put(CALORIE_KEY.get(nutrient.getNutrient()), nutrient.getValue());
+        for (Nutrient nutrient : food.getNutrients()) values.put(NUTRIENT_KEYS.get(nutrient.getNutrient()), nutrient.getValue());
         // get the rows affected
         return db.update(FOOD_TABLE_NAME, values, "id = ?", new String[]{String.valueOf(food.getId())}) > 0;
     }
