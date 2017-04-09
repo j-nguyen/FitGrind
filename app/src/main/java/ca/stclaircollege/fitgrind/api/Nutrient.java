@@ -22,8 +22,7 @@ public class Nutrient implements Parcelable {
     private String unit = "g"; // default
     private double value;
 
-    public Nutrient(int nutrientId, String nutrient, String unit, String value) {
-        this.nutrientId = nutrientId;
+    public Nutrient(String nutrient, String unit, String value) {
         // if we land on energy, we want it to say Calories instead of energy. This is better for the user.
         this.nutrient = (nutrient.equals("Energy")) ? "Calories" : nutrient;
         this.unit = unit;
@@ -37,15 +36,15 @@ public class Nutrient implements Parcelable {
         // this is using db so we can check for units in this case. There are only a select few that uses different units
         // TODO: Fix something better than this, this is awful
         switch (nutrient) {
-            case "Vitamin A":
+            case "Vitamin A, RAE":
                 this.unit =  "\u03bcg";
                 break;
-            case "Calcium":
-            case "Vitamin C":
-            case "Iron":
+            case "Calcium, Ca":
+            case "Vitamin C, total ascorbic acid":
+            case "Iron, Fe":
             case "Cholesterol":
-            case "Potassium":
-            case "Sodium":
+            case "Potassium, K":
+            case "Sodium, Na":
                 this.unit = "mg";
                 break;
             case "Calories":
@@ -59,10 +58,6 @@ public class Nutrient implements Parcelable {
         nutrient = in.readString();
         unit = in.readString();
         value = in.readDouble();
-    }
-
-    public int getNutrientId() {
-        return nutrientId;
     }
 
     public String getNutrient() {
