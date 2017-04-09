@@ -32,8 +32,8 @@
         <ImageView
             app:srcCompat="@drawable/ic_chevron_right_black_24dp"
             android:id="@+id/chevron"
-            android:layout_weight="1"
-            android:layout_height="match_parent"
+            android:layout_weight="0.5"
+            android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:cropToPadding="false"
             android:adjustViewBounds="false" />

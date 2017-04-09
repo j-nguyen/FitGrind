@@ -42,60 +42,43 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final String PROGRESS_TABLE_NAME = "progress";
 
     // put it in a hashmap key
-    private static final HashMap<Integer, String> KEY_MAP = new HashMap<Integer, String>();
+    private static HashMap<String, String> NUTRIENT_KEYS = new HashMap<String, String>();
     private static final HashMap<String, String> CALORIE_KEY = new HashMap<String, String>();
-    private static final HashMap<String, String> CALORIE_VALUES = new HashMap<String, String>();
 
     // initialize for our static provider
     // TODO: Fix this horror at some point
     static {
-        KEY_MAP.put(208, "calories");
-        KEY_MAP.put(269, "sugar");
-        KEY_MAP.put(204, "total_fat");
-        KEY_MAP.put(205, "carbohydrate");
-        KEY_MAP.put(606, "saturated_fat");
-        KEY_MAP.put(605, "trans_fat");
-        KEY_MAP.put(601, "cholesterol");
-        KEY_MAP.put(307, "sodium");
-        KEY_MAP.put(291, "fiber");
-        KEY_MAP.put(203, "protein");
-        KEY_MAP.put(320, "vitamin_a");
-        KEY_MAP.put(401, "vitamin_c");
-        KEY_MAP.put(301, "calcium");
-        KEY_MAP.put(303, "iron");
-        KEY_MAP.put(306, "potassium");
+        NUTRIENT_KEYS.put("Fiber, total dietary", "fiber");
+        NUTRIENT_KEYS.put("Vitamin A, RAE", "vitamin_a");
+        NUTRIENT_KEYS.put("Calcium, Ca", "calcium");
+        NUTRIENT_KEYS.put("Sugars, total", "sugar");
+        NUTRIENT_KEYS.put("Protein", "protein");
+        NUTRIENT_KEYS.put("Vitamin C, total ascorbic acid", "vitamin_c");
+        NUTRIENT_KEYS.put("Total lipid (fat)", "total_fat");
+        NUTRIENT_KEYS.put("Iron, Fe", "iron");
+        NUTRIENT_KEYS.put("Carbohydrate, by difference", "carbohydrate");
+        NUTRIENT_KEYS.put("Cholesterol", "cholesterol");
+        NUTRIENT_KEYS.put("Potassium, K", "potassium");
+        NUTRIENT_KEYS.put("Calories", "calories");
+        NUTRIENT_KEYS.put("Sodium, Na", "sodium");
+        NUTRIENT_KEYS.put("Fatty acids, total trans", "trans_fat");
+        NUTRIENT_KEYS.put("Fatty acids, total saturated", "saturated_fat");
         // now do it for CALORIE_KEY map
         CALORIE_KEY.put("calories", "Calories");
-        CALORIE_KEY.put("sugar", "Sugar");
-        CALORIE_KEY.put("total_fat", "Total Fat");
-        CALORIE_KEY.put("carbohydrate", "Carbohydrate");
-        CALORIE_KEY.put("trans_fat", "Trans Fat");
+        CALORIE_KEY.put("sugar", "Sugars, total");
+        CALORIE_KEY.put("total_fat", "Total lipid (fat)");
+        CALORIE_KEY.put("carbohydrate", "Carbohydrate, by difference");
+        CALORIE_KEY.put("trans_fat", "Fatty acids, total trans");
         CALORIE_KEY.put("cholesterol", "Cholesterol");
-        CALORIE_KEY.put("sodium", "Sodium");
-        CALORIE_KEY.put("fiber", "Fiber");
+        CALORIE_KEY.put("sodium", "Sodium, Na");
+        CALORIE_KEY.put("fiber", "Fiber, total dietary");
         CALORIE_KEY.put("protein", "Protein");
-        CALORIE_KEY.put("vitamin_a", "Vitamin A");
-        CALORIE_KEY.put("vitamin_c", "Vitamin C");
-        CALORIE_KEY.put("calcium", "Calcium");
-        CALORIE_KEY.put("iron", "Iron");
-        CALORIE_KEY.put("potassium", "Potassium");
-        CALORIE_KEY.put("saturated_fat", "Saturated Fat");
-        // now do it for CALORIE_KEY map
-        CALORIE_VALUES.put("Calories", "calories");
-        CALORIE_VALUES.put("Sugar", "sugar");
-        CALORIE_VALUES.put("Total Fat", "total_fat");
-        CALORIE_VALUES.put("Carbohydrate", "carbohydrate");
-        CALORIE_VALUES.put("Trans Fat", "trans_fat");
-        CALORIE_VALUES.put("Cholesterol", "cholesterol");
-        CALORIE_VALUES.put("Sodium", "sodium");
-        CALORIE_VALUES.put("Fiber", "fiber");
-        CALORIE_VALUES.put("Protein", "protein");
-        CALORIE_VALUES.put("Vitamin A", "vitamin_a");
-        CALORIE_VALUES.put("Vitamin C", "vitamin_c");
-        CALORIE_VALUES.put("Calcium", "calcium");
-        CALORIE_VALUES.put("Iron", "iron");
-        CALORIE_VALUES.put("Potassium", "potassium");
-        CALORIE_VALUES.put("Saturated Fat", "saturated_fat");
+        CALORIE_KEY.put("vitamin_a", "Vitamin A, RAE");
+        CALORIE_KEY.put("vitamin_c", "Vitamin C, total ascorbic acid");
+        CALORIE_KEY.put("calcium", "Calcium, Ca");
+        CALORIE_KEY.put("iron", "Iron, Fe");
+        CALORIE_KEY.put("potassium", "Potassium, K");
+        CALORIE_KEY.put("saturated_fat", "Fatty acids, total saturated");
     }
 
     // create our table names
@@ -318,7 +301,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         values.put("serving", food.getServingSize());
         // we now have to iterate through an array to make sure
         // we can reference the map using a dictionary for access
-        for (Nutrient nutrient : food.getNutrients()) values.put(KEY_MAP.get(nutrient.getNutrientId()), nutrient.getValue());
+        for (Nutrient nutrient : food.getNutrients()) values.put(NUTRIENT_KEYS.get(nutrient.getNutrient()), nutrient.getValue());
         // now finally insert from the values
         long id = db.insert(FOOD_TABLE_NAME, null, values);
         return id;
@@ -428,7 +411,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         // Create the content values
         ContentValues values = new ContentValues();
         // we'll just go through every list, but we'll need to get the hash map entry set again
-        for (Nutrient nutrient : food.getNutrients()) values.put(CALORIE_VALUES.get(nutrient.getNutrient()), nutrient.getValue());
+        for (Nutrient nutrient : food.getNutrients()) values.put(NUTRIENT_KEYS.get(nutrient.getNutrient()), nutrient.getValue());
         // get the rows affected
         return db.update(FOOD_TABLE_NAME, values, "id = ?", new String[]{String.valueOf(food.getId())}) > 0;
     }
@@ -556,7 +539,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             // long id, String name, String servingSize, ArrayList<Nutrient> nutrients
             food = new Food(cursor.getLong(0), cursor.getString(1), cursor.getString(2));
             // iterate the hashmap (not good) but we'll need it
-            for (String key : KEY_MAP.values()) food.addNutrient(new Nutrient(CALORIE_KEY.get(key), cursor.getDouble(cursor.getColumnIndex(key))));
+            for (String key : NUTRIENT_KEYS.values()) food.addNutrient(new Nutrient(CALORIE_KEY.get(key), cursor.getDouble(cursor.getColumnIndex(key))));
         }
         return food;
     }
@@ -580,7 +563,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             do {
                 Food food = new Food(cursor.getLong(1), cursor.getString(2), cursor.getString(3), cursor.getString(0));
                 // we'll be forced to iterate through the hash map to get the key values
-                for (String key : KEY_MAP.values()) food.addNutrient(new Nutrient(key, cursor.getDouble(cursor.getColumnIndex(key))));
+                for (String key : NUTRIENT_KEYS.values()) food.addNutrient(new Nutrient(key, cursor.getDouble(cursor.getColumnIndex(key))));
                 foodList.add(food);
             } while (cursor.moveToNext());
             // return food log

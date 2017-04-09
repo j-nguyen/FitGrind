@@ -4,6 +4,7 @@ import android.content.Context;
 import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.interfaces.JSONObjectRequestListener;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * FoodAPI class is where we retrieve all our food, nutritional values and much more.
