@@ -158,7 +158,6 @@ public class MainFragment extends Fragment {
 
         // Create a database
         DatabaseHandler db = new DatabaseHandler(getContext());
-
         // let's set up calories and weight goal
         mCaloriesGoal.setText(weightCalculator.getCalorieGoal());
         // we will set up a calories obtained, to do this we need to call the db
@@ -175,7 +174,7 @@ public class MainFragment extends Fragment {
 
         // we want to set the text view for last logged weight, last calories and calories goal
         Calendar cal = Calendar.getInstance(Locale.getDefault());
-        mCurrentDate.setText(new SimpleDateFormat("yyyy-MM-dd").format(cal.getTime()));
+        mCurrentDate.setText("Today\'s Date: " + new SimpleDateFormat("yyyy-MM-dd").format(cal.getTime()));
 
         // set up for last logged, we'll need to db this one
         String calorieLogDate = (db.lastRecordedCalorieLog() != null) ? db.lastRecordedCalorieLog() : "";

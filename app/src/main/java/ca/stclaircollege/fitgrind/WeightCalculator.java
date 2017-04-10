@@ -30,11 +30,6 @@ public class WeightCalculator {
         lifestyle = Double.parseDouble(SP.getString("lifestyle_key", "1.2"));
         deficit = Double.parseDouble(SP.getString("weight_per_week", "500"));
 
-        /*
-         For men: BMR = 10 x weight (kg) + 6.25 x height (cm) – 5 x age (years) + 5
-         For women: BMR = 10 x weight (kg) + 6.25 x height (cm) – 5 x age (years) – 161
-         */
-
         // now we check and calculate BMR formula based on given results.
         // this will calculate how much to maintain weight
         if (gender.equals("Male")) {
