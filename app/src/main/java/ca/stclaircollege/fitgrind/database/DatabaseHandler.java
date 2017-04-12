@@ -419,13 +419,25 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     public boolean updateFood(Food food) {
         // Create db
-        SQLiteDatabase db = getReadableDatabase();
+        SQLiteDatabase db = getWritableDatabase();
         // Create the content values
         ContentValues values = new ContentValues();
         // we'll just go through every list, but we'll need to get the hash map entry set again
         for (Nutrient nutrient : food.getNutrients()) values.put(NUTRIENT_KEYS.get(nutrient.getNutrient()), nutrient.getValue());
         // get the rows affected
         return db.update(FOOD_TABLE_NAME, values, "id = ?", new String[]{String.valueOf(food.getId())}) > 0;
+    }
+
+    public boolean updateWeight(Weight weight) {
+        // create update db
+        SQLiteDatabase db = getWritableDatabase();
+        // create content values
+        ContentValues values = new ContentValues();
+        // put values in
+        values.put("weight", weight.getWeight());
+        values.put("date", weight.getDate());
+        // return rows affected
+        return db.update(WEIGHTLOG_TABLE_NAME, values, "id = ?", new String[]{String.valueOf(weight.getId())}) > 0;
     }
 
     /**
@@ -480,6 +492,16 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         // deletes both of them and checks if both are deleted
         return db.delete(FOOD_TABLE_NAME, "id = ?", new String[]{String.valueOf(id)}) > 0 &&
                 db.delete(FOODLOG_TABLE_NAME, "id = ?", new String[]{String.valueOf(id)}) > 0;
+    }
+
+    /**
+     * Deletes the weight log based on id
+     * @param id
+     * @return true or false, true if query is successful
+     */
+    public boolean deleteWeight(long id) {
+        SQLiteDatabase db = getWritableDatabase();
+        return db.delete(WEIGHTLOG_TABLE_NAME, "id = ?", new String[]{String.valueOf(id)}) > 0;
     }
 
     /*

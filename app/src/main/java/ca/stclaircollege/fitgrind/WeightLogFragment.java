@@ -8,14 +8,18 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v7.widget.PopupMenu;
 import android.text.InputType;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -51,6 +55,7 @@ public class WeightLogFragment extends Fragment {
 
     private TextView mCurrentWeight, mWeightGoal;
     private Button mAddProgressButton, mViewProgressButton;
+    private ArrayList<Weight> weightList;
     private WeightCalculator weightCalculator;
     private ListView mListView;
     private FloatingActionButton fab;
@@ -103,7 +108,7 @@ public class WeightLogFragment extends Fragment {
 
         // open up db and set it up
         DatabaseHandler db = new DatabaseHandler(getContext());
-        final ArrayList<Weight> weightList = db.selectAllWeightLog();
+        weightList = db.selectAllWeightLog();
         db.close();
 
         // set up custom adapter
@@ -194,23 +199,103 @@ public class WeightLogFragment extends Fragment {
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
+        public View getView(final int position, View convertView, ViewGroup parent) {
             // get the weight object
-            Weight weightItem = getItem(position);
+            final Weight weightItem = getItem(position);
 
             // setup layout
             if (convertView == null) convertView = LayoutInflater.from(getContext()).inflate(R.layout.view_weight_log, parent, false);
 
             // get text views
             TextView date = (TextView) convertView.findViewById(R.id.recorded_date);
-            TextView weight = (TextView) convertView.findViewById(R.id.recorded_weight);
+            final TextView weight = (TextView) convertView.findViewById(R.id.recorded_weight);
 
             // set it up
             date.setText(weightItem.getFormattedDate());
-            // before we go, we're changing the date format to be in 12 time format
-
             weight.setText(weightItem.getWeight() + "lbs");
 
+            // check out the menu button
+
+            // create ImageView
+            final ImageView menuButton = (ImageView) convertView.findViewById(R.id.menuButton);
+
+            // create a listener
+            menuButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // instantiate a pop up menu
+                    PopupMenu menu = new PopupMenu(getContext(), menuButton);
+                    // inflate the pop up menu with the xml
+                    menu.getMenuInflater().inflate(R.menu.popup_menu, menu.getMenu());
+
+                    // create an event listener
+                    menu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                        @Override
+                        public boolean onMenuItemClick(MenuItem item) {
+                            switch (item.getItemId()) {
+                                case R.id.edit:
+                                    // create another alert dialog with a final edit text
+                                    AlertDialog.Builder dialog = new AlertDialog.Builder(getContext());
+
+                                    // set up dialog messages
+                                    dialog.setTitle("Edit Weight Log");
+                                    dialog.setMessage("Edit weight log\'s weight.");
+
+                                    // create 1 edit text
+                                    // we want to create an edit text for the user to input in
+                                    final EditText input = new EditText(getContext());
+
+                                    //set up input
+                                    input.setText("" + weightItem.getWeight());
+
+                                    // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+                                    input.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+                                    dialog.setView(input);
+
+                                    // set up listeners for positive and negative buttons
+
+                                    dialog.setPositiveButton("Edit", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                            // here we attempt to update.
+                                            // if update is sucessful, notify the dataset
+                                            DatabaseHandler db = new DatabaseHandler(getContext());
+                                            Double parsedWeight = Double.parseDouble(input.getText().toString());
+                                            weightItem.setWeight(parsedWeight);
+                                            if (db.updateWeight(weightItem)) {
+                                                ((BaseAdapter) mListView.getAdapter()).notifyDataSetChanged();
+                                                Toast.makeText(getActivity(), R.string.db_update_success, Toast.LENGTH_SHORT).show();
+                                            }
+                                        }
+                                    });
+
+                                    dialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i) {}
+                                    });
+
+                                    dialog.show();
+
+                                    break;
+                                case R.id.delete:
+                                    DatabaseHandler db = new DatabaseHandler(getContext());
+                                    if (db.deleteWeight(weightItem.getId())) {
+                                        // remove from the array too
+                                        weightList.remove(position);
+                                        ((BaseAdapter) mListView.getAdapter()).notifyDataSetChanged();
+                                        Toast.makeText(getActivity(), R.string.db_delete_success, Toast.LENGTH_SHORT).show();
+                                    }
+                                    db.close();
+                                    break;
+                            }
+                            return true;
+                        }
+                    });
+
+                    // finally show the pop up menu
+                    menu.show();
+                }
+            });
             return convertView;
         }
     }
