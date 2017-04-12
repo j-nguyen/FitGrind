@@ -44,9 +44,9 @@ public class ViewCalorieDayLogFragment extends Fragment {
 
     // TODO: Rename and change types of parameters
     private FoodLog foodLog;
-    private double calories;
+    private double[] nutrients;
     private ListView mListView;
-    private TextView noLogText, calorieGoal, caloriesObtained;
+    private TextView noLogText, calorieGoal, caloriesObtained, totalFat, totalCarbs, totalProtein;
 
     private OnFragmentInteractionListener mListener;
 
@@ -59,11 +59,11 @@ public class ViewCalorieDayLogFragment extends Fragment {
      * @return A new instance of fragment ViewCalorieDayLogFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static ViewCalorieDayLogFragment newInstance(Parcelable foodLog, double calories) {
+    public static ViewCalorieDayLogFragment newInstance(Parcelable foodLog, double[] nutrients) {
         ViewCalorieDayLogFragment fragment = new ViewCalorieDayLogFragment();
         Bundle args = new Bundle();
         args.putParcelable(ARG_PARAM1, foodLog);
-        args.putDouble(ARG_PARAM2, calories);
+        args.putDoubleArray(ARG_PARAM2, nutrients);
         fragment.setArguments(args);
         return fragment;
     }
@@ -73,7 +73,7 @@ public class ViewCalorieDayLogFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             foodLog = getArguments().getParcelable(ARG_PARAM1);
-            calories = getArguments().getDouble(ARG_PARAM2);
+            nutrients = getArguments().getDoubleArray(ARG_PARAM2);
         }
     }
 
@@ -88,22 +88,26 @@ public class ViewCalorieDayLogFragment extends Fragment {
         noLogText = (TextView) view.findViewById(R.id.no_log_text);
         calorieGoal = (TextView) view.findViewById(R.id.calorie_goal_label);
         caloriesObtained = (TextView) view.findViewById(R.id.calorie_obtained_label);
+        totalFat = (TextView) view.findViewById(R.id.total_fat_day);
+        totalCarbs = (TextView) view.findViewById(R.id.total_carb_day);
+        totalProtein = (TextView) view.findViewById(R.id.total_protein_day);
 
         // check if object is able to be passed through
-        if (foodLog != null) {
+        if (foodLog != null && nutrients != null) {
             // set the adapter
             CustomAdapter adapter = new CustomAdapter(getActivity(), foodLog.getFoodList());
             mListView.setAdapter(adapter);
 
             // We now also want to get the calories obtained during this time and the calorie goal
             WeightCalculator weightCalculator = new WeightCalculator(getContext());
-            double caloriesLeft = weightCalculator.getBMR() - calories;
+            double caloriesLeft = weightCalculator.getBMR() - nutrients[0];
             // we can check the caloriesLeft, and set the colour based on if we past the code or not
             // without using the R.colour, we can set using a hex-value
             caloriesObtained.setTextColor((caloriesLeft >= 0) ? Color.parseColor("#2ecc71") : Color.parseColor("#e74c3c"));
             // set the text
             calorieGoal.setText(weightCalculator.getCalorieGoal());
             caloriesObtained.setText("" + caloriesLeft);
+            // set up calories.
 
         } else {
             // if it is, we'll show up the textview

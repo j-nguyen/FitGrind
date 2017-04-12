@@ -99,7 +99,7 @@ public class ViewCalorieLogFragment extends Fragment {
     // Today, Yesterday, and then 2 days ago.
     public class SectionPagerAdapter extends FragmentPagerAdapter {
         private ArrayList<FoodLog> foodLog = new ArrayList<FoodLog>();
-        private double[] calories;
+        private double[][] nutrients;
 
         public SectionPagerAdapter(FragmentManager fm) {
             super(fm);
@@ -108,14 +108,14 @@ public class ViewCalorieLogFragment extends Fragment {
             foodLog.add(db.selectCalorieLogAt(2));
             foodLog.add(db.selectCalorieLogAt(1));
             foodLog.add(db.selectCalorieLogAt(0));
-            calories = new double[]{db.selectCaloriesAt(2), db.selectCaloriesAt(1), db.selectCaloriesAt(0)};
+            nutrients = new double[][]{ db.selectNutrientsAt(2), db.selectNutrientsAt(1), db.selectNutrientsAt(0)};
             db.close();
         }
         public Fragment getItem(int position) {
             switch(position) {
-                case 0: return ViewCalorieDayLogFragment.newInstance(foodLog.get(0), calories[0]);
-                case 1: return ViewCalorieDayLogFragment.newInstance(foodLog.get(1), calories[1]);
-                default: return ViewCalorieDayLogFragment.newInstance(foodLog.get(2), calories[2]);
+                case 0: return ViewCalorieDayLogFragment.newInstance(foodLog.get(0), nutrients[0]);
+                case 1: return ViewCalorieDayLogFragment.newInstance(foodLog.get(1), nutrients[1]);
+                default: return ViewCalorieDayLogFragment.newInstance(foodLog.get(2), nutrients[2]);
             }
         }
         public int getCount(){
