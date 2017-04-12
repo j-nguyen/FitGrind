@@ -7,12 +7,17 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
+
+import ca.stclaircollege.fitgrind.database.Weight;
 
 
 /**
@@ -38,6 +43,7 @@ public class WeightLogFragment extends Fragment {
     private TextView mCurrentWeight, mWeightGoal;
     private Button mAddProgressButton, mViewProgressButton;
     private WeightCalculator weightCalculator;
+    private ListView mListView;
 
     public WeightLogFragment() {}
 
@@ -82,6 +88,7 @@ public class WeightLogFragment extends Fragment {
         mWeightGoal = (TextView) view.findViewById(R.id.weight_goal_label);
         mAddProgressButton = (Button) view.findViewById(R.id.addProgressButton);
         mViewProgressButton = (Button) view.findViewById(R.id.viewProgressButton);
+        mListView = (ListView) view.findViewById(R.id.listview_weight);
 
         // we want to set the text view for last logged weight, last calories and calories goal
         mCurrentWeight.setText("Current Weight: " + weightCalculator.getCurrentWeight());
@@ -105,6 +112,14 @@ public class WeightLogFragment extends Fragment {
         });
 
         return view;
+    }
+
+    // create a custom adapter for this
+    public class CustomAdapter extends ArrayAdapter<Weight> {
+
+        public CustomAdapter(Context context, ArrayList<Weight> weightList) {
+            super(context, 0, weightList);
+        }
     }
 
     // TODO: Rename method, update argument and hook method into UI event

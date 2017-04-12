@@ -470,6 +470,27 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 db.delete(FOODLOG_TABLE_NAME, "id = ?", new String[]{String.valueOf(id)}) > 0;
     }
 
+    /*
+     * READ METHODS / SELECT METHODS
+     */
+
+    public ArrayList<Weight> selectAllWeightLog() {
+        // get a readable db
+        SQLiteDatabase db = getReadableDatabase();
+        // create blank arraylist
+        ArrayList<Weight> results = null;
+        // create sql
+        Cursor cursor = db.rawQuery("SELECT * FROM " + WEIGHTLOG_TABLE_NAME, null);
+        if (cursor.moveToFirst()) {
+            results = new ArrayList<Weight>();
+            // iterate through
+            do {
+                results.add(new Weight(cursor.getLong(0), cursor.getDouble(1), cursor.getString(2)));
+            } while(cursor.moveToNext());
+        }
+        return results;
+    }
+
     /**
      * Gets all the routine available that the person made.
      * @return an ArrayList of Program
@@ -681,4 +702,5 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         if (cursor.moveToLast()) result = cursor.getString(0);
         return result;
     }
+
 }
