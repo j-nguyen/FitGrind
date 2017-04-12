@@ -74,6 +74,10 @@ public class WeightCalculator {
         return Math.floor(BMR);
     }
 
+    public String getCurrentWeight() {
+        return String.format("%.0f lbs",(weight / CONVERT_TO_KG));
+    }
+
     public String getCalorieGoal() {
         // let's round it down automatically, instead of rounding up to be safe.
         return String.format("%.0f", Math.floor(this.BMR));

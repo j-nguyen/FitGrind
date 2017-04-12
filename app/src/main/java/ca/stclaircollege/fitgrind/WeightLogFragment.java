@@ -35,7 +35,7 @@ public class WeightLogFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    private TextView mRecentDate, mWeightGoal;
+    private TextView mCurrentWeight, mWeightGoal;
     private Button mAddProgressButton, mViewProgressButton;
     private WeightCalculator weightCalculator;
 
@@ -78,14 +78,13 @@ public class WeightLogFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_weight_log, container, false);
 
         // connect from the layout
-        mRecentDate = (TextView) view.findViewById(R.id.recent_date_label);
+        mCurrentWeight = (TextView) view.findViewById(R.id.current_weight_label);
         mWeightGoal = (TextView) view.findViewById(R.id.weight_goal_label);
         mAddProgressButton = (Button) view.findViewById(R.id.addProgressButton);
         mViewProgressButton = (Button) view.findViewById(R.id.viewProgressButton);
 
         // we want to set the text view for last logged weight, last calories and calories goal
-        Calendar cal = Calendar.getInstance(Locale.getDefault());
-        mRecentDate.setText(new SimpleDateFormat("yyyy-MM-dd").format(cal.getTime()));
+        mCurrentWeight.setText("Current Weight: " + weightCalculator.getCurrentWeight());
 
         // now for weight goal
         mWeightGoal.setText("Weight Goal: " + weightCalculator.getWeightGoal());
@@ -94,7 +93,7 @@ public class WeightLogFragment extends Fragment {
         mViewProgressButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                
             }
         });
 

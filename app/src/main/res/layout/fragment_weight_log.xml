@@ -11,12 +11,14 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/padding"
         android:layout_marginBottom="@dimen/padding"
-        android:id="@+id/overview" >
+        android:id="@+id/overview"
+        android:elevation="@dimen/cardview_default_elevation">
 
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:padding="@dimen/padding">
 
             <LinearLayout
                 android:orientation="horizontal"
@@ -29,7 +31,7 @@
                     android:text="TextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/recent_date_label"
+                    android:id="@+id/current_weight_label"
                     android:textSize="@dimen/title_label_font_size" />
 
                 <TextView
