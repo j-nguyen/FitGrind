@@ -1,5 +1,10 @@
 package ca.stclaircollege.fitgrind.database;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 /**
  * Created by johnnynguyen on 2017-04-12.
  */
@@ -42,5 +47,22 @@ public class Weight {
 
     public void setDate(String date) {
         this.date = date;
+    }
+
+    public String getFormattedDate() {
+        SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+        SimpleDateFormat outputFormat = new SimpleDateFormat("EEE, d MMM yyyy hh:mm a", Locale.getDefault());
+
+        Date date;
+        String formatDate = null;
+
+        try {
+            date = inputFormat.parse(this.date);
+            formatDate = outputFormat.format(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return formatDate;
     }
 }

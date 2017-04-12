@@ -218,6 +218,18 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return db.insert(WORKOUTROUTINE_TABLE_NAME, null, values);
     }
 
+    public long insertWeight(Weight weight) {
+        // create a writeable db
+        SQLiteDatabase db = getWritableDatabase();
+        // create content values
+        ContentValues values = new ContentValues();
+        // put the properties
+        values.put("weight", weight.getWeight());
+        values.put("date", weight.getDate());
+        // return
+        return db.insert(WEIGHTLOG_TABLE_NAME, null, values);
+    }
+
     /**
      * Inserts a workout, with the cardio object
      * @param cardio
@@ -478,11 +490,10 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         // get a readable db
         SQLiteDatabase db = getReadableDatabase();
         // create blank arraylist
-        ArrayList<Weight> results = null;
+        ArrayList<Weight> results = new ArrayList<Weight>();;
         // create sql
         Cursor cursor = db.rawQuery("SELECT * FROM " + WEIGHTLOG_TABLE_NAME, null);
         if (cursor.moveToFirst()) {
-            results = new ArrayList<Weight>();
             // iterate through
             do {
                 results.add(new Weight(cursor.getLong(0), cursor.getDouble(1), cursor.getString(2)));

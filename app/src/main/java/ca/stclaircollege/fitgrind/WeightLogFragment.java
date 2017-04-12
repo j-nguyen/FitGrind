@@ -1,17 +1,24 @@
 package ca.stclaircollege.fitgrind;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -46,6 +53,7 @@ public class WeightLogFragment extends Fragment {
     private Button mAddProgressButton, mViewProgressButton;
     private WeightCalculator weightCalculator;
     private ListView mListView;
+    private FloatingActionButton fab;
 
     public WeightLogFragment() {}
 
@@ -91,6 +99,7 @@ public class WeightLogFragment extends Fragment {
         mAddProgressButton = (Button) view.findViewById(R.id.addProgressButton);
         mViewProgressButton = (Button) view.findViewById(R.id.viewProgressButton);
         mListView = (ListView) view.findViewById(R.id.listview_weight);
+        fab = (FloatingActionButton) view.findViewById(R.id.fab);
 
         // open up db and set it up
         DatabaseHandler db = new DatabaseHandler(getContext());
@@ -106,6 +115,58 @@ public class WeightLogFragment extends Fragment {
 
         // now for weight goal
         mWeightGoal.setText("Weight Goal: " + weightCalculator.getWeightGoal());
+
+        // set up listener for fab button
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // once it clicks, instead of opening up another fragment, this time we're going to open a dialog instead.
+                // we're doing this because all we have to record is the weight, nothing more.
+                AlertDialog.Builder dialog = new AlertDialog.Builder(getContext());
+                dialog.setTitle("Add Weight Log");
+                dialog.setMessage("Enter in your current weight:");
+
+                // we want to create an edit text for the user to input in
+                final EditText input = new EditText(getContext());
+
+                // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+                input.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+                dialog.setView(input);
+
+                // now we want to set up the box
+
+                dialog.setPositiveButton("Enter", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        // if clicked, we want to retrieve the current date and weight
+                        Double weight = Double.parseDouble(input.getText().toString());
+                        // we want to set the text view for last logged weight, last calories and calories goal
+                        Calendar cal = Calendar.getInstance(Locale.getDefault());
+                        String currDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(cal.getTime());
+                        // set it up as a new weight object
+                        Weight weightLog = new Weight(weight, currDate);
+                        // create a db
+                        DatabaseHandler db = new DatabaseHandler(getContext());
+                        if (db.insertWeight(weightLog) != -1) {
+                            // notify data set and add
+                            weightList.add(weightLog);
+                            ((BaseAdapter) mListView.getAdapter()).notifyDataSetChanged();
+                            Toast.makeText(getActivity(), R.string.db_insert_success, Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(getActivity(), R.string.db_error, Toast.LENGTH_SHORT).show();
+                        }
+                        db.close();
+                    }
+                });
+
+                dialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {}
+                });
+
+                dialog.show();
+            }
+        });
 
         // now we want to set-up event listeners for the button
 //        mViewProgressButton.setOnClickListener(new View.OnClickListener() {
@@ -145,7 +206,9 @@ public class WeightLogFragment extends Fragment {
             TextView weight = (TextView) convertView.findViewById(R.id.recorded_weight);
 
             // set it up
-            date.setText(weightItem.getDate());
+            date.setText(weightItem.getFormattedDate());
+            // before we go, we're changing the date format to be in 12 time format
+
             weight.setText(weightItem.getWeight() + "lbs");
 
             return convertView;
