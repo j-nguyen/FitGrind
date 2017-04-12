@@ -3,6 +3,7 @@ package ca.stclaircollege.fitgrind;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
 
+import ca.stclaircollege.fitgrind.database.DatabaseHandler;
 import ca.stclaircollege.fitgrind.database.Weight;
 
 
@@ -90,6 +92,15 @@ public class WeightLogFragment extends Fragment {
         mViewProgressButton = (Button) view.findViewById(R.id.viewProgressButton);
         mListView = (ListView) view.findViewById(R.id.listview_weight);
 
+        // open up db and set it up
+        DatabaseHandler db = new DatabaseHandler(getContext());
+        final ArrayList<Weight> weightList = db.selectAllWeightLog();
+        db.close();
+
+        // set up custom adapter
+        CustomAdapter adapter = new CustomAdapter(getContext(), weightList);
+        mListView.setAdapter(adapter);
+
         // we want to set the text view for last logged weight, last calories and calories goal
         mCurrentWeight.setText("Current Weight: " + weightCalculator.getCurrentWeight());
 
@@ -97,19 +108,19 @@ public class WeightLogFragment extends Fragment {
         mWeightGoal.setText("Weight Goal: " + weightCalculator.getWeightGoal());
 
         // now we want to set-up event listeners for the button
-        mViewProgressButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                
-            }
-        });
-
-        mAddProgressButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                
-            }
-        });
+//        mViewProgressButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+//            }
+//        });
+//
+//        mAddProgressButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+//            }
+//        });
 
         return view;
     }
@@ -119,6 +130,25 @@ public class WeightLogFragment extends Fragment {
 
         public CustomAdapter(Context context, ArrayList<Weight> weightList) {
             super(context, 0, weightList);
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            // get the weight object
+            Weight weightItem = getItem(position);
+
+            // setup layout
+            if (convertView == null) convertView = LayoutInflater.from(getContext()).inflate(R.layout.view_weight_log, parent, false);
+
+            // get text views
+            TextView date = (TextView) convertView.findViewById(R.id.recorded_date);
+            TextView weight = (TextView) convertView.findViewById(R.id.recorded_weight);
+
+            // set it up
+            date.setText(weightItem.getDate());
+            weight.setText(weightItem.getWeight() + "lbs");
+
+            return convertView;
         }
     }
 
