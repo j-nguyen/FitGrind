@@ -25,7 +25,9 @@ public class MainActivity extends AppCompatActivity
                     AddFoodFragment.OnFragmentInteractionListener,
                     ViewFoodFragment.OnFragmentInteractionListener,
                     WorkoutExerciseFragment.OnFragmentInteractionListener,
-                    ExerciseFragment.OnFragmentInteractionListener{
+                    ExerciseFragment.OnFragmentInteractionListener,
+                    ViewCalorieLogFragment.OnFragmentInteractionListener, ViewCalorieDayLogFragment.OnFragmentInteractionListener,
+                    EditFoodFragment.OnFragmentInteractionListener, AddCustomFoodFragment.OnFragmentInteractionListener {
 
     // create fragment manager
     FragmentManager fm = getSupportFragmentManager();
@@ -36,11 +38,6 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        // SharedPrefences Test
-        SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(this);
-        String gender = SP.getString("gender_keys", "Male");
-        System.out.println(gender);
 
         // set the layout here
         FragmentTransaction trans = fm.beginTransaction();
@@ -98,13 +95,25 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_home) {
-//            FragmentTransaction tran = fm.beginTransaction();
-//            tran.replace(R.id.content_main, new ());
-//            tran.commit();
+            FragmentTransaction tran = fm.beginTransaction();
+            tran.replace(R.id.content_main, new MainFragment());
+            tran.commit();
+
+        } else if (id == R.id.nav_diary) {
+
+            FragmentTransaction trans = fm.beginTransaction();
+            trans.replace(R.id.content_main, new ViewCalorieLogFragment());
+            trans.commit();
+
+        } else if (id == R.id.nav_add_custom_food) {
+
+            FragmentTransaction trans = fm.beginTransaction();
+            trans.replace(R.id.content_main, new AddCustomFoodFragment());
+            trans.commit();
 
         } else if (id == R.id.nav_add_food) {
-//            FragmentTransaction tran = fm.beginTransaction();
-//            tran.replace(R.id.content_main, new ());
+//            FragmentTransaction trans = fm.beginTransaction();
+//            tran.replace(R.id.content_main, new );
 //            tran.commit();
 
         } else if (id == R.id.nav_weight_log) {

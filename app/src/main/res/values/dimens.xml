@@ -17,4 +17,5 @@
     <dimen name="title_label_font_size">18sp</dimen>
     <dimen name="recorded_date_margin">-10dp</dimen>
     <dimen name="food_title_font_size">22sp</dimen>
+    <dimen name="submit_margin">10dp</dimen>
 </resources>

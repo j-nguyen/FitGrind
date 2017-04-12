@@ -7,9 +7,17 @@
             android:icon="@drawable/ic_home_black_24dp"
             android:title="@string/home" />
         <item
+            android:id="@+id/nav_diary"
+            android:icon="@drawable/ic_assignment_black_24dp"
+            android:title="@string/calorie_log" />
+        <item
             android:id="@+id/nav_add_food"
             android:icon="@drawable/ic_food"
             android:title="@string/add_food" />
+        <item
+            android:id="@+id/nav_add_custom_food"
+            android:icon="@drawable/ic_food"
+            android:title="@string/add_custom_food" />
         <item
             android:id="@+id/nav_weight_log"
             android:icon="@drawable/ic_scale_bathroom"
@@ -22,6 +30,9 @@
             android:id="@+id/nav_progress_gallary"
             android:icon="@drawable/ic_menu_gallery"
             android:title="@string/progress_gallary" />
+        <item
+            android:id="@+id/nav_test"
+            android:title="test" />
     </group>
 
     <!--<item android:title="Communicate">-->

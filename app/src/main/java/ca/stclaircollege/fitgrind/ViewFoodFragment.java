@@ -115,8 +115,7 @@ public class ViewFoodFragment extends Fragment {
                         JSONArray nutrientObj = foodObj.getJSONArray(NUTRIENT_KEY);
                         for (int i=0; i < nutrientObj.length(); i++) {
                             JSONObject obj = nutrientObj.getJSONObject(i);
-                            // add new nutrient
-                            currFood.addNutrient(new Nutrient(Integer.parseInt(obj.getString(Nutrient.ID_KEY)), obj.getString(Nutrient.NUTRIENT_KEY),
+                            currFood.addNutrient(new Nutrient(obj.getString(Nutrient.NUTRIENT_KEY),
                                     obj.getString(Nutrient.UNIT_KEY), obj.getString(Nutrient.VALUE_KEY)));
                         }
                         // set adapter and food name as well as the serving
@@ -124,6 +123,7 @@ public class ViewFoodFragment extends Fragment {
                         mFoodWeight.setText(currFood.getServingSize());
                         mListView.setAdapter(new CustomAdapter(getContext(), currFood.getNutrients()));
                     } catch (JSONException e) {
+                        Toast.makeText(getContext(), R.string.invalid_nutrients, Toast.LENGTH_SHORT).show();
                         e.printStackTrace();
                     }
                 }
@@ -131,7 +131,7 @@ public class ViewFoodFragment extends Fragment {
                 @Override
                 public void onError(ANError anError) {
                     // output toast text if error
-                    Toast.makeText(getContext(), R.string.invalid_info, Toast.LENGTH_LONG).show();
+                    Toast.makeText(getContext(), R.string.invalid_info, Toast.LENGTH_SHORT).show();
                 }
             });
         }

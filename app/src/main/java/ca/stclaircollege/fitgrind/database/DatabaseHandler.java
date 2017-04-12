@@ -42,25 +42,43 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final String PROGRESS_TABLE_NAME = "progress";
 
     // put it in a hashmap key
-    private static final HashMap<Integer, String> KEY_MAP = new HashMap<Integer, String>();
+    private static HashMap<String, String> NUTRIENT_KEYS = new HashMap<String, String>();
+    private static final HashMap<String, String> CALORIE_KEY = new HashMap<String, String>();
 
     // initialize for our static provider
+    // TODO: Fix this horror at some point
     static {
-        KEY_MAP.put(208, "calories");
-        KEY_MAP.put(269, "sugar");
-        KEY_MAP.put(204, "total_fat");
-        KEY_MAP.put(205, "carbohydrate");
-        KEY_MAP.put(606, "saturated_fat");
-        KEY_MAP.put(605, "trans_fat");
-        KEY_MAP.put(601, "cholesterol");
-        KEY_MAP.put(307, "sodium");
-        KEY_MAP.put(291, "fiber");
-        KEY_MAP.put(203, "protein");
-        KEY_MAP.put(320, "vitamin_a");
-        KEY_MAP.put(401, "vitamin_c");
-        KEY_MAP.put(301, "calcium");
-        KEY_MAP.put(303, "iron");
-        KEY_MAP.put(306, "potassium");
+        NUTRIENT_KEYS.put("Fiber, total dietary", "fiber");
+        NUTRIENT_KEYS.put("Vitamin A, RAE", "vitamin_a");
+        NUTRIENT_KEYS.put("Calcium, Ca", "calcium");
+        NUTRIENT_KEYS.put("Sugars, total", "sugar");
+        NUTRIENT_KEYS.put("Protein", "protein");
+        NUTRIENT_KEYS.put("Vitamin C, total ascorbic acid", "vitamin_c");
+        NUTRIENT_KEYS.put("Total lipid (fat)", "total_fat");
+        NUTRIENT_KEYS.put("Iron, Fe", "iron");
+        NUTRIENT_KEYS.put("Carbohydrate, by difference", "carbohydrate");
+        NUTRIENT_KEYS.put("Cholesterol", "cholesterol");
+        NUTRIENT_KEYS.put("Potassium, K", "potassium");
+        NUTRIENT_KEYS.put("Calories", "calories");
+        NUTRIENT_KEYS.put("Sodium, Na", "sodium");
+        NUTRIENT_KEYS.put("Fatty acids, total trans", "trans_fat");
+        NUTRIENT_KEYS.put("Fatty acids, total saturated", "saturated_fat");
+        // now do it for CALORIE_KEY map
+        CALORIE_KEY.put("calories", "Calories");
+        CALORIE_KEY.put("sugar", "Sugars, total");
+        CALORIE_KEY.put("total_fat", "Total lipid (fat)");
+        CALORIE_KEY.put("carbohydrate", "Carbohydrate, by difference");
+        CALORIE_KEY.put("trans_fat", "Fatty acids, total trans");
+        CALORIE_KEY.put("cholesterol", "Cholesterol");
+        CALORIE_KEY.put("sodium", "Sodium, Na");
+        CALORIE_KEY.put("fiber", "Fiber, total dietary");
+        CALORIE_KEY.put("protein", "Protein");
+        CALORIE_KEY.put("vitamin_a", "Vitamin A, RAE");
+        CALORIE_KEY.put("vitamin_c", "Vitamin C, total ascorbic acid");
+        CALORIE_KEY.put("calcium", "Calcium, Ca");
+        CALORIE_KEY.put("iron", "Iron, Fe");
+        CALORIE_KEY.put("potassium", "Potassium, K");
+        CALORIE_KEY.put("saturated_fat", "Fatty acids, total saturated");
     }
 
     // create our table names
@@ -189,7 +207,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
      * Inserts routine into sqlite db. Parameters include the routine object.
      * @param program
      */
-    public void insertProgram(Program program) {
+    public long insertProgram(Program program) {
         // Create the writeable DB
         SQLiteDatabase db = getWritableDatabase();
         // Use contentvalues
@@ -197,14 +215,14 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         // put name and desc
         values.put("name", program.getName());
         values.put("description", program.getDescription());
-        db.insert(WORKOUTROUTINE_TABLE_NAME, null, values);
+        return db.insert(WORKOUTROUTINE_TABLE_NAME, null, values);
     }
 
     /**
      * Inserts a workout, with the cardio object
      * @param cardio
      */
-    public void insertWorkout(Cardio cardio, long routineId, long dayId) {
+    public boolean insertWorkout(Cardio cardio, long routineId, long dayId) {
         // writeable db
         SQLiteDatabase db = getWritableDatabase();
         // create content values
@@ -217,36 +235,35 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         values.clear(); // clear
         values.put("exercise_id", id);
         values.put("time", cardio.getTime());
-        db.insert(CARDIOLOG_TABLE_NAME, null, values);
+        long row = db.insert(CARDIOLOG_TABLE_NAME, null, values);
         // now we finally want to insert the final workout
         values.clear();
         values.put("routine_id", routineId);
         values.put("exercise_id", id);
         values.put("day_id", dayId);
-        db.insert(WORKOUT_TABLE_NAME, null, values);
-        db.close();
+        long secondRow = db.insert(WORKOUT_TABLE_NAME, null, values);
+        return row > 0 && secondRow > 0;
     }
 
     /**
      * Inserts your 'weight-log' picture weekly.
      * @param progress
      */
-    public void insertProgress(Progress progress) {
+    public boolean insertProgress(Progress progress) {
         SQLiteDatabase db = getWritableDatabase();
         // Create the content values
         ContentValues values = new ContentValues();
         // input the values
         values.put("resource", progress.getResource());
         // insert the db
-        db.insert(PROGRESS_TABLE_NAME, null, values);
-        db.close();
+        return db.insert(PROGRESS_TABLE_NAME, null, values) > 0;
     }
 
     /**
      * Inserts workout with strength object
      * @param strength
      */
-    public void insertWorkout(Strength strength, long routineId, long dayId) {
+    public boolean insertWorkout(Strength strength, long routineId, long dayId) {
         // create db
         SQLiteDatabase db = getWritableDatabase();
         // create the content values
@@ -261,14 +278,14 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         values.put("set", strength.getSet());
         values.put("rep", strength.getReptitions());
         values.put("weight", strength.getWeight());
-        db.insert(STRENGTHLOG_TABLE_NAME, null, values);
+        long row = db.insert(STRENGTHLOG_TABLE_NAME, null, values);
         // now we finally want to insert the final workout
         values.clear();
         values.put("routine_id", routineId);
         values.put("exercise_id", id);
         values.put("day_id", dayId);
-        db.insert(WORKOUT_TABLE_NAME, null, values);
-        db.close();
+        long secondRow = db.insert(WORKOUT_TABLE_NAME, null, values);
+        return row > 0 && secondRow > 0;
     }
 
     /**
@@ -283,15 +300,26 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         values.put("name", food.getName());
         values.put("serving", food.getServingSize());
         // we now have to iterate through an array to make sure
-        for (int i=0; i < FoodAPI.MAX_NUTRIENTS; i++) {
-            // reference nutrient obj
-            Nutrient nutrient = food.getNutrients().get(i);
-            // we can reference the map using a dictionary for accesss
-            values.put(KEY_MAP.get(nutrient.getNutrientId()), nutrient.getValue());
-        }
+        // we can reference the map using a dictionary for access
+        for (Nutrient nutrient : food.getNutrients()) values.put(NUTRIENT_KEYS.get(nutrient.getNutrient()), nutrient.getValue());
         // now finally insert from the values
         long id = db.insert(FOOD_TABLE_NAME, null, values);
-        db.close();
+        return id;
+    }
+
+    /**
+     * Inserts a custom type of food. A few things need to be adjusted.
+     * @param food
+     * @return
+     */
+    public long insertCustomFood(Food food) {
+        SQLiteDatabase db = getWritableDatabase();
+        // create content values
+        ContentValues values = new ContentValues();
+        values.put("name", food.getName());
+        values.put("serving", food.getServingSize());
+        for (Nutrient nutrient : food.getNutrients()) values.put(nutrient.getNutrient(), nutrient.getValue());
+        long id = db.insert(FOOD_TABLE_NAME, null, values);
         return id;
     }
 
@@ -318,7 +346,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
      * Updates specific row
      * @param program
      */
-    public void updateRoutine(Program program) {
+    public boolean updateRoutine(Program program) {
         // create db
         SQLiteDatabase db = getWritableDatabase();
         // setup content values
@@ -327,8 +355,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         values.put("name", program.getName());
         values.put("description", program.getDescription());
         // update the db
-        db.update(WORKOUTROUTINE_TABLE_NAME, values, "id = ?", new String[]{String.valueOf(program.getId())});
-        db.close();
+
+        return db.update(WORKOUTROUTINE_TABLE_NAME, values, "id = ?", new String[]{String.valueOf(program.getId())}) > 0;
     }
 
     /**
@@ -336,7 +364,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
      * @param cardio
      * @param exerciseId
      */
-    public void updateWorkout(Cardio cardio, long exerciseId) {
+    public boolean updateWorkout(Cardio cardio, long exerciseId) {
         // writeable db
         SQLiteDatabase db = getWritableDatabase();
         // create content values
@@ -344,13 +372,13 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         // input the values
         values.put("name", cardio.getName());
         // update db
-        db.update(EXERCISE_TABLE_NAME, values, "id = ?", new String[]{String.valueOf(cardio.getId())});
+        int row = db.update(EXERCISE_TABLE_NAME, values, "id = ?", new String[]{String.valueOf(cardio.getId())});
         // now update on this workout
         values.clear(); // clear
         values.put("exercise_id", exerciseId);
         values.put("time", cardio.getTime());
-        db.update(CARDIOLOG_TABLE_NAME, values, "exercise_id = ?", new String[]{String.valueOf(exerciseId)});
-        db.close();
+        int secondRow = db.update(CARDIOLOG_TABLE_NAME, values, "exercise_id = ?", new String[]{String.valueOf(exerciseId)});
+        return row > 0 && secondRow > 0;
     }
 
     /**
@@ -358,7 +386,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
      * @param strength
      * @param exerciseId
      */
-    public void updateWorkout(Strength strength, long exerciseId) {
+    public boolean updateWorkout(Strength strength, long exerciseId) {
         // create db
         SQLiteDatabase db = getWritableDatabase();
         // create the content values
@@ -366,59 +394,80 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         // input the name and insert.
         values.put("name", strength.getName());
         // insert and retrieve the id
-        db.update(EXERCISE_TABLE_NAME, values, "id = ?", new String[]{String.valueOf(strength.getId())});
+        int row = db.update(EXERCISE_TABLE_NAME, values, "id = ?", new String[]{String.valueOf(strength.getId())});
         // update on this field
         values.clear();
         values.put("exercise_id", exerciseId);
         values.put("set", strength.getSet());
         values.put("rep", strength.getReptitions());
         values.put("weight", strength.getWeight());
-        db.update(STRENGTHLOG_TABLE_NAME, values, "exercise_id = ?", new String[]{String.valueOf(exerciseId)});
-        db.close();
+        int secondRow = db.update(STRENGTHLOG_TABLE_NAME, values, "exercise_id = ?", new String[]{String.valueOf(exerciseId)});
+        return row > 0 && secondRow > 0;
+    }
+
+    public boolean updateFood(Food food) {
+        // Create db
+        SQLiteDatabase db = getReadableDatabase();
+        // Create the content values
+        ContentValues values = new ContentValues();
+        // we'll just go through every list, but we'll need to get the hash map entry set again
+        for (Nutrient nutrient : food.getNutrients()) values.put(NUTRIENT_KEYS.get(nutrient.getNutrient()), nutrient.getValue());
+        // get the rows affected
+        return db.update(FOOD_TABLE_NAME, values, "id = ?", new String[]{String.valueOf(food.getId())}) > 0;
     }
 
     /**
      * delete routine
      * @param id
      */
-    public void deleteRoutine(long id) {
+    public boolean deleteRoutine(long id) {
         SQLiteDatabase db = getWritableDatabase();
-        db.delete(WORKOUTROUTINE_TABLE_NAME, "id = ?", new String[]{String.valueOf(id)});
-        db.close();
+        return db.delete(WORKOUTROUTINE_TABLE_NAME, "id = ?", new String[]{String.valueOf(id)}) > 0 ;
     }
 
     /**
      * Deletes the cardio workout from 3 tables
      * @param id
      */
-    public void deleteCardioWorkout(long id) {
+    public boolean deleteCardioWorkout(long id) {
         SQLiteDatabase db = getWritableDatabase();
-        db.delete(CREATE_WORKOUT_TABLE, "exercise_id = ?", new String[]{String.valueOf(id)});
-        db.delete(CARDIOLOG_TABLE_NAME, "exercise_id = ?", new String[]{String.valueOf(id)});
-        db.delete(EXERCISE_TABLE_NAME, "id = ?", new String[]{String.valueOf(id)});
-        db.close();
+        int fRow = db.delete(CREATE_WORKOUT_TABLE, "exercise_id = ?", new String[]{String.valueOf(id)});
+        int sRow = db.delete(CARDIOLOG_TABLE_NAME, "exercise_id = ?", new String[]{String.valueOf(id)});
+        int tRow = db.delete(EXERCISE_TABLE_NAME, "id = ?", new String[]{String.valueOf(id)});
+        return fRow > 0 && sRow > 0 && tRow > 0;
     }
 
     /**
      * Deletes the strength/weights workout from 3 tables.
      * @param id
      */
-    public void deleteStrengthWorkout(long id) {
+    public boolean deleteStrengthWorkout(long id) {
         SQLiteDatabase db = getWritableDatabase();
-        db.delete(CREATE_WORKOUT_TABLE, "exercise_id = ?", new String[]{String.valueOf(id)});
-        db.delete(STRENGTHLOG_TABLE_NAME, "exercise_id = ?", new String[]{String.valueOf(id)});
-        db.delete(EXERCISE_TABLE_NAME, "id = ?", new String[]{String.valueOf(id)});
-        db.close();
+        int fRow = db.delete(CREATE_WORKOUT_TABLE, "exercise_id = ?", new String[]{String.valueOf(id)});
+        int sRow = db.delete(STRENGTHLOG_TABLE_NAME, "exercise_id = ?", new String[]{String.valueOf(id)});
+        int tRow = db.delete(EXERCISE_TABLE_NAME, "id = ?", new String[]{String.valueOf(id)});
+        return fRow > 0 && sRow > 0 && tRow > 0;
     }
 
     /**
      * Deletes the picture
      * @param id
      */
-    public void deleteProgress(long id) {
+    public boolean deleteProgress(long id) {
         SQLiteDatabase db = getWritableDatabase();
-        db.delete(PROGRESS_TABLE_NAME, "id = ?", new String[]{String.valueOf(id)});
-        db.close();
+        return db.delete(PROGRESS_TABLE_NAME, "id = ?", new String[]{String.valueOf(id)}) > 0;
+    }
+
+    /**
+     * Deletes the food based on id
+     * @param id
+     * @return true if successful
+     */
+    public boolean deleteFood(long id) {
+        SQLiteDatabase db = getWritableDatabase();
+        // deletes both of them and checks if both are deleted
+        return db.delete(FOOD_TABLE_NAME, "id = ?", new String[]{String.valueOf(id)}) > 0 &&
+                db.delete(FOODLOG_TABLE_NAME, "id = ?", new String[]{String.valueOf(id)}) > 0;
     }
 
     /**
@@ -473,16 +522,30 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return workoutList;
     }
 
-    public ArrayList<FoodLog> selectCalorieLogWeek() {
-        ArrayList<FoodLog> results = new ArrayList<FoodLog>();
-        for (int i=0; i < 7; i++) results.add(selectCalorieLogAt(i));
-        return results;
+    /**
+     * Selects food based on id
+     * @param id
+     * @return
+     */
+    public Food selectFood(long id) {
+        SQLiteDatabase db = getReadableDatabase();
+        // create Food Object
+        Food food = null;
+        // and now create sql
+        Cursor cursor = db.rawQuery("SELECT * FROM food WHERE id = ?", new String[]{String.valueOf(id)});
+        // check if successful
+        if (cursor.moveToFirst()) {
+            // long id, String name, String servingSize, ArrayList<Nutrient> nutrients
+            food = new Food(cursor.getLong(0), cursor.getString(1), cursor.getString(2));
+            // iterate the hashmap (not good) but we'll need it
+            for (String key : NUTRIENT_KEYS.values()) food.addNutrient(new Nutrient(CALORIE_KEY.get(key), cursor.getDouble(cursor.getColumnIndex(key))));
+        }
+        return food;
     }
-
 
     /**
      * Retrieves a log of food, from the past x days.
-     * @return A 2d arraylist. We know the exact amount the size of the outer, which is 7 for 7 days.
+     * @return FoodLog object. We know the exact amount the size of the outer, which is 7 for 7 days.
      */
     public FoodLog selectCalorieLogAt(int day) {
         FoodLog foodLog = null;
@@ -499,15 +562,33 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             do {
                 Food food = new Food(cursor.getLong(1), cursor.getString(2), cursor.getString(3), cursor.getString(0));
                 // we'll be forced to iterate through the hash map to get the key values
-                for (String key : KEY_MAP.values()) food.addNutrient(new Nutrient(key, cursor.getDouble(cursor.getColumnIndex(key))));
+                for (String key : NUTRIENT_KEYS.values()) food.addNutrient(new Nutrient(key, cursor.getDouble(cursor.getColumnIndex(key))));
                 foodList.add(food);
             } while (cursor.moveToNext());
             // return food log
             foodLog = new FoodLog(now, foodList);
         }
-        db.close();
         // return null if nothing
         return foodLog;
+    }
+
+    public double selectCaloriesAt(int day) {
+        double calories = -1;
+        // get db
+        SQLiteDatabase db = getReadableDatabase();
+        // create the dates
+        String now = getCurrDateMinus(day);
+        String sql = "SELECT SUM(food.calories) FROM food_log INNER JOIN food ON food_log.food_id = food.id " +
+                "WHERE food_log.date BETWEEN ? AND ?;";
+        Cursor cursor = db.rawQuery(sql, new String[]{now + " 00:00:00", now + "23:59:59"});
+        // check
+        if (cursor.moveToFirst()) {
+            cursor.moveToLast();
+            // and now get the value
+            calories =  cursor.getDouble(0);
+        }
+        // return -1
+        return calories;
     }
 
     /**

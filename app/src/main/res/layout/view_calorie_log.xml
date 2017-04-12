@@ -10,7 +10,8 @@
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:id="@+id/item_view">
 
         <LinearLayout
             android:orientation="horizontal"
@@ -26,14 +27,11 @@
                 android:textSize="@dimen/food_title_font_size"
                 android:textStyle="normal|bold" />
 
-            <TextView
-                android:text="TextView"
+            <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/recorded_date"
-                android:layout_weight="1"
-                android:gravity="right"
-                android:layout_marginTop="@dimen/recorded_date_margin" />
+                card_view:srcCompat="@drawable/ic_more_vert_black_24dp"
+                android:id="@+id/menuButton" />
 
         </LinearLayout>
 
@@ -44,11 +42,26 @@
             android:id="@+id/calorie_serving"
             android:layout_weight="1" />
 
-        <TextView
-            android:text="TextView"
+        <LinearLayout
+            android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/calorie_calories" />
+            android:layout_height="match_parent">
+
+            <TextView
+                android:text="TextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/calorie_calories"
+                android:layout_weight="1" />
+
+            <TextView
+                android:text="TextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/recorded_date"
+                android:layout_weight="1"
+                android:gravity="right" />
+        </LinearLayout>
 
     </LinearLayout>
 
