@@ -58,7 +58,7 @@ public class MainFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    private TextView mCurrentDate, mLastLoggedCalories, mLastLoggedWeight, mCaloriesGoal, mCaloriesObtained;
+    private TextView mCurrentDate, mCaloriesGoal, mCaloriesObtained;
     private ListView mListView;
     private ArrayList<Food> recentFood;
     private CardView results;
@@ -136,8 +136,6 @@ public class MainFragment extends Fragment {
 
         // connect
         mCurrentDate = (TextView) view.findViewById(R.id.currentDate);
-        mLastLoggedCalories = (TextView) view.findViewById(R.id.lastLoggedCalories);
-        mLastLoggedWeight = (TextView) view.findViewById(R.id.lastLoggedWeight);
         mCaloriesGoal = (TextView) view.findViewById(R.id.calories_goal);
         mCaloriesObtained = (TextView) view.findViewById(R.id.calories_obtained_title);
         mListView = (ListView) view.findViewById(R.id.calorie_listview);
@@ -180,10 +178,6 @@ public class MainFragment extends Fragment {
         String calorieLogDate = (db.lastRecordedCalorieLog() != null) ? db.lastRecordedCalorieLog() : "";
         String weightLogDate = (db.lastRecordedWeightLog() != null) ? db.lastRecordedWeightLog() : "";
         db.close();
-
-        // set the text
-        mLastLoggedCalories.setText("Recent food log: " + calorieLogDate);
-        mLastLoggedWeight.setText("Recent weight log: " + weightLogDate);
 
         // set a long lcick for mlistview
         mListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
