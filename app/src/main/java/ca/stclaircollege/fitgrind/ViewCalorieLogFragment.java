@@ -108,14 +108,13 @@ public class ViewCalorieLogFragment extends Fragment {
             foodLog.add(db.selectCalorieLogAt(2));
             foodLog.add(db.selectCalorieLogAt(1));
             foodLog.add(db.selectCalorieLogAt(0));
-            nutrients = new double[][]{ db.selectNutrientsAt(2), db.selectNutrientsAt(1), db.selectNutrientsAt(0)};
             db.close();
         }
         public Fragment getItem(int position) {
             switch(position) {
-                case 0: return ViewCalorieDayLogFragment.newInstance(foodLog.get(0), nutrients[0]);
-                case 1: return ViewCalorieDayLogFragment.newInstance(foodLog.get(1), nutrients[1]);
-                default: return ViewCalorieDayLogFragment.newInstance(foodLog.get(2), nutrients[2]);
+                case 0: return ViewCalorieDayLogFragment.newInstance(foodLog.get(0), 2);
+                case 1: return ViewCalorieDayLogFragment.newInstance(foodLog.get(1), 1);
+                default: return ViewCalorieDayLogFragment.newInstance(foodLog.get(2), 0);
             }
         }
         public int getCount(){
