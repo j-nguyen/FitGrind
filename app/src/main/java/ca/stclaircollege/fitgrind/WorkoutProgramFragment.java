@@ -12,6 +12,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -31,7 +32,7 @@ import ca.stclaircollege.fitgrind.database.Program;
  * Use the {@link WorkoutProgramFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class WorkoutProgramFragment extends Fragment {
+public class  WorkoutProgramFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -40,8 +41,11 @@ public class WorkoutProgramFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-
+    private static final int LIST_REQUEST = 1;
     ListView list;
+    CustomAdapter adapter;
+    ArrayList<Program> programsList;
+
 
     private OnFragmentInteractionListener mListener;
 
@@ -87,19 +91,18 @@ public class WorkoutProgramFragment extends Fragment {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                FragmentTransaction ft = fm.beginTransaction();
-                ft.addToBackStack(null);
-                ft.replace(R.id.content_main, new AddProgramFragment());
-                ft.commit();
+                Intent intent = new Intent(getActivity(), AddProgramActivity.class);
+                //startActivity(intent);
+                startActivityForResult(intent, LIST_REQUEST);
             }
         });
         list = (ListView) view.findViewById(R.id.workoutProgramList);
         DatabaseHandler db = new DatabaseHandler(getContext());
         //final ArrayList<Program> programsList = new ArrayList<Program>();
-        final ArrayList<Program> programsList = db.selectAllRoutine();
+        programsList = db.selectAllRoutine();
         db.close();
 
-        final CustomAdapter adapter = new CustomAdapter(getContext(), programsList);
+        adapter = new CustomAdapter(getContext(), programsList);
         list.setAdapter(adapter);
 
         //launch to new activity
@@ -115,6 +118,10 @@ public class WorkoutProgramFragment extends Fragment {
         list.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                DatabaseHandler db = new DatabaseHandler(getContext());
+                Program program = programsList.get(position);
+                db.deleteRoutine(program.getId());
+                db.close();
                 programsList.remove(position);
                 adapter.notifyDataSetChanged();
                 return false;
@@ -143,6 +150,16 @@ public class WorkoutProgramFragment extends Fragment {
             description.setText(item.getDescription());
 
             return  convertView;
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int  resultCode, Intent data){
+        if(requestCode == LIST_REQUEST) {
+            Program program = data.getExtras().getParcelable("program");
+            programsList.add(program);
+            adapter.notifyDataSetChanged();
+            System.out.println("68");
         }
     }
 

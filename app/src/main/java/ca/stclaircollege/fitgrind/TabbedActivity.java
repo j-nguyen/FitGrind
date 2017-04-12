@@ -1,5 +1,6 @@
 package ca.stclaircollege.fitgrind;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -27,7 +28,8 @@ public class TabbedActivity extends AppCompatActivity implements
     WorkoutProgramFragment.OnFragmentInteractionListener,
     TimeFragment.OnFragmentInteractionListener,
     WorkoutExerciseFragment.OnFragmentInteractionListener,
-    ExerciseFragment.OnFragmentInteractionListener{
+    ExerciseFragment.OnFragmentInteractionListener,
+    AddProgramFragment.OnFragmentInteractionListener{
 
     private Toolbar toolbar;
     private TabLayout tabLayout;
@@ -171,6 +173,11 @@ public class TabbedActivity extends AppCompatActivity implements
         public void addFrag(Fragment fragment) {
             mFragmentList.add(fragment);
         }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int  resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     public void onFragmentInteraction(Uri uri) {
