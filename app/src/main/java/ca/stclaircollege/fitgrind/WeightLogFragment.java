@@ -24,10 +24,13 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 import ca.stclaircollege.fitgrind.database.DatabaseHandler;
 import ca.stclaircollege.fitgrind.database.Weight;
@@ -54,7 +57,7 @@ public class WeightLogFragment extends Fragment {
     private OnFragmentInteractionListener mListener;
 
     private TextView mCurrentWeight, mWeightGoal;
-    private Button mAddProgressButton, mViewProgressButton;
+    private Button mViewProgressButton;
     private ArrayList<Weight> weightList;
     private WeightCalculator weightCalculator;
     private ListView mListView;
@@ -101,7 +104,6 @@ public class WeightLogFragment extends Fragment {
         // connect from the layout
         mCurrentWeight = (TextView) view.findViewById(R.id.current_weight_label);
         mWeightGoal = (TextView) view.findViewById(R.id.weight_goal_label);
-        mAddProgressButton = (Button) view.findViewById(R.id.addProgressButton);
         mViewProgressButton = (Button) view.findViewById(R.id.viewProgressButton);
         mListView = (ListView) view.findViewById(R.id.listview_weight);
         fab = (FloatingActionButton) view.findViewById(R.id.fab);
@@ -125,51 +127,80 @@ public class WeightLogFragment extends Fragment {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // once it clicks, instead of opening up another fragment, this time we're going to open a dialog instead.
-                // we're doing this because all we have to record is the weight, nothing more.
-                AlertDialog.Builder dialog = new AlertDialog.Builder(getContext());
-                dialog.setTitle("Add Weight Log");
-                dialog.setMessage("Enter in your current weight:");
-
-                // we want to create an edit text for the user to input in
-                final EditText input = new EditText(getContext());
-
-                // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
-                input.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
-                dialog.setView(input);
-
-                // now we want to set up the box
-
-                dialog.setPositiveButton("Enter", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        // if clicked, we want to retrieve the current date and weight
-                        Double weight = Double.parseDouble(input.getText().toString());
-                        // we want to set the text view for last logged weight, last calories and calories goal
-                        Calendar cal = Calendar.getInstance(Locale.getDefault());
-                        String currDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(cal.getTime());
-                        // set it up as a new weight object
-                        Weight weightLog = new Weight(weight, currDate);
-                        // create a db
-                        DatabaseHandler db = new DatabaseHandler(getContext());
-                        if (db.insertWeight(weightLog) != -1) {
-                            // notify data set and add
-                            weightList.add(weightLog);
-                            ((BaseAdapter) mListView.getAdapter()).notifyDataSetChanged();
-                            Toast.makeText(getActivity(), R.string.db_insert_success, Toast.LENGTH_SHORT).show();
-                        } else {
-                            Toast.makeText(getActivity(), R.string.db_error, Toast.LENGTH_SHORT).show();
-                        }
-                        db.close();
+                // Create a db
+                DatabaseHandler db = new DatabaseHandler(getContext());
+                //get date today
+                final String lastDate = db.lastRecordedWeightLog();
+                db.close();
+                // if it's past 7 days, we can let the user insert the weight log
+                // find the difference between the dates.
+                // if we can't retrieve the last date, we can set it automatically to 7 becasue there isn't a date recorded
+                long diff = (lastDate != null) ? 0 : 7;
+                // parse and check
+                if (lastDate != null) {
+                    try {
+                        Date date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(lastDate);
+                        Date now = Calendar.getInstance(Locale.getDefault()).getTime();
+                        diff = date.getTime() - now.getTime();
+                    } catch (ParseException e) {
+                        e.printStackTrace();
                     }
-                });
+                }
+                // check to make sure it's there
+                if (diff >= 7) {
+                    // once it clicks, instead of opening up another fragment, this time we're going to open a dialog instead.
+                    // we're doing this because all we have to record is the weight, nothing more.
+                    AlertDialog.Builder dialog = new AlertDialog.Builder(getContext());
+                    dialog.setTitle("Add Weight Log");
+                    dialog.setMessage("Enter in your current weight:");
 
-                dialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {}
-                });
+                    // we want to create an edit text for the user to input in
+                    final EditText input = new EditText(getContext());
 
-                dialog.show();
+                    // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+                    input.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+                    dialog.setView(input);
+
+                    // now we want to set up the box
+
+                    dialog.setPositiveButton("Enter", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            // if clicked, we want to retrieve the current date and weight
+                            Double weight = Double.parseDouble(input.getText().toString());
+                            // we want to set the text view for last logged weight, last calories and calories goal
+                            Calendar cal = Calendar.getInstance(Locale.getDefault());
+                            String currDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(cal.getTime());
+                            // set it up as a new weight object
+                            Weight weightLog = new Weight(weight, currDate);
+                            // create a db
+                            DatabaseHandler db = new DatabaseHandler(getContext());
+                            long id = db.insertWeight(weightLog);
+                            // insert the weight
+                            if (id != -1) {
+                                // notify data set and add
+                                weightLog.setId(id);
+                                weightList.add(weightLog);
+                                ((BaseAdapter) mListView.getAdapter()).notifyDataSetChanged();
+                                Toast.makeText(getActivity(), R.string.db_insert_success, Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(getActivity(), R.string.db_error, Toast.LENGTH_SHORT).show();
+                            }
+                            db.close();
+                        }
+                    });
+
+                    dialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {}
+                    });
+
+                    dialog.show();
+
+                } else {
+                    // create a toast indicating that you need to create it another time.
+                    Toast.makeText(getActivity(), R.string.invalid_seven_days, Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -181,13 +212,6 @@ public class WeightLogFragment extends Fragment {
 //            }
 //        });
 //
-//        mAddProgressButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//
-//            }
-//        });
-
         return view;
     }
 
@@ -279,6 +303,7 @@ public class WeightLogFragment extends Fragment {
                                     break;
                                 case R.id.delete:
                                     DatabaseHandler db = new DatabaseHandler(getContext());
+                                    System.out.println(weightItem.getId());
                                     if (db.deleteWeight(weightItem.getId())) {
                                         // remove from the array too
                                         weightList.remove(position);

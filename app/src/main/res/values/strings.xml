@@ -38,6 +38,7 @@
     <string name="db_update_success">Successfully updated!</string>
     <string name="db_delete_success">Successfully deleted!</string>
     <string name="invalid_field">Some fields have not been entered! Please enter all the information.</string>
+    <string name="invalid_seven_days">You must wait 7 more days, until you can record another weight.</string>
 
     <!-- Info -->
     <string name="results_title">Calorie Results</string>

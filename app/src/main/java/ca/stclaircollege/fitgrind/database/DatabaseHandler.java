@@ -735,5 +735,4 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         if (cursor.moveToLast()) result = cursor.getString(0);
         return result;
     }
-
 }
