@@ -42,10 +42,16 @@
 
             <TextView
                 android:text="TextView"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/recorded_weight"
-                android:layout_weight="1" />
+                android:id="@+id/recorded_weight" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                card_view:srcCompat="@drawable/ic_photo_black_24dp"
+                android:id="@+id/photo"
+                android:layout_gravity="end" />
 
         </LinearLayout>
 
