@@ -27,7 +27,8 @@ public class MainActivity extends AppCompatActivity
                     WorkoutExerciseFragment.OnFragmentInteractionListener,
                     ExerciseFragment.OnFragmentInteractionListener,
                     ViewCalorieLogFragment.OnFragmentInteractionListener, ViewCalorieDayLogFragment.OnFragmentInteractionListener,
-                    EditFoodFragment.OnFragmentInteractionListener, AddCustomFoodFragment.OnFragmentInteractionListener {
+                    EditFoodFragment.OnFragmentInteractionListener, AddCustomFoodFragment.OnFragmentInteractionListener,
+                    WeightLogFragment.OnFragmentInteractionListener {
 
     // create fragment manager
     FragmentManager fm = getSupportFragmentManager();
@@ -117,9 +118,10 @@ public class MainActivity extends AppCompatActivity
 //            tran.commit();
 
         } else if (id == R.id.nav_weight_log) {
-//            FragmentTransaction tran = fm.beginTransaction();
-//            tran.replace(R.id.content_main, new ());
-//            tran.commit();
+
+            FragmentTransaction tran = fm.beginTransaction();
+            tran.replace(R.id.content_main, new WeightLogFragment());
+            tran.commit();
 
         } else if (id == R.id.nav_workout_schedule) {
             startActivity(new Intent(MainActivity.this, TabbedActivity.class));

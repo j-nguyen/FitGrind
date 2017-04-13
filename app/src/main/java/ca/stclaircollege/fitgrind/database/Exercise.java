@@ -1,4 +1,4 @@
-package ca.stclaircollege.fitgrind;
+package ca.stclaircollege.fitgrind.database;
 
 /**
  * Created by Allan on 4/5/2017.
