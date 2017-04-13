@@ -1,30 +1,30 @@
 package ca.stclaircollege.fitgrind;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
-import android.widget.TextView;
-import java.util.ArrayList;
-import ca.stclaircollege.fitgrind.database.Exercise;
+import android.widget.Button;
+import android.widget.EditText;
+
 import ca.stclaircollege.fitgrind.database.DatabaseHandler;
+import ca.stclaircollege.fitgrind.database.Program;
 
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link ExerciseFragment.OnFragmentInteractionListener} interface
+ * {@link AddProgramFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link ExerciseFragment#newInstance} factory method to
+ * Use the {@link AddProgramFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ExerciseFragment extends Fragment {
+public class AddProgramFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -33,14 +33,13 @@ public class ExerciseFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-
-    ListView list;
-    CustomAdapter customAdapter;
-    ArrayList<Exercise> exercisesList;
+    EditText name;
+    EditText description;
+    FragmentManager fm;
 
     private OnFragmentInteractionListener mListener;
 
-    public ExerciseFragment() {
+    public AddProgramFragment() {
         // Required empty public constructor
     }
 
@@ -50,11 +49,11 @@ public class ExerciseFragment extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment ExerciseFragment.
+     * @return A new instance of fragment AddProgramFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static ExerciseFragment newInstance(String param1, String param2) {
-        ExerciseFragment fragment = new ExerciseFragment();
+    public static AddProgramFragment newInstance(String param1, String param2) {
+        AddProgramFragment fragment = new AddProgramFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -75,59 +74,27 @@ public class ExerciseFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_exercise, container, false);
-        FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fabExercise);
-        fab.setOnClickListener(new View.OnClickListener() {
+        View view = inflater.inflate(R.layout.fragment_add_program, container, false);
+        name = (EditText) view.findViewById(R.id.nameEditText);
+        description = (EditText) view.findViewById(R.id.descriptionEditText);
+        Button submit = (Button) view.findViewById(R.id.submitButton);
+        submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Program program = new Program(name.getText().toString(), description.getText().toString());
+                DatabaseHandler db = new DatabaseHandler(getContext());
+                db.insertProgram(program);
+                db.close();
+                Intent intent = new Intent();
+                intent.putExtra("program", program);
+                getActivity().setResult(1, intent);
+                fm = getActivity().getSupportFragmentManager();
+                fm.popBackStack();
+                getActivity().finish();
             }
         });
 
-        list = (ListView) view.findViewById(R.id.exerciselist);
-        DatabaseHandler db = new DatabaseHandler(getContext());
-        final ArrayList<Exercise> exercisesList = new ArrayList<Exercise>();
-        //exercisesList = db.selectAllWorkout();
-        db.close();
-//        exercisesList.add(new Exercise("text", "test", "test"));
-//        exercisesList.add(new Exercise("text", "test", "test"));
-//        exercisesList.add(new Exercise("text", "test", "test"));
-        
-        final ExerciseFragment.CustomAdapter adapter = new ExerciseFragment.CustomAdapter(getContext(), exercisesList);
-        list.setAdapter(adapter);
-
-
-        if(mParam1 != null){
-            TextView text = (TextView) view.findViewById(R.id.day);
-            text.setText(mParam1);
-        }
-
         return view;
-    }
-
-    public class CustomAdapter extends ArrayAdapter<Exercise> {
-        public CustomAdapter(Context context, ArrayList<Exercise> items) {
-            super(context, 0, items);
-        }
-        //get each item and assign a view to it
-        public View getView(int position, View convertView, ViewGroup parent){
-            final Exercise item = getItem(position);
-            if(convertView == null){
-                convertView = LayoutInflater.from(getContext()).inflate(R.layout.exercise_view, parent, false);
-            }
-
-            //set the listview items
-            TextView exerciseName = (TextView) convertView.findViewById(R.id.exerciseName);
-            exerciseName.setText(item.getName());
-
-            TextView set = (TextView) convertView.findViewById(R.id.exerciseSet);
-            set.setText(item.getSet());
-
-            TextView length = (TextView) convertView.findViewById(R.id.exerciseRep);
-            length.setText(item.getRep());
-
-            return  convertView;
-        }
     }
 
     // TODO: Rename method, update argument and hook method into UI event

@@ -4,6 +4,7 @@ import android.content.Context;
 import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.interfaces.JSONObjectRequestListener;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * FoodAPI class is where we retrieve all our food, nutritional values and much more.
@@ -20,7 +21,6 @@ public class FoodAPI {
     private static final String BASE_URL = "https://api.nal.usda.gov/ndb/";
     private static final String NUTRIENT_URL = "&nutrients=208&nutrients=269&nutrients=204&nutrients=205&nutrients=606&nutrients=605" +
             "&nutrients=601&nutrients=307&nutrients=291&nutrients=203&nutrients=320&nutrients=401&nutrients=301&nutrients=303&nutrients=306";
-    public static final int MAX_NUTRIENTS = 15;
 
     // We will need the API key. We can use context to pass, but having it passed like this might be much better
     private String apiKey;

@@ -1,5 +1,6 @@
 package ca.stclaircollege.fitgrind;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -25,7 +26,10 @@ import java.util.List;
 
 public class TabbedActivity extends AppCompatActivity implements
     WorkoutProgramFragment.OnFragmentInteractionListener,
-    TimeFragment.OnFragmentInteractionListener{
+    TimeFragment.OnFragmentInteractionListener,
+    WorkoutExerciseFragment.OnFragmentInteractionListener,
+    ExerciseFragment.OnFragmentInteractionListener,
+    AddProgramFragment.OnFragmentInteractionListener{
 
     private Toolbar toolbar;
     private TabLayout tabLayout;
@@ -69,16 +73,6 @@ public class TabbedActivity extends AppCompatActivity implements
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
         setupTabIcons();
-
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
 
     }
 
@@ -179,6 +173,11 @@ public class TabbedActivity extends AppCompatActivity implements
         public void addFrag(Fragment fragment) {
             mFragmentList.add(fragment);
         }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int  resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     public void onFragmentInteraction(Uri uri) {

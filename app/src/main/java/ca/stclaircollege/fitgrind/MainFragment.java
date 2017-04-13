@@ -1,18 +1,31 @@
 package ca.stclaircollege.fitgrind;
 
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.CardView;
+import android.support.v7.widget.PopupMenu;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.w3c.dom.Text;
 
@@ -41,16 +54,18 @@ public class MainFragment extends Fragment {
     private static final String ARG_PARAM2 = "param2";
 
     // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+
 
     private OnFragmentInteractionListener mListener;
 
-    private TextView mCurrentDate, mLastLoggedCalories, mLastLoggedWeight, mCaloriesGoal, mWeightGoal;
+    private TextView mCurrentDate, mCaloriesGoal, mCaloriesObtained;
     private ListView mListView;
+    private ArrayList<Food> recentFood;
+    private CardView results;
 
     // connect from the xml layout here
     private FloatingActionButton fab;
+    private WeightCalculator weightCalculator;
 
     public MainFragment() {}
 
@@ -76,10 +91,41 @@ public class MainFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+        // Create our shared preferences here
+        final SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(this.getActivity());
+        // we want to launch an activity once, to ask the user if they've set-up their settings.
+        // If they choose no, then we dont bother with them anymore.
+        boolean isStarted = SP.getBoolean("last_start", false);
+        // if it hasn't been then we can launch dialog
+        if (!isStarted) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+            builder.setTitle("Food Options");
+            builder.setMessage("Please set-up your personalized fitness, to get the full experience!");
+            builder.setPositiveButton("Go to Settings", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    SharedPreferences.Editor edit = SP.edit();
+                    edit.putBoolean("last_start", Boolean.TRUE);
+                    edit.commit();
+                    // start activity here
+                    Intent intent = new Intent(getActivity(), SettingsActivity.class);
+                    startActivity(intent);
+                }
+            });
+            builder.setNegativeButton("I\'ll do it later.", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    SharedPreferences.Editor edit = SP.edit();
+                    edit.putBoolean("last_start", Boolean.TRUE);
+                    edit.commit();
+                }
+            });
+            builder.show();
         }
+
+
+        // create our weight calculator
+        weightCalculator = new WeightCalculator(SP);
     }
 
     @Override
@@ -90,25 +136,84 @@ public class MainFragment extends Fragment {
 
         // connect
         mCurrentDate = (TextView) view.findViewById(R.id.currentDate);
-        mLastLoggedCalories = (TextView) view.findViewById(R.id.lastLoggedCalories);
-        mLastLoggedWeight = (TextView) view.findViewById(R.id.lastLoggedWeight);
         mCaloriesGoal = (TextView) view.findViewById(R.id.calories_goal);
-        mWeightGoal = (TextView) view.findViewById(R.id.weight_goal);
+        mCaloriesObtained = (TextView) view.findViewById(R.id.calories_obtained_title);
         mListView = (ListView) view.findViewById(R.id.calorie_listview);
+        results = (CardView) view.findViewById(R.id.results);
+
+        // set up event listener for card view to go to view calorie day log fragment
+        results.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Create a fragmentManager
+                FragmentManager fm = getActivity().getSupportFragmentManager();
+                FragmentTransaction trans = fm.beginTransaction();
+                trans.replace(R.id.content_main, new ViewCalorieLogFragment());
+                trans.addToBackStack(null);
+                trans.commit();
+            }
+        });
 
         // Create a database
         DatabaseHandler db = new DatabaseHandler(getContext());
+        // let's set up calories and weight goal
+        mCaloriesGoal.setText(weightCalculator.getCalorieGoal());
+        // we will set up a calories obtained, to do this we need to call the db
+        // at zero selects today.
+        double caloriesObtained = db.selectCaloriesAt(0);
+        double caloriesLeft = weightCalculator.getBMR() - caloriesObtained;
+        // set the text colour depending on weight.
+        mCaloriesObtained.setTextColor((caloriesLeft >= 0) ? Color.parseColor("#2ecc71") : Color.parseColor("#e74c3c"));
+        mCaloriesObtained.setText("" + caloriesLeft);
+
         // retrieve a food log
-        ArrayList<Food> recentFood = db.selectRecentFoodLog();
-        if (recentFood != null) mListView.setAdapter(new CustomAdapter(getContext(), db.selectRecentFoodLog()));
+        recentFood = db.selectRecentFoodLog();
+        if (recentFood != null) mListView.setAdapter(new CustomAdapter(getContext(), recentFood));
 
         // we want to set the text view for last logged weight, last calories and calories goal
         Calendar cal = Calendar.getInstance(Locale.getDefault());
-        mCurrentDate.setText(new SimpleDateFormat("yyyy-MM-dd").format(cal.getTime()));
+        mCurrentDate.setText("Today\'s Date: " + new SimpleDateFormat("yyyy-MM-dd").format(cal.getTime()));
 
         // set up for last logged, we'll need to db this one
-        mLastLoggedCalories.setText("Last Logged Calorie: " + db.lastRecordedCalorieLog());
-        if (db.lastRecordedWeightLog() != null) mLastLoggedWeight.setText("Last Logged Weight: " + db.lastRecordedWeightLog());
+        String calorieLogDate = (db.lastRecordedCalorieLog() != null) ? db.lastRecordedCalorieLog() : "";
+        String weightLogDate = (db.lastRecordedWeightLog() != null) ? db.lastRecordedWeightLog() : "";
+        db.close();
+
+        // set a long lcick for mlistview
+        mListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, final int i, long l) {
+                // use the id
+                final Food food = (Food) mListView.getItemAtPosition(i);
+                CharSequence colors[] = new CharSequence[] {"Edit", "Delete"};
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                builder.setTitle("Food Options");
+                builder.setItems(colors, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                       // 0 indicating edit, and 1 indicating delete
+                        if (which == 0) {
+                            FragmentTransaction trans = getActivity().getSupportFragmentManager().beginTransaction();
+                            trans.replace(R.id.content_main, EditFoodFragment.newInstance(food.getId()));
+                            trans.addToBackStack(null);
+                            trans.commit();
+                        } else {
+                            DatabaseHandler db = new DatabaseHandler(getContext());
+                            if (db.deleteFood(food.getId())) {
+                                recentFood.remove(i);
+                                // we also wanna make a notify update
+                                ((BaseAdapter) mListView.getAdapter()).notifyDataSetChanged();
+                                Toast.makeText(getContext(), R.string.db_delete_success, Toast.LENGTH_SHORT).show();
+                            }
+                            db.close();
+                        }
+                    }
+                });
+                builder.show();
+                return true;
+            }
+        });
 
         // connect layout
         fab = (FloatingActionButton) view.findViewById(R.id.fab);
@@ -135,9 +240,9 @@ public class MainFragment extends Fragment {
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
+        public View getView(final int position, View convertView, ViewGroup parent) {
             // Get the data item for this position
-            Food food = getItem(position);
+            final Food food = getItem(position);
             // Check if an existing view is being reused, otherwise inflate the view
             if (convertView == null) convertView = LayoutInflater.from(getContext()).inflate(R.layout.view_calorie_log, parent, false);
 
@@ -145,6 +250,49 @@ public class MainFragment extends Fragment {
             TextView serving = (TextView) convertView.findViewById(R.id.calorie_serving);
             TextView recordedDate = (TextView) convertView.findViewById(R.id.recorded_date);
             TextView calories = (TextView) convertView.findViewById(R.id.calorie_calories);
+
+            // create ImageView
+            final ImageView menuButton = (ImageView) convertView.findViewById(R.id.menuButton);
+
+            // create a listener
+            menuButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // instantiate a pop up menu
+                    PopupMenu menu = new PopupMenu(getContext(), menuButton);
+                    // inflate the pop up menu with the xml
+                    menu.getMenuInflater().inflate(R.menu.popup_menu, menu.getMenu());
+
+                    // create an event listener
+                    menu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                        @Override
+                        public boolean onMenuItemClick(MenuItem item) {
+                            switch (item.getItemId()) {
+                                case R.id.edit:
+                                    FragmentTransaction trans = getActivity().getSupportFragmentManager().beginTransaction();
+                                    trans.replace(R.id.content_main, EditFoodFragment.newInstance(food.getId()));
+                                    trans.addToBackStack(null);
+                                    trans.commit();
+                                    break;
+                                case R.id.delete:
+                                    DatabaseHandler db = new DatabaseHandler(getContext());
+                                    if (db.deleteFood(food.getId())) {
+                                        recentFood.remove(position);
+                                        // we also wanna make a notify update
+                                        ((BaseAdapter) mListView.getAdapter()).notifyDataSetChanged();
+                                        Toast.makeText(getContext(), R.string.db_delete_success, Toast.LENGTH_SHORT).show();
+                                    }
+                                    db.close();
+                                    break;
+                            }
+                            return true;
+                        }
+                    });
+
+                    // finally show the pop up menu
+                    menu.show();
+                }
+            });
 
             name.setText(food.getName());
             serving.setText(food.getServingSize());

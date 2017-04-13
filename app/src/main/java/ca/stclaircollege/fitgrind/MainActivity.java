@@ -1,8 +1,11 @@
 package ca.stclaircollege.fitgrind;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.Preference;
+import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
@@ -22,7 +25,10 @@ public class MainActivity extends AppCompatActivity
                     AddFoodFragment.OnFragmentInteractionListener,
                     ViewFoodFragment.OnFragmentInteractionListener,
                     WorkoutExerciseFragment.OnFragmentInteractionListener,
-                    ExerciseFragment.OnFragmentInteractionListener{
+                    ExerciseFragment.OnFragmentInteractionListener,
+                    ViewCalorieLogFragment.OnFragmentInteractionListener, ViewCalorieDayLogFragment.OnFragmentInteractionListener,
+                    EditFoodFragment.OnFragmentInteractionListener, AddCustomFoodFragment.OnFragmentInteractionListener,
+                    WeightLogFragment.OnFragmentInteractionListener {
 
     // create fragment manager
     FragmentManager fm = getSupportFragmentManager();
@@ -75,7 +81,9 @@ public class MainActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            return true;
+            // setup intent
+            Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
+            startActivity(intent);
         }
 
         return super.onOptionsItemSelected(item);
@@ -88,19 +96,32 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_home) {
-//            FragmentTransaction tran = fm.beginTransaction();
-//            tran.replace(R.id.content_main, new ());
-//            tran.commit();
+            FragmentTransaction tran = fm.beginTransaction();
+            tran.replace(R.id.content_main, new MainFragment());
+            tran.commit();
+
+        } else if (id == R.id.nav_diary) {
+
+            FragmentTransaction trans = fm.beginTransaction();
+            trans.replace(R.id.content_main, new ViewCalorieLogFragment());
+            trans.commit();
+
+        } else if (id == R.id.nav_add_custom_food) {
+
+            FragmentTransaction trans = fm.beginTransaction();
+            trans.replace(R.id.content_main, new AddCustomFoodFragment());
+            trans.commit();
 
         } else if (id == R.id.nav_add_food) {
-//            FragmentTransaction tran = fm.beginTransaction();
-//            tran.replace(R.id.content_main, new ());
+//            FragmentTransaction trans = fm.beginTransaction();
+//            tran.replace(R.id.content_main, new );
 //            tran.commit();
 
         } else if (id == R.id.nav_weight_log) {
-//            FragmentTransaction tran = fm.beginTransaction();
-//            tran.replace(R.id.content_main, new ());
-//            tran.commit();
+
+            FragmentTransaction tran = fm.beginTransaction();
+            tran.replace(R.id.content_main, new WeightLogFragment());
+            tran.commit();
 
         } else if (id == R.id.nav_workout_schedule) {
             startActivity(new Intent(MainActivity.this, TabbedActivity.class));
@@ -109,11 +130,6 @@ public class MainActivity extends AppCompatActivity
 //            FragmentTransaction tran = fm.beginTransaction();
 //            tran.replace(R.id.content_main, new ());
 //            tran.commit();
-
-        } else if (id == R.id.nav_test) {
-            FragmentTransaction tran = fm.beginTransaction();
-            tran.replace(R.id.content_main, new WorkoutExerciseFragment());
-            tran.commit();
 
         }
 
