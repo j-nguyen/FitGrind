@@ -3,28 +3,21 @@ package ca.stclaircollege.fitgrind;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
-import android.widget.TextView;
-import java.util.ArrayList;
-import ca.stclaircollege.fitgrind.database.Exercise;
-import ca.stclaircollege.fitgrind.database.DatabaseHandler;
 
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link ExerciseFragment.OnFragmentInteractionListener} interface
+ * {@link AddCardioExerciseFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link ExerciseFragment#newInstance} factory method to
+ * Use the {@link AddCardioExerciseFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ExerciseFragment extends Fragment {
+public class AddCardioExerciseFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -34,13 +27,9 @@ public class ExerciseFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    ListView list;
-    CustomAdapter customAdapter;
-    ArrayList<Exercise> exercisesList;
-
     private OnFragmentInteractionListener mListener;
 
-    public ExerciseFragment() {
+    public AddCardioExerciseFragment() {
         // Required empty public constructor
     }
 
@@ -50,11 +39,11 @@ public class ExerciseFragment extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment ExerciseFragment.
+     * @return A new instance of fragment AddCardioExerciseFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static ExerciseFragment newInstance(String param1, String param2) {
-        ExerciseFragment fragment = new ExerciseFragment();
+    public static AddCardioExerciseFragment newInstance(String param1, String param2) {
+        AddCardioExerciseFragment fragment = new AddCardioExerciseFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -75,59 +64,7 @@ public class ExerciseFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_exercise, container, false);
-        FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fabExercise);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
-
-        list = (ListView) view.findViewById(R.id.exerciselist);
-        DatabaseHandler db = new DatabaseHandler(getContext());
-        final ArrayList<Exercise> exercisesList = new ArrayList<Exercise>();
-        //exercisesList = db.selectAllWorkout();
-        db.close();
-//        exercisesList.add(new Exercise("text", "test", "test"));
-//        exercisesList.add(new Exercise("text", "test", "test"));
-//        exercisesList.add(new Exercise("text", "test", "test"));
-        
-        final ExerciseFragment.CustomAdapter adapter = new ExerciseFragment.CustomAdapter(getContext(), exercisesList);
-        list.setAdapter(adapter);
-
-
-        if(mParam1 != null){
-            TextView text = (TextView) view.findViewById(R.id.day);
-            text.setText(mParam1);
-        }
-
-        return view;
-    }
-
-    public class CustomAdapter extends ArrayAdapter<Exercise> {
-        public CustomAdapter(Context context, ArrayList<Exercise> items) {
-            super(context, 0, items);
-        }
-        //get each item and assign a view to it
-        public View getView(int position, View convertView, ViewGroup parent){
-            final Exercise item = getItem(position);
-            if(convertView == null){
-                convertView = LayoutInflater.from(getContext()).inflate(R.layout.exercise_view, parent, false);
-            }
-
-            //set the listview items
-            TextView exerciseName = (TextView) convertView.findViewById(R.id.exerciseName);
-            exerciseName.setText(item.getName());
-
-            TextView set = (TextView) convertView.findViewById(R.id.exerciseSet);
-            set.setText(item.getSet());
-
-            TextView length = (TextView) convertView.findViewById(R.id.exerciseRep);
-            length.setText(item.getRep());
-
-            return  convertView;
-        }
+        return inflater.inflate(R.layout.fragment_add_cardio_exercise, container, false);
     }
 
     // TODO: Rename method, update argument and hook method into UI event
