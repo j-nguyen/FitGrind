@@ -8,34 +8,38 @@
 
     <!-- TODO: Update blank fragment layout -->
     <TextView
-        android:text="TextView"
+        android:text="Exercise Name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/textView2"
-        android:layout_column="0"/>
+        android:id="@+id/cardioNameLabel"
+        android:layout_column="0" />
 
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:inputType="textPersonName"
-        android:text="Name"
-        android:ems="10"
-        android:id="@+id/editText"
-        android:layout_column="1"/>
+        android:id="@+id/cardioNameEditText"
+        android:layout_column="1" />
 
     <TextView
-        android:text="TextView"
+        android:text="Time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/textView3"
-        android:layout_column="0"/>
+        android:id="@+id/timeLabel"
+        android:layout_column="0" />
 
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:inputType="textPersonName"
-        android:text="Name"
-        android:ems="10"
-        android:id="@+id/editText2"
-        android:layout_column="1"/>
+        android:id="@+id/timeEditText"
+        android:layout_column="1" />
+
+    <Button
+        android:text="Add Cardio Workout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/submitButton"
+        android:layout_columnSpan="2"
+        android:layout_column="0" />
 </GridLayout>
