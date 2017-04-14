@@ -14,8 +14,11 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import ca.stclaircollege.fitgrind.database.Cardio;
 import ca.stclaircollege.fitgrind.database.DatabaseHandler;
 import ca.stclaircollege.fitgrind.database.Exercise;
+import ca.stclaircollege.fitgrind.database.Strength;
+import ca.stclaircollege.fitgrind.database.WorkoutType;
 
 
 /**
@@ -38,7 +41,7 @@ public class ExerciseFragment extends Fragment {
 
     ListView list;
     CustomAdapter customAdapter;
-    ArrayList<Exercise> exercisesList;
+    ArrayList<WorkoutType> exercisesList;
 
     private OnFragmentInteractionListener mListener;
 
@@ -88,15 +91,16 @@ public class ExerciseFragment extends Fragment {
 
         list = (ListView) view.findViewById(R.id.exerciselist);
         DatabaseHandler db = new DatabaseHandler(getContext());
-        final ArrayList<Exercise> exercisesList = new ArrayList<Exercise>();
-        //exercisesList = db.selectAllWorkout();
+//        final ArrayList<Strength> exercisesList = new ArrayList<Strength>();
+        exercisesList = db.selectAllWorkout();
         db.close();
-//        exercisesList.add(new Exercise("text", "test", "test"));
-//        exercisesList.add(new Exercise("text", "test", "test"));
+//        System.out.println(exercisesList.size());
+        exercisesList.add(new Strength("asd", 1, 2, 2.2));
+        exercisesList.add(new Cardio("oppo", 2.2));
 //        exercisesList.add(new Exercise("text", "test", "test"));
         
-        final ExerciseFragment.CustomAdapter adapter = new ExerciseFragment.CustomAdapter(getContext(), exercisesList);
-        list.setAdapter(adapter);
+        customAdapter = new CustomAdapter(getContext(), exercisesList);
+        list.setAdapter(customAdapter);
 
 
         if(mParam1 != null){
@@ -107,13 +111,13 @@ public class ExerciseFragment extends Fragment {
         return view;
     }
 
-    public class CustomAdapter extends ArrayAdapter<Exercise> {
-        public CustomAdapter(Context context, ArrayList<Exercise> items) {
+    public class CustomAdapter extends ArrayAdapter<WorkoutType> {
+        public CustomAdapter(Context context, ArrayList<WorkoutType> items) {
             super(context, 0, items);
         }
         //get each item and assign a view to it
         public View getView(int position, View convertView, ViewGroup parent){
-            final Exercise item = getItem(position);
+            WorkoutType item = getItem(position);
             if(convertView == null){
                 convertView = LayoutInflater.from(getContext()).inflate(R.layout.exercise_view, parent, false);
             }
@@ -122,12 +126,22 @@ public class ExerciseFragment extends Fragment {
             TextView exerciseName = (TextView) convertView.findViewById(R.id.exerciseName);
             exerciseName.setText(item.getName());
 
-            TextView set = (TextView) convertView.findViewById(R.id.exerciseSet);
-            set.setText(item.getSet());
+            if(item instanceof Strength) {
+                Strength mItem = (Strength) item;
+                System.out.println(mItem.getSet());
+                TextView set = (TextView) convertView.findViewById(R.id.exerciseSet);
+                set.setText("" + mItem.getSet());
 
-            TextView length = (TextView) convertView.findViewById(R.id.exerciseRep);
-            length.setText(item.getRep());
+                TextView rep = (TextView) convertView.findViewById(R.id.exerciseRep);
+                rep.setText("" + mItem.getReptitions());
 
+                TextView weight = (TextView) convertView.findViewById(R.id.exerciseWeight);
+                weight.setText("" + mItem.getWeight());
+            } else if (item instanceof Cardio){
+                Cardio mItem = (Cardio) item;
+                TextView time = (TextView) convertView.findViewById(R.id.exerciseTime);
+                time.setText("" + mItem.getTime());
+            }
             return  convertView;
         }
     }

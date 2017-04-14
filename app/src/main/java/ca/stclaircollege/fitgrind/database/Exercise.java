@@ -9,7 +9,7 @@ public class Exercise {
     private String set;
     private String rep;
 
-    public Exercise(String name, String set, String rep) {
+    public Exercise(String name, String set, String rep, String weight) {
         this.name = name;
         this.set = set;
         this.rep = rep;

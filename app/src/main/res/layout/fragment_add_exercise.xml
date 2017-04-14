@@ -55,7 +55,7 @@
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="gone"
+            android:visibility="visible"
             android:id="@+id/StrengthLayout">
 
             <LinearLayout
@@ -133,7 +133,8 @@
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/CardioLayout">
+            android:id="@+id/CardioLayout"
+            android:visibility="gone">
 
             <LinearLayout
                 android:orientation="horizontal"
@@ -158,5 +159,19 @@
 
             </LinearLayout>
         </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <Button
+                android:text="Add Exercise "
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/exerciseSubmitButton"
+                android:layout_weight="1" />
+        </LinearLayout>
+
     </LinearLayout>
 </LinearLayout>

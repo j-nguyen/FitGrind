@@ -21,6 +21,12 @@ public class Cardio extends WorkoutType {
         this.time = time;
     }
 
+    public Cardio(String name, double time) {
+        this.name = name;
+        this.time = time;
+    }
+
+
     public long getCardioId() {
         return cardioId;
     }
