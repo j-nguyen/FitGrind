@@ -15,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
@@ -134,18 +135,21 @@ public class WeightLogFragment extends Fragment {
                 db.close();
                 // if it's past 7 days, we can let the user insert the weight log
                 // find the difference between the dates.
-                // if we can't retrieve the last date, we can set it automatically to 7 becasue there isn't a date recorded
+                // if we can't retrieve the last date, we can set it automatically to 7 because there isn't a date recorded
                 long diff = (lastDate != null) ? 0 : 7;
                 // parse and check
                 if (lastDate != null) {
                     try {
-                        Date date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(lastDate);
+                        Date date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2017-04-12 14:23:14");
                         Date now = Calendar.getInstance(Locale.getDefault()).getTime();
-                        diff = date.getTime() - now.getTime();
+                        diff = now.getTime() - date.getTime();
+                        diff = TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
+
                     } catch (ParseException e) {
                         e.printStackTrace();
                     }
                 }
+
                 // check to make sure it's there
                 if (diff >= 7) {
                     // once it clicks, instead of opening up another fragment, this time we're going to open a dialog instead.
@@ -199,8 +203,16 @@ public class WeightLogFragment extends Fragment {
 
                 } else {
                     // create a toast indicating that you need to create it another time.
-                    Toast.makeText(getActivity(), R.string.invalid_seven_days, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), String.format(getString(R.string.invalid_days), 7 - diff), Toast.LENGTH_LONG).show();
                 }
+            }
+        });
+
+        // create the listener for when an item is clicked
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                System.out.println("TEST");
             }
         });
 
