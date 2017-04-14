@@ -3,12 +3,13 @@ package ca.stclaircollege.fitgrind;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
+import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.PopupMenu;
 import android.text.InputType;
 import android.view.LayoutInflater;
@@ -24,7 +25,6 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -32,9 +32,10 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
-
 import ca.stclaircollege.fitgrind.database.DatabaseHandler;
+import ca.stclaircollege.fitgrind.database.Progress;
 import ca.stclaircollege.fitgrind.database.Weight;
+
 
 
 /**
@@ -50,6 +51,7 @@ public class WeightLogFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    private static final int PICK_GALLERY = 1;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -217,10 +219,33 @@ public class WeightLogFragment extends Fragment {
                 // we also need the item obj
                 Weight weight = (Weight) mListView.getItemAtPosition(i);
                 DatabaseHandler db = new DatabaseHandler(getContext());
+                Progress progress = db.selectProgress(weight.getId());
                 // check if a progress exists
                 // if it doesn't we can open up a gallery or a progress for them to get it in
-                if (db.selectProgress(weight.getId()) == null) {
+                if (progress == null) {
                     // We need to open an alert dialog
+                    AlertDialog.Builder dialog = new AlertDialog.Builder(getContext());
+                    final CharSequence[] items = { "Take Photo", "Choose from Gallery",
+                            "Cancel" };
+                    dialog.setTitle("Select Option");
+                    dialog.setItems(items, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            switch (i) {
+                                case 0:
+                                    break;
+                                case 1:
+                                    Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                                    startActivityForResult(intent, PICK_GALLERY);
+                                    break;
+                                default:
+                                    dialogInterface.dismiss();
+                                    break;
+                            }
+                        }
+                    });
+                    // show dialog
+                    dialog.show();
                 } else {
                     // show the activity
                 }
@@ -346,6 +371,51 @@ public class WeightLogFragment extends Fragment {
             });
             return convertView;
         }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case PICK_GALLERY:
+                // check if selected result was ok
+                if (resultCode == getActivity().RESULT_OK) {
+                    String path = getPath(getContext(), data.getData());
+                    if (path != null) {
+                        // insert the progress
+                        DatabaseHandler db = new DatabaseHandler(getContext());
+                        boolean result = db.insertProgress(new Progress(path));
+                        if (result) {
+                            Toast.makeText(getActivity(), R.string.db_insert_success, Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(getActivity(), R.string.db_error, Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }
+                break;
+
+        }
+    }
+
+    /**
+     *  This method helps us get the real absolute path from a gallery picture. This is used when the user selects the gallery.
+     *  Once selected, this will be inserted into the db.
+     * @param context
+     * @param uri
+     * @return
+     */
+    private String getPath( Context context, Uri uri ) {
+        String result = null;
+        String[] proj = { MediaStore.Images.Media.DATA };
+        Cursor cursor = context.getContentResolver( ).query( uri, proj, null, null, null );
+        if(cursor != null){
+            if ( cursor.moveToFirst( ) ) {
+                int column_index = cursor.getColumnIndexOrThrow( proj[0] );
+                result = cursor.getString( column_index );
+            }
+            cursor.close( );
+        }
+        return result;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
