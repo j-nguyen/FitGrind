@@ -283,6 +283,11 @@ public class WeightLogFragment extends Fragment {
                     dialog.show();
                 } else {
                     // show the activity
+                    Intent intent = new Intent(getActivity(), FullScreenImageActivity.class);
+                    intent.putExtra("progress", progress);
+                    if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
+                        startActivity(intent);
+                    }
                 }
             }
         });

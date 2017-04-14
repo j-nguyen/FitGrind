@@ -5,7 +5,10 @@
     <!-- Permission used for API key -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-feature android:name="android.hardware.camera" android:required="false" />
+
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
 
     <application
         android:allowBackup="true"
@@ -39,7 +42,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="ca.stclaircollege.fitgrind.MainActivity" />
         </activity>
-        <activity android:name=".AddProgramActivity"></activity>
+        <activity android:name=".AddProgramActivity" />
 
         <provider
             android:name="android.support.v4.content.FileProvider"
@@ -48,8 +51,10 @@
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_paths"></meta-data>
+                android:resource="@xml/file_paths" />
         </provider>
+
+        <activity android:name=".FullScreenImageActivity"></activity>
     </application>
 
 </manifest>
