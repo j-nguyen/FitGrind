@@ -4,12 +4,15 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.FileProvider;
 import android.support.v7.widget.PopupMenu;
 import android.text.InputType;
 import android.view.LayoutInflater;
@@ -25,6 +28,9 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+import java.io.File;
+import java.io.IOException;
+import java.net.URI;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -51,7 +57,9 @@ public class WeightLogFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-    private static final int PICK_GALLERY = 1;
+
+    private static final int GALLERY_INTENT = 1;
+    private static final int CAMERA_INTENT = 2;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -65,6 +73,7 @@ public class WeightLogFragment extends Fragment {
     private WeightCalculator weightCalculator;
     private ListView mListView;
     private FloatingActionButton fab;
+    private String mCurrentPhotoPath;
 
     public WeightLogFragment() {}
 
@@ -198,7 +207,7 @@ public class WeightLogFragment extends Fragment {
 
                     dialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                         @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {}
+                        public void onClick(DialogInterface dialogInterface, int i) { dialogInterface.dismiss(); }
                     });
 
                     dialog.show();
@@ -233,10 +242,36 @@ public class WeightLogFragment extends Fragment {
                         public void onClick(DialogInterface dialogInterface, int i) {
                             switch (i) {
                                 case 0:
+                                    // if ewe have a camera available, we can use it
+                                    if (getActivity().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
+                                        // launch camera intent
+                                        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                                        if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
+                                            // Create a file where the photo should go
+                                            File photoFile = null;
+                                            try {
+                                                photoFile = createImageFile();
+                                            } catch(IOException e) { e.printStackTrace(); }
+                                            // Continue only if file was successfully created
+                                            if (photoFile != null) {
+                                                Uri photoURI = FileProvider.getUriForFile(getActivity(), "ca.stclaircollege.fileprovider", photoFile);
+                                                intent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                                                startActivityForResult(intent, CAMERA_INTENT);
+                                            }
+                                        }
+                                    } else {
+                                        // if not then we launch the gallery intent instead
+                                        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                                        if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
+                                            startActivityForResult(intent, GALLERY_INTENT);
+                                        }
+                                    }
                                     break;
                                 case 1:
                                     Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                                    startActivityForResult(intent, PICK_GALLERY);
+                                    if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
+                                        startActivityForResult(intent, GALLERY_INTENT);
+                                    }
                                     break;
                                 default:
                                     dialogInterface.dismiss();
@@ -377,7 +412,7 @@ public class WeightLogFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
-            case PICK_GALLERY:
+            case GALLERY_INTENT:
                 // check if selected result was ok
                 if (resultCode == getActivity().RESULT_OK) {
                     String path = getPath(getContext(), data.getData());
@@ -393,7 +428,9 @@ public class WeightLogFragment extends Fragment {
                     }
                 }
                 break;
+            case CAMERA_INTENT:
 
+                break;
         }
     }
 
@@ -416,6 +453,22 @@ public class WeightLogFragment extends Fragment {
             cursor.close( );
         }
         return result;
+    }
+
+    private File createImageFile() throws IOException {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
+
+        // Save a file: path for use with ACTION_VIEW intents
+        mCurrentPhotoPath = image.getAbsolutePath();
+        return image;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
