@@ -40,6 +40,7 @@ import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 import ca.stclaircollege.fitgrind.database.DatabaseHandler;
 import ca.stclaircollege.fitgrind.database.Progress;
+import ca.stclaircollege.fitgrind.database.Strength;
 import ca.stclaircollege.fitgrind.database.Weight;
 
 
@@ -254,7 +255,7 @@ public class WeightLogFragment extends Fragment {
                                             } catch(IOException e) { e.printStackTrace(); }
                                             // Continue only if file was successfully created
                                             if (photoFile != null) {
-                                                Uri photoURI = FileProvider.getUriForFile(getActivity(), "ca.stclaircollege.fileprovider", photoFile);
+                                                Uri photoURI = FileProvider.getUriForFile(getContext(), "ca.stclaircollege.fileprovider", photoFile);
                                                 intent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
                                                 startActivityForResult(intent, CAMERA_INTENT);
                                             }
@@ -415,28 +416,31 @@ public class WeightLogFragment extends Fragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        switch (requestCode) {
-            case GALLERY_INTENT:
-                // check if selected result was ok
-                if (resultCode == getActivity().RESULT_OK) {
-                    String path = getPath(getContext(), data.getData());
-                    if (path != null) {
-                        // insert the progress
-                        DatabaseHandler db = new DatabaseHandler(getContext());
-                        boolean result = db.insertProgress(new Progress(path));
-                        if (result) {
-                            Toast.makeText(getActivity(), R.string.db_insert_success, Toast.LENGTH_SHORT).show();
-                        } else {
-                            Toast.makeText(getActivity(), R.string.db_error, Toast.LENGTH_SHORT).show();
-                        }
-                    }
+        if (requestCode == GALLERY_INTENT && resultCode == getActivity().RESULT_OK) {
+            String path = getPath(getContext(), data.getData());
+            if (path != null) {
+                // insert the progress
+                DatabaseHandler db = new DatabaseHandler(getContext());
+                boolean result = db.insertProgress(new Progress(path));
+                if (result) {
+                    Toast.makeText(getActivity(), R.string.db_insert_success, Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getActivity(), R.string.db_error, Toast.LENGTH_SHORT).show();
                 }
-                break;
-            case CAMERA_INTENT:
-
-                break;
+            }
+        } else if (requestCode == CAMERA_INTENT && resultCode == getActivity().RESULT_OK) {
+            // insert the progress
+            DatabaseHandler db = new DatabaseHandler(getContext());
+            boolean result = db.insertProgress(new Progress(mCurrentPhotoPath));
+            if (result) {
+                Toast.makeText(getActivity(), R.string.db_insert_success, Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(getActivity(), R.string.db_error, Toast.LENGTH_SHORT).show();
+            }
         }
+
+
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     /**
