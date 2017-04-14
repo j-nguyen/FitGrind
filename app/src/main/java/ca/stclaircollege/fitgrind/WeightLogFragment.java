@@ -140,7 +140,7 @@ public class WeightLogFragment extends Fragment {
                 // parse and check
                 if (lastDate != null) {
                     try {
-                        Date date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2017-04-12 14:23:14");
+                        Date date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(lastDate);
                         Date now = Calendar.getInstance(Locale.getDefault()).getTime();
                         diff = now.getTime() - date.getTime();
                         diff = TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
@@ -212,7 +212,18 @@ public class WeightLogFragment extends Fragment {
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                System.out.println("TEST");
+                // in here, we want to add an image.
+                // so we'll check if there's an image here or not through db
+                // we also need the item obj
+                Weight weight = (Weight) mListView.getItemAtPosition(i);
+                DatabaseHandler db = new DatabaseHandler(getContext());
+                // check if a progress exists
+                // if it doesn't we can open up a gallery or a progress for them to get it in
+                if (db.selectProgress(weight.getId()) == null) {
+                    // We need to open an alert dialog
+                } else {
+                    // show the activity
+                }
             }
         });
 
