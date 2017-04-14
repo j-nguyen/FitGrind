@@ -37,7 +37,8 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="ca.stclaircollege.fitgrind.MainActivity" />
         </activity>
-        <activity android:name=".AddProgramActivity"></activity>
+        <activity android:name=".AddProgramActivity" />
+        <activity android:name=".AddExerciseActivity"></activity>
     </application>
 
 </manifest>

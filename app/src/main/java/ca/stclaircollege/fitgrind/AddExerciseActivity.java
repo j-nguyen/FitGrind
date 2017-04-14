@@ -4,15 +4,17 @@ import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
-public class AddProgramActivity extends AppCompatActivity implements
-    AddProgramFragment.OnFragmentInteractionListener{
+public class AddExerciseActivity extends AppCompatActivity implements
+    AddProgramFragment.OnFragmentInteractionListener,
+    ExerciseFragment.OnFragmentInteractionListener{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_program);
+        setContentView(R.layout.activity_add_exercise);
+
         // get the fragment manager
-        getSupportFragmentManager().beginTransaction().replace(R.id.activity_add_program, new AddProgramFragment()).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.activity_add_exercise, new AddExerciseFragment()).commit();
     }
 
     @Override
