@@ -5,7 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 public class AddExerciseActivity extends AppCompatActivity implements
-    AddProgramFragment.OnFragmentInteractionListener,
+    AddExerciseFragment.OnFragmentInteractionListener,
     ExerciseFragment.OnFragmentInteractionListener{
 
     @Override
