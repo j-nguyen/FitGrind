@@ -6,13 +6,13 @@
     android:id="@+id/activity_full_screen_image"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center"
     android:orientation="vertical"
     tools:context="ca.stclaircollege.fitgrind.FullScreenImageActivity">
 
-    <ImageView
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
+    <com.github.chrisbanes.photoview.PhotoView
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:scaleType="centerCrop"
         android:adjustViewBounds="true"
         android:id="@+id/full_image" />
 
