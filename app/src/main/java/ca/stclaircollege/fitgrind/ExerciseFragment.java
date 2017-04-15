@@ -86,8 +86,8 @@ public class ExerciseFragment extends Fragment {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), AddExerciseActivity.class);
-                startActivity(intent);
+//                Intent intent = new Intent(getActivity(), AddExerciseActivity.class);
+//                startActivity(intent);
             }
         });
 

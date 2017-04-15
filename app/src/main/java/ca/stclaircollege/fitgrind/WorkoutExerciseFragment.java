@@ -11,6 +11,7 @@ import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 
 
 /**
@@ -74,11 +75,39 @@ public class WorkoutExerciseFragment extends Fragment {
         sectionPagerAdapter = new SectionPagerAdapter(getChildFragmentManager());
         viewPager = (ViewPager) view.findViewById(R.id.exerciseContent);
         viewPager.setAdapter(sectionPagerAdapter);
-        if(savedInstanceState == null){
-            Snackbar.make(view, "Swipe left for more gear", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show();
-        }
+//        if(savedInstanceState == null){
+//            Snackbar.make(view, "Swipe left for more gear", Snackbar.LENGTH_LONG)
+//                    .setAction("Action", null).show();
+//        }
+        ImageButton backButton = (ImageButton) view.findViewById(R.id.exercise_back_button);
+        ImageButton forwardButton = (ImageButton) view.findViewById(R.id.exercise_forward_button);
 
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int location = viewPager.getCurrentItem();
+                if(location > 0) {
+                    location--;
+                    viewPager.setCurrentItem(location);
+                } else if (location == 0){
+                    viewPager.setCurrentItem(viewPager.getChildCount());
+                }
+            }
+        });
+
+        forwardButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int location = viewPager.getCurrentItem();
+                location++;
+                if(location >= viewPager.getChildCount()+5) {
+                    location++;
+                    viewPager.setCurrentItem(0);
+                } else {
+                    viewPager.setCurrentItem(location);
+                }
+            }
+        });
         return view;
     }
 
