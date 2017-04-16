@@ -261,12 +261,13 @@ public class DatabaseHandler extends SQLiteOpenHelper {
      * Inserts your 'weight-log' picture weekly.
      * @param progress
      */
-    public boolean insertProgress(Progress progress) {
+    public boolean insertProgress(Progress progress, long weightId) {
         SQLiteDatabase db = getWritableDatabase();
         // Create the content values
         ContentValues values = new ContentValues();
         // input the values
         values.put("resource", progress.getResource());
+        values.put("weight_id", weightId);
         // insert the db
         return db.insert(PROGRESS_TABLE_NAME, null, values) > 0;
     }
@@ -607,7 +608,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         // create db
         SQLiteDatabase db = getReadableDatabase();
         // create a query cursor to check
-        Cursor cursor = db.rawQuery("SELECT * FROM progress WHERE id = ?", new String[]{String.valueOf(id)});
+        Cursor cursor = db.rawQuery("SELECT * FROM progress WHERE weight_id = ?", new String[]{String.valueOf(id)});
         if (cursor.moveToFirst()) {
             // move to last because we know what it is now
             cursor.moveToLast();

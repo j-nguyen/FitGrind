@@ -5,9 +5,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
+
 import com.github.chrisbanes.photoview.PhotoView;
 import com.squareup.picasso.Picasso;
 import java.io.File;
+
+import ca.stclaircollege.fitgrind.database.DatabaseHandler;
 import ca.stclaircollege.fitgrind.database.Progress;
 
 public class FullScreenImageActivity extends AppCompatActivity {
@@ -56,7 +60,18 @@ public class FullScreenImageActivity extends AppCompatActivity {
             finish();
         } else if (id == R.id.action_delete) {
             // if it's delete then we need to delete
-            System.out.println(progress.getId()); // print out id)
+            // create first a db handler
+            DatabaseHandler db = new DatabaseHandler(this);
+            // next we want to delete the item
+            boolean result = db.deleteProgress(progress.getId());
+
+            if (result) {
+                Toast.makeText(getApplicationContext(), R.string.db_delete_success, Toast.LENGTH_LONG).show();
+                finish();
+            } else {
+                Toast.makeText(getApplicationContext(), R.string.db_error, Toast.LENGTH_SHORT).show();
+            }
+
         }
 
         return super.onOptionsItemSelected(item);
