@@ -105,10 +105,10 @@ public class ExerciseFragment extends Fragment {
         list.setAdapter(customAdapter);
 
 
-        if(mParam1 != null){
-            TextView text = (TextView) view.findViewById(R.id.day);
-            text.setText(mParam1);
-        }
+//        if(mParam1 != null){
+//            TextView text = (TextView) view.findViewById(R.id.day);
+//            text.setText(mParam1);
+//        }
 
         return view;
     }

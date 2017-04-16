@@ -155,11 +155,13 @@ public class  WorkoutProgramFragment extends Fragment {
 
     @Override
     public void onActivityResult(int requestCode, int  resultCode, Intent data){
-        if(requestCode == LIST_REQUEST) {
-            Program program = data.getExtras().getParcelable("program");
-            programsList.add(program);
-            adapter.notifyDataSetChanged();
-            System.out.println("68");
+        if(requestCode == LIST_REQUEST && requestCode == getActivity().RESULT_OK) {
+            if(data.getExtras() != null) {
+                Program program = data.getExtras().getParcelable("program");
+                programsList.add(program);
+                adapter.notifyDataSetChanged();
+                System.out.println("68");
+            }
         }
     }
 

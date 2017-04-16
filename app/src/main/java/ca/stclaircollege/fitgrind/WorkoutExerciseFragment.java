@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
 
 /**
@@ -79,8 +80,33 @@ public class WorkoutExerciseFragment extends Fragment {
 //            Snackbar.make(view, "Swipe left for more gear", Snackbar.LENGTH_LONG)
 //                    .setAction("Action", null).show();
 //        }
+        final TextView day = (TextView) view.findViewById(R.id.day);
         ImageButton backButton = (ImageButton) view.findViewById(R.id.exercise_back_button);
         ImageButton forwardButton = (ImageButton) view.findViewById(R.id.exercise_forward_button);
+
+        day.setText("Sunday");
+        // set up listeners for viewpager
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {}
+
+            @Override
+            public void onPageSelected(int position) {
+                switch (position) {
+                    case 0: day.setText("Sunday"); break;
+                    case 1: day.setText("Monday"); break;
+                    case 2: day.setText("Tuesday"); break;
+                    case 3: day.setText("Wednesday"); break;
+                    case 4: day.setText("Thursday"); break;
+                    case 5: day.setText("Friday"); break;
+                    case 6: day.setText("Saturday"); break;
+                    default: day.setText("Sunday"); break;
+                }
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {}
+        });
 
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
