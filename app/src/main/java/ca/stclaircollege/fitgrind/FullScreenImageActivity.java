@@ -5,8 +5,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.Toast;
-
 import com.github.chrisbanes.photoview.PhotoView;
 import com.squareup.picasso.Picasso;
 import java.io.File;
@@ -40,6 +41,19 @@ public class FullScreenImageActivity extends AppCompatActivity {
             // if it does set the new imageview
             File file = new File(progress.getResource());
             Picasso.with(this).load(file).into(mImageView);
+
+            // create an event listener
+            mImageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    ActionBar bar = getSupportActionBar();
+                    if (bar.isShowing()) {
+                        bar.hide();
+                    } else {
+                        bar.show();
+                    }
+                }
+            });
         }
     }
 

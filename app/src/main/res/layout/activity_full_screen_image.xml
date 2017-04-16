@@ -6,7 +6,9 @@
     android:id="@+id/activity_full_screen_image"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@android:color/black"
     android:orientation="vertical"
+    android:fitsSystemWindows="true"
     tools:context="ca.stclaircollege.fitgrind.FullScreenImageActivity">
 
     <com.github.chrisbanes.photoview.PhotoView

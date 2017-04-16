@@ -55,7 +55,9 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
-        <activity android:name=".FullScreenImageActivity">
+        <activity
+            android:name=".FullScreenImageActivity"
+            android:theme="@style/AppTheme.TransparentActionBar">
         </activity>
     </application>
 
