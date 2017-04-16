@@ -369,6 +369,8 @@ public class WeightLogFragment extends Fragment {
                                         // remove from the array too
                                         weightList.remove(position);
                                         ((BaseAdapter) mListView.getAdapter()).notifyDataSetChanged();
+                                        // delete from photo too, if it exists
+                                        db.deleteProgress(weightItem.getId());
                                         Toast.makeText(getActivity(), R.string.db_delete_success, Toast.LENGTH_SHORT).show();
                                     }
                                     db.close();
