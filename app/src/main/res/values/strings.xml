@@ -38,7 +38,7 @@
     <string name="db_update_success">Successfully updated!</string>
     <string name="db_delete_success">Successfully deleted!</string>
     <string name="invalid_field">Some fields have not been entered! Please enter all the information.</string>
-    <string name="invalid_seven_days">You must wait 7 more days, until you can record another weight.</string>
+    <string name="invalid_days">You must wait %d more day(s), until you can record another weight.</string>
 
     <!-- Info -->
     <string name="results_title">Calorie Results</string>
@@ -108,6 +108,10 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_log_day">Food logs</string>
+
+    <string name="title_activity_fullscreen">FullscreenActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
 
     =======
     >>>>>>> staging

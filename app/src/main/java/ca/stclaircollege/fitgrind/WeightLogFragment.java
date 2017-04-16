@@ -1,20 +1,30 @@
 package ca.stclaircollege.fitgrind;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
+import android.os.Environment;
+import android.preference.PreferenceManager;
+import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.FileProvider;
 import android.support.v7.widget.PopupMenu;
 import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
@@ -23,7 +33,9 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-
+import java.io.File;
+import java.io.IOException;
+import java.net.URI;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -31,9 +43,11 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
-
 import ca.stclaircollege.fitgrind.database.DatabaseHandler;
+import ca.stclaircollege.fitgrind.database.Progress;
+import ca.stclaircollege.fitgrind.database.Strength;
 import ca.stclaircollege.fitgrind.database.Weight;
+
 
 
 /**
@@ -50,6 +64,13 @@ public class WeightLogFragment extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
+    // ACTIVITY RESULTS
+    private static final int GALLERY_INTENT = 1;
+    private static final int CAMERA_INTENT = 2;
+
+    // PERMISSION RESULTS
+    private static final int STORAGE_REQUEST = 1;
+
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
@@ -62,6 +83,8 @@ public class WeightLogFragment extends Fragment {
     private WeightCalculator weightCalculator;
     private ListView mListView;
     private FloatingActionButton fab;
+    private String mCurrentPhotoPath;
+    private long weightId = -1;
 
     public WeightLogFragment() {}
 
@@ -134,18 +157,21 @@ public class WeightLogFragment extends Fragment {
                 db.close();
                 // if it's past 7 days, we can let the user insert the weight log
                 // find the difference between the dates.
-                // if we can't retrieve the last date, we can set it automatically to 7 becasue there isn't a date recorded
+                // if we can't retrieve the last date, we can set it automatically to 7 because there isn't a date recorded
                 long diff = (lastDate != null) ? 0 : 7;
                 // parse and check
                 if (lastDate != null) {
                     try {
                         Date date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(lastDate);
                         Date now = Calendar.getInstance(Locale.getDefault()).getTime();
-                        diff = date.getTime() - now.getTime();
+                        diff = now.getTime() - date.getTime();
+                        diff = TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
+
                     } catch (ParseException e) {
                         e.printStackTrace();
                     }
                 }
+
                 // check to make sure it's there
                 if (diff >= 7) {
                     // once it clicks, instead of opening up another fragment, this time we're going to open a dialog instead.
@@ -176,30 +202,65 @@ public class WeightLogFragment extends Fragment {
                             // create a db
                             DatabaseHandler db = new DatabaseHandler(getContext());
                             long id = db.insertWeight(weightLog);
+                            db.close();
                             // insert the weight
                             if (id != -1) {
                                 // notify data set and add
                                 weightLog.setId(id);
                                 weightList.add(weightLog);
                                 ((BaseAdapter) mListView.getAdapter()).notifyDataSetChanged();
+                                // we also want to set the edited shared preferences too
+                                SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(getActivity());
+                                SharedPreferences.Editor edit = SP.edit();
+                                edit.putString("weight", ""+weight);
+                                edit.commit();
+                                // now we want to set the current weight text change
+                                mCurrentWeight.setText(String.format("Current Weight: %f lbs", weight));
                                 Toast.makeText(getActivity(), R.string.db_insert_success, Toast.LENGTH_SHORT).show();
                             } else {
                                 Toast.makeText(getActivity(), R.string.db_error, Toast.LENGTH_SHORT).show();
                             }
-                            db.close();
                         }
                     });
 
                     dialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                         @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {}
+                        public void onClick(DialogInterface dialogInterface, int i) { dialogInterface.dismiss(); }
                     });
-
+                    // show the dialog
                     dialog.show();
 
                 } else {
                     // create a toast indicating that you need to create it another time.
-                    Toast.makeText(getActivity(), R.string.invalid_seven_days, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), String.format(getString(R.string.invalid_days), 7 - diff), Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+
+        // create the listener for when an item is clicked
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                // in here, we want to add an image.
+                // so we'll check if there's an image here or not through db
+                // we also need the item obj
+                Weight weight = (Weight) mListView.getItemAtPosition(i);
+                DatabaseHandler db = new DatabaseHandler(getContext());
+                Progress progress = db.selectProgress(weight.getId());
+                db.close();
+                // check if a progress exists
+                // if it doesn't we can open up a gallery or a progress for them to get it in
+                if (progress == null) {
+                    // check for permissions
+                    weightId = weight.getId();
+                    requestStoragePermissions();
+                } else {
+                    // show the activity
+                    Intent intent = new Intent(getActivity(), FullScreenImageActivity.class);
+                    intent.putExtra("progress", progress);
+                    if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
+                        startActivity(intent);
+                    }
                 }
             }
         });
@@ -308,6 +369,8 @@ public class WeightLogFragment extends Fragment {
                                         // remove from the array too
                                         weightList.remove(position);
                                         ((BaseAdapter) mListView.getAdapter()).notifyDataSetChanged();
+                                        // delete from photo too, if it exists
+                                        db.deleteProgress(weightItem.getId());
                                         Toast.makeText(getActivity(), R.string.db_delete_success, Toast.LENGTH_SHORT).show();
                                     }
                                     db.close();
@@ -322,6 +385,150 @@ public class WeightLogFragment extends Fragment {
                 }
             });
             return convertView;
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == GALLERY_INTENT && resultCode == getActivity().RESULT_OK) {
+            String path = getPath(getContext(), data.getData());
+            if (path != null) {
+                // insert the progress
+                DatabaseHandler db = new DatabaseHandler(getContext());
+                boolean result = db.insertProgress(new Progress(path),weightId);
+                if (result) {
+                    Toast.makeText(getActivity(), R.string.db_insert_success, Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getActivity(), R.string.db_error, Toast.LENGTH_SHORT).show();
+                }
+            }
+        } else if (requestCode == CAMERA_INTENT && resultCode == getActivity().RESULT_OK) {
+            // insert the progress
+            DatabaseHandler db = new DatabaseHandler(getContext());
+            boolean result = db.insertProgress(new Progress(mCurrentPhotoPath), weightId);
+            if (result) {
+                Toast.makeText(getActivity(), R.string.db_insert_success, Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(getActivity(), R.string.db_error, Toast.LENGTH_SHORT).show();
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        // check for permisisons
+        System.out.println("Whats good");
+        if (requestCode == STORAGE_REQUEST && grantResults[0]== PackageManager.PERMISSION_GRANTED) {
+            System.out.println("Hello");
+            //resume tasks needing this permission
+            openPhotoDialog();
+        }
+    }
+
+    /**
+     *  This method helps us get the real absolute path from a gallery picture. This is used when the user selects the gallery.
+     *  Once selected, this will be inserted into the db.
+     * @param context
+     * @param uri
+     * @return
+     */
+    private String getPath( Context context, Uri uri ) {
+        String result = null;
+        String[] proj = { MediaStore.Images.Media.DATA };
+        Cursor cursor = context.getContentResolver( ).query( uri, proj, null, null, null );
+        if(cursor != null){
+            if ( cursor.moveToFirst( ) ) {
+                int column_index = cursor.getColumnIndexOrThrow(proj[0]);
+                result = cursor.getString(column_index);
+            }
+            cursor.close();
+        }
+        return result;
+    }
+
+    private File createImageFile() throws IOException {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
+
+        // Save a file: path for use with ACTION_VIEW intents
+        mCurrentPhotoPath = image.getAbsolutePath();
+        return image;
+    }
+
+    public void openPhotoDialog() {
+        // We need to open an alert dialog
+        AlertDialog.Builder dialog = new AlertDialog.Builder(getContext());
+        final CharSequence[] items = { "Take Photo", "Choose from Gallery",
+                "Cancel" };
+        dialog.setTitle("Select Option");
+        dialog.setItems(items, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                switch (i) {
+                    case 0:
+                        // if ewe have a camera available, we can use it
+                        if (getActivity().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
+                            // launch camera intent
+                            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                            if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
+                                // Create a file where the photo should go
+                                File photoFile = null;
+                                try {
+                                    photoFile = createImageFile();
+                                } catch(IOException e) { e.printStackTrace(); }
+                                // Continue only if file was successfully created
+                                if (photoFile != null) {
+                                    Uri photoURI = FileProvider.getUriForFile(getContext(), "ca.stclaircollege.fileprovider", photoFile);
+                                    intent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                                    startActivityForResult(intent, CAMERA_INTENT);
+                                }
+                            }
+                        } else {
+                            // if not then we launch the gallery intent instead
+                            Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                            if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
+                                startActivityForResult(intent, GALLERY_INTENT);
+                            }
+                        }
+                        break;
+                    case 1:
+                        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                        if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
+                            startActivityForResult(intent, GALLERY_INTENT);
+                        }
+                        break;
+                    default:
+                        dialogInterface.dismiss();
+                        break;
+                }
+            }
+        });
+        // show dialog
+        dialog.show();
+    }
+
+    public void requestStoragePermissions() {
+        // check the the version and make sure it's higher than 23 which is marshmellow
+        if (Build.VERSION.SDK_INT >= 23) {
+            // check permissions here
+            if (getActivity().checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                openPhotoDialog();
+            } else {
+                // request permissions here
+                requestPermissions(new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE}, STORAGE_REQUEST);
+            }
+        } else {
+            // permissions are automatically added with the android manifest xml file. if it's lower than 23, then it's using lollipop and lower.
+            openPhotoDialog();
         }
     }
 

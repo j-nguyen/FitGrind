@@ -5,7 +5,8 @@
     android:layout_height="wrap_content"
     card_view:cardElevation="@dimen/elevation"
     card_view:contentPadding="@dimen/padding"
-    android:layout_margin="@dimen/cardview_calorie_margin">
+    android:layout_margin="@dimen/cardview_calorie_margin"
+    android:id="@+id/item_card_view">
 
     <LinearLayout
         android:orientation="vertical"

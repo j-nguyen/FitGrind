@@ -118,8 +118,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final String CREATE_PROGRESS_TABLE =
             "CREATE TABLE progress (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
-                "resource TEXT, " +
-                "date DATETIME DEFAULT (DATETIME(CURRENT_TIMESTAMP, 'LOCALTIME')));";
+                "weight_id INTEGER REFERENCES weight_log (id), " +
+                "resource TEXT);";
 
     private static final String CREATE_WORKOUTDAY_TABLE =
             "CREATE TABLE workout_day (" +
@@ -261,12 +261,13 @@ public class DatabaseHandler extends SQLiteOpenHelper {
      * Inserts your 'weight-log' picture weekly.
      * @param progress
      */
-    public boolean insertProgress(Progress progress) {
+    public boolean insertProgress(Progress progress, long weightId) {
         SQLiteDatabase db = getWritableDatabase();
         // Create the content values
         ContentValues values = new ContentValues();
         // input the values
         values.put("resource", progress.getResource());
+        values.put("weight_id", weightId);
         // insert the db
         return db.insert(PROGRESS_TABLE_NAME, null, values) > 0;
     }
@@ -595,6 +596,25 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             for (String key : NUTRIENT_KEYS.values()) food.addNutrient(new Nutrient(CALORIE_KEY.get(key), cursor.getDouble(cursor.getColumnIndex(key))));
         }
         return food;
+    }
+
+    /**
+     * Selects progress at id
+     * @param id
+     * @return an object is found, null if not
+     */
+    public Progress selectProgress(long id) {
+        Progress progress = null;
+        // create db
+        SQLiteDatabase db = getReadableDatabase();
+        // create a query cursor to check
+        Cursor cursor = db.rawQuery("SELECT * FROM progress WHERE weight_id = ?", new String[]{String.valueOf(id)});
+        if (cursor.moveToFirst()) {
+            // move to last because we know what it is now
+            cursor.moveToLast();
+            progress = new Progress(cursor.getLong(0), cursor.getString(2));
+        }
+        return progress;
     }
 
     /**
