@@ -5,12 +5,14 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
@@ -200,17 +202,24 @@ public class WeightLogFragment extends Fragment {
                             // create a db
                             DatabaseHandler db = new DatabaseHandler(getContext());
                             long id = db.insertWeight(weightLog);
+                            db.close();
                             // insert the weight
                             if (id != -1) {
                                 // notify data set and add
                                 weightLog.setId(id);
                                 weightList.add(weightLog);
                                 ((BaseAdapter) mListView.getAdapter()).notifyDataSetChanged();
+                                // we also want to set the edited shared preferences too
+                                SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(getActivity());
+                                SharedPreferences.Editor edit = SP.edit();
+                                edit.putString("weight", ""+weight);
+                                edit.commit();
+                                // now we want to set the current weight text change
+                                mCurrentWeight.setText(String.format("Current Weight: %f lbs", weight));
                                 Toast.makeText(getActivity(), R.string.db_insert_success, Toast.LENGTH_SHORT).show();
                             } else {
                                 Toast.makeText(getActivity(), R.string.db_error, Toast.LENGTH_SHORT).show();
                             }
-                            db.close();
                         }
                     });
 
@@ -218,7 +227,7 @@ public class WeightLogFragment extends Fragment {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) { dialogInterface.dismiss(); }
                     });
-
+                    // show the dialog
                     dialog.show();
 
                 } else {
