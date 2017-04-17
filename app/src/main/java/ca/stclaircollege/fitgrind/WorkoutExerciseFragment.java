@@ -90,6 +90,7 @@ public class WorkoutExerciseFragment extends Fragment {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {}
 
+            //set the textview title
             @Override
             public void onPageSelected(int position) {
                 switch (position) {
@@ -108,6 +109,7 @@ public class WorkoutExerciseFragment extends Fragment {
             public void onPageScrollStateChanged(int state) {}
         });
 
+        //viewpaher back
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -121,6 +123,7 @@ public class WorkoutExerciseFragment extends Fragment {
             }
         });
 
+        //move viewpager forward
         forwardButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

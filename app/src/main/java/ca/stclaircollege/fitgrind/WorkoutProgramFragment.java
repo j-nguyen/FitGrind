@@ -9,14 +9,19 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.widget.PopupMenu;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -114,19 +119,6 @@ public class  WorkoutProgramFragment extends Fragment {
             }
         });
 
-        //remove each list
-        list.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                DatabaseHandler db = new DatabaseHandler(getContext());
-                Program program = programsList.get(position);
-                db.deleteRoutine(program.getId());
-                db.close();
-                programsList.remove(position);
-                adapter.notifyDataSetChanged();
-                return false;
-            }
-        });
         return view;
     }
 
@@ -136,18 +128,61 @@ public class  WorkoutProgramFragment extends Fragment {
             super(context, 0, items);
         }
         //get each item and assign a view to it
-        public View getView(int position, View convertView, ViewGroup parent){
-            final Program item = getItem(position);
+        public View getView(final int position, View convertView, ViewGroup parent){
+            final Program program = getItem(position);
             if(convertView == null){
                 convertView = LayoutInflater.from(getContext()).inflate(R.layout.program_view, parent, false);
             }
 
             //set the listview items
             TextView name = (TextView) convertView.findViewById(R.id.programName);
-            name.setText(item.getName());
+            name.setText(program.getName());
 
             TextView description = (TextView) convertView.findViewById(R.id.programDescription);
-            description.setText(item.getDescription());
+            description.setText(program.getDescription());
+
+            // create ImageView
+            final ImageView menuButton = (ImageView) convertView.findViewById(R.id.editProgram);
+
+            // create a listener
+            menuButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // pop up menu
+                    PopupMenu menu = new PopupMenu(getContext(), menuButton);
+                    //inflate the pop up menu with the xml
+                    menu.getMenuInflater().inflate(R.menu.popup_menu, menu.getMenu());
+
+                    // create an event listener
+                    menu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                        @Override
+                        public boolean onMenuItemClick(MenuItem item) {
+                            switch (item.getItemId()) {
+                                case R.id.edit:
+                                    FragmentTransaction trans = getActivity().getSupportFragmentManager().beginTransaction();
+                                    //trans.replace(R.id.content_main, Fragment.newInstance(.getId()));
+                                    trans.addToBackStack(null);
+                                    trans.commit();
+                                    break;
+                                case R.id.delete:
+                                    //delete from db
+                                    DatabaseHandler db = new DatabaseHandler(getContext());
+                                    if (db.deleteRoutine(program.getId())) {
+                                        programsList.remove(position);
+                                        // we also wanna make a notify update
+                                        ((BaseAdapter) list.getAdapter()).notifyDataSetChanged();
+                                        Toast.makeText(getContext(), R.string.db_delete_success, Toast.LENGTH_SHORT).show();
+                                    }
+                                    db.close();
+                                    break;
+                            }
+                            return true;
+                        }
+                    });
+                    // finally show the pop up menu
+                    menu.show();
+                }
+            });
 
             return  convertView;
         }
