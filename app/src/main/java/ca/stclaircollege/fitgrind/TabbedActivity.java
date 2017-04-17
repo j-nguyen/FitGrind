@@ -28,8 +28,7 @@ public class TabbedActivity extends AppCompatActivity implements
     WorkoutProgramFragment.OnFragmentInteractionListener,
     TimeFragment.OnFragmentInteractionListener,
     WorkoutExerciseFragment.OnFragmentInteractionListener,
-    ExerciseFragment.OnFragmentInteractionListener,
-    AddProgramFragment.OnFragmentInteractionListener{
+    ExerciseFragment.OnFragmentInteractionListener {
 
     private Toolbar toolbar;
     private TabLayout tabLayout;

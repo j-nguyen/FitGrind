@@ -10,6 +10,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.PopupMenu;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -189,14 +190,11 @@ public class  WorkoutProgramFragment extends Fragment {
     }
 
     @Override
-    public void onActivityResult(int requestCode, int  resultCode, Intent data){
-        if(requestCode == LIST_REQUEST && requestCode == getActivity().RESULT_OK) {
-            if(data.getExtras() != null) {
-                Program program = data.getExtras().getParcelable("program");
-                programsList.add(program);
-                adapter.notifyDataSetChanged();
-                System.out.println("68");
-            }
+    public void onActivityResult(int requestCode, int resultCode, Intent data){
+        if(requestCode == LIST_REQUEST && resultCode == getActivity().RESULT_OK) {
+            Program program = data.getExtras().getParcelable("program");
+            programsList.add(program);
+            adapter.notifyDataSetChanged();
         }
     }
 
