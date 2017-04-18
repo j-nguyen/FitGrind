@@ -24,7 +24,7 @@ public class WeightCalculator {
         SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(context);
         gender = SP.getString("gender_keys", "Male");
         age = Double.parseDouble(SP.getString("age", "0"));
-        height = Double.parseDouble(SP.getString("height", "0")) * CONVERT_TO_CM;
+        height = Double.parseDouble(SP.getString("height_inches", "0")) * CONVERT_TO_CM;
         weight = Double.parseDouble(SP.getString("weight", "0")) * CONVERT_TO_KG;
         weightgoal = Double.parseDouble(SP.getString("weight_goal", "0")) * CONVERT_TO_KG;
         lifestyle = Double.parseDouble(SP.getString("lifestyle_key", "1.2"));

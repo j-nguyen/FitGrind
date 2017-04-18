@@ -105,7 +105,8 @@
             android:padding="@dimen/padding"
             android:textStyle="normal|bold"
             android:textSize="@dimen/title_font_size"
-            android:textColor="@color/primaryText" />
+            android:textColor="@color/primaryText"
+            android:gravity="center_horizontal" />
 
         <View
             android:layout_width="match_parent"

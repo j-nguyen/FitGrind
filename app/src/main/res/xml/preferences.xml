@@ -14,28 +14,32 @@
         android:inputType="number"
         android:title="@string/age_title"
         android:key="@string/age_key"
-        android:summary="@string/age_summary" />
+        android:summary="@string/age_summary"
+        android:defaultValue="0" />
     <EditTextPreference
         android:selectAllOnFocus="true"
         android:singleLine="true"
         android:inputType="number|numberDecimal"
-        android:title="@string/height_title"
-        android:key="@string/height_key"
-        android:summary="@string/height_summary" />
+        android:title="@string/height_title_in"
+        android:key="@string/height_key_in"
+        android:summary="@string/height_summary_in"
+        android:defaultValue="0" />
     <EditTextPreference
         android:selectAllOnFocus="true"
         android:singleLine="true"
         android:inputType="number|numberDecimal"
         android:title="@string/weight_label_title"
         android:key="@string/weight_key"
-        android:summary="@string/weight_description" />
+        android:summary="@string/weight_description"
+        android:defaultValue="0" />
     <EditTextPreference
         android:selectAllOnFocus="true"
         android:singleLine="true"
         android:inputType="number|numberDecimal"
         android:title="@string/weight_goal_title"
         android:key="@string/weight_goal_key"
-        android:summary="@string/weight_goal_summary" />
+        android:summary="@string/weight_goal_summary"
+        android:defaultValue="0" />
     <ListPreference
         android:defaultValue="0"
         android:title="@string/lifestyle_title"

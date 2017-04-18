@@ -56,9 +56,9 @@
     <string name="weight_key">weight</string>
     <string name="weight_label_title">Current Weight (lbs)</string>
     <string name="weight_description">Enter in your current weight in lbs</string>
-    <string name="height_key">height</string>
-    <string name="height_title">Enter your height (in)</string>
-    <string name="height_summary">Enter in your height (Example: 53 in)</string>
+    <string name="height_key_in">height_inches</string>
+    <string name="height_title_in">Enter your height (in)</string>
+    <string name="height_summary_in">Enter in your height (Example: 53 in)</string>
     <string name="age_key">age</string>
     <string name="age_title">Enter in your age</string>
     <string name="age_summary">Enter in your current age. (Example: 15)</string>
@@ -108,4 +108,7 @@
     <string name="iron_label">Iron (mg):</string>
     <string name="recent_log_title">Recent Logged Entries</string>
     <string name="title_log_day">Food Logs</string>
+    <string name="height_ft">height_ft</string>
+    <string name="height_title_ft">Enter your height (ft)</string>
+    <string name="height_summary_ft">Enter in your height in feet</string>
 </resources>

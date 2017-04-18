@@ -183,6 +183,7 @@
         android:textStyle="normal|bold"
         android:textSize="@dimen/title_font_size"
         android:textColor="@color/primaryText"
+        android:gravity="center_horizontal"
         android:padding="@dimen/padding" />
 
     <View
