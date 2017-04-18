@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">FitGrind</string>
+    <string name="author">Allan Lin &amp; Johnny Nguyen</string>
 
     <!-- Put Item API Key here for public access. If production, i guess we can obfuscate this -->
     <string name="API_KEY">pwiN99R45M4Zs6Wj0yHYBxokOxhPYQcZ6WxbQMYt</string>

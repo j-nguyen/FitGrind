@@ -109,9 +109,8 @@
 
         <View
             android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/cardview_shadow_end_color">
-        </View>
+            android:background="@color/cardview_shadow_end_color"
+            android:layout_height="1dp" />
 
         <ListView
             android:layout_width="match_parent"
