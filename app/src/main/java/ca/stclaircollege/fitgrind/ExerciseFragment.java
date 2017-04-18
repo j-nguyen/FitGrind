@@ -6,10 +6,13 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.PopupMenu;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import java.util.ArrayList;
@@ -144,6 +147,33 @@ public class ExerciseFragment extends Fragment {
                 TextView time = (TextView) convertView.findViewById(R.id.exerciseTime);
                 time.setText("" + mItem.getTime());
             }
+
+            //image view button edit exercise
+            final ImageView menuButton = (ImageView) convertView.findViewById(R.id.editExercise);
+            menuButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // pop up menu
+                    PopupMenu menu = new PopupMenu(getContext(), menuButton);
+                    //inflate the pop up menu with the xml
+                    menu.getMenuInflater().inflate(R.menu.popup_menu, menu.getMenu());
+
+                    menu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                        @Override
+                        public boolean onMenuItemClick(MenuItem item) {
+                            switch (item.getItemId()) {
+
+                            }
+
+
+                            return false;
+
+                        }
+                    });
+                }
+
+            });
+
             return  convertView;
         }
     }
