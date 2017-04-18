@@ -1,8 +1,8 @@
 <resources>
     <string name="app_name">FitGrind</string>
+    <string name="author">Allan Lin &amp; Johnny Nguyen</string>
 
-    <!-- Put Item API Key here for public access. We don't
-    need to obfuscate it because everyone can get a free API key. -->
+    <!-- Put Item API Key here for public access. If production, i guess we can obfuscate this -->
     <string name="API_KEY">pwiN99R45M4Zs6Wj0yHYBxokOxhPYQcZ6WxbQMYt</string>
 
     <!-- Nav menu title -->
@@ -11,9 +11,11 @@
     <string name="add_button">Add Food To Log</string>
     <string name="add_food">Add Food</string>
     <string name="add_custom_food">Add Custom Food</string>
-    <string name="weight_log">Weight Log</string>
-    <string name="workout_schedule">Workout Schedule</string>
-    <string name="progress_gallary">Progress Gallery</string>
+    <string name="weight_log">View Weight Log</string>
+    <string name="workout_schedule">View Workout Schedule</string>
+    <string name="add_title">Adding Foods</string>
+    <string name="helpful_links">Helpful Links</string>
+    <string name="workout_tips">Workout Tips</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -45,7 +47,7 @@
     <string name="results_title">Calorie Results</string>
     <string name="calorie_goal">Calorie Goal</string>
     <string name="weight_goal">Weight Goal</string>
-    <string name="not_logged">No Logged Date</string>
+    <string name="not_logged">No Logged Entry</string>
 
     <!-- Strings related to Settings -->
     <string name="title_activity_settings">Settings</string>
@@ -105,15 +107,5 @@
     <string name="iron_hint">Enter Iron value</string>
     <string name="iron_label">Iron (mg):</string>
     <string name="recent_log_title">Recent Logged Entries</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="title_log_day">Food logs</string>
-
-    <string name="title_activity_fullscreen">FullscreenActivity</string>
-    <string name="dummy_button">Dummy Button</string>
-    <string name="dummy_content">DUMMY\nCONTENT</string>
-
-    =======
-    >>>>>>> staging
+    <string name="title_log_day">Food Logs</string>
 </resources>
