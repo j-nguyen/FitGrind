@@ -72,7 +72,7 @@ public class AddCustomFoodFragment extends Fragment {
         submitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!isFieldEmpty()) {
+                if (isFieldFilled()) {
                     // Create food object
                     Food food = new Food(name.getText().toString(), serving.getText().toString());
                     // add the nutrients
@@ -114,13 +114,14 @@ public class AddCustomFoodFragment extends Fragment {
      * This function checks if all the fields are empty or not.
      * @return boolean value
      */
-    public boolean isFieldEmpty() {
-        return TextUtils.isEmpty(name.getText()) && TextUtils.isEmpty(serving.getText()) && TextUtils.isEmpty(calories.getText()) &&
-                TextUtils.isEmpty(sugar.getText()) && TextUtils.isEmpty(totalFat.getText()) && TextUtils.isEmpty(carbohydrate.getText()) &&
-                TextUtils.isEmpty(saturatedFat.getText()) && TextUtils.isEmpty(transFat.getText()) && TextUtils.isEmpty(cholesterol.getText()) &&
-                TextUtils.isEmpty(sodium.getText()) && TextUtils.isEmpty(fiber.getText()) && TextUtils.isEmpty(protein.getText()) &&
-                TextUtils.isEmpty(vitaminA.getText()) && TextUtils.isEmpty(vitaminC.getText()) && TextUtils.isEmpty(calcium.getText()) &&
-                TextUtils.isEmpty(iron.getText()) && TextUtils.isEmpty(potassium.getText());
+    public boolean isFieldFilled() {
+        return !isEmpty(name) && !isEmpty(serving) && !isEmpty(calories) && !isEmpty(sugar) && !isEmpty(totalFat) && !isEmpty(carbohydrate) &&
+            !isEmpty(saturatedFat) && !isEmpty(transFat) && !isEmpty(cholesterol) && !isEmpty(sodium) && !isEmpty(fiber) && !isEmpty(protein) &&
+            !isEmpty(vitaminA) && !isEmpty(vitaminC) && !isEmpty(calcium) && !isEmpty(iron) && !isEmpty(potassium);
+    }
+
+    private boolean isEmpty(EditText e) {
+        return e.getText().toString().trim().length() == 0;
     }
 
     /**

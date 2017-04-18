@@ -216,7 +216,7 @@ public class WeightLogFragment extends Fragment {
                                 edit.putString("weight", ""+weight);
                                 edit.commit();
                                 // now we want to set the current weight text change
-                                mCurrentWeight.setText(String.format("Current Weight: %f lbs", weight));
+                                mCurrentWeight.setText(String.format("Current Weight: %.1f lbs", weight));
                                 Toast.makeText(getActivity(), R.string.db_insert_success, Toast.LENGTH_SHORT).show();
                             } else {
                                 Toast.makeText(getActivity(), R.string.db_error, Toast.LENGTH_SHORT).show();
@@ -430,9 +430,7 @@ public class WeightLogFragment extends Fragment {
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         // check for permisisons
-        System.out.println("Whats good");
         if (requestCode == STORAGE_REQUEST && grantResults[0]== PackageManager.PERMISSION_GRANTED) {
-            System.out.println("Hello");
             //resume tasks needing this permission
             openPhotoDialog();
         }
@@ -450,7 +448,7 @@ public class WeightLogFragment extends Fragment {
         String[] proj = { MediaStore.Images.Media.DATA };
         Cursor cursor = context.getContentResolver( ).query( uri, proj, null, null, null );
         if(cursor != null){
-            if ( cursor.moveToFirst( ) ) {
+            if (cursor.moveToFirst()) {
                 int column_index = cursor.getColumnIndexOrThrow(proj[0]);
                 result = cursor.getString(column_index);
             }
