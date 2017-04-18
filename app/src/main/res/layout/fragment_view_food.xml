@@ -48,7 +48,8 @@
                     android:layout_weight="1"
                     android:textStyle="bold"
                     android:text="@string/food_name_label"
-                    android:textSize="@dimen/view_food_label" />
+                    android:textSize="@dimen/view_food_label"
+                    android:textColor="@color/primaryText" />
 
                 <TextView
                     android:layout_width="wrap_content"
