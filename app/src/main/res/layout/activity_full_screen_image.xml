@@ -8,14 +8,13 @@
     android:layout_height="match_parent"
     android:background="@android:color/black"
     android:orientation="vertical"
-    android:fitsSystemWindows="true"
     tools:context="ca.stclaircollege.fitgrind.FullScreenImageActivity">
 
     <com.github.chrisbanes.photoview.PhotoView
-        android:layout_height="match_parent"
         android:layout_width="match_parent"
-        android:scaleType="centerCrop"
-        android:adjustViewBounds="true"
-        android:id="@+id/full_image" />
+        android:layout_height="match_parent"
+        app:srcCompat="@drawable/ic_menu_camera"
+        android:id="@+id/full_image"
+        android:adjustViewBounds="true" />
 
 </LinearLayout>
