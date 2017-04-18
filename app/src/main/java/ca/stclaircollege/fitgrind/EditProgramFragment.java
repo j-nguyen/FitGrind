@@ -4,10 +4,13 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -37,6 +40,7 @@ public class EditProgramFragment extends Fragment {
     private String mParam2;
     private Program program;
     private ListView mListView;
+    private ArrayList<Program> programArrayList;
 
     private OnFragmentInteractionListener mListener;
 
@@ -76,10 +80,28 @@ public class EditProgramFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_edit_program, container, false);
-        mListView = (ListView) view.findViewById(R.id.edit_food_listview);
+        mListView = (ListView) view.findViewById(R.id.edit_program_listview);
         DatabaseHandler db = new DatabaseHandler(getContext());
-        //mListView = db.selectAllRoutine();
+        programArrayList = db.selectAllRoutine();
         db.close();
+        CustomAdapter adapter = new CustomAdapter(getContext(), programArrayList);
+        mListView.setAdapter(adapter);
+
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                Program program = (Program) mListView.getItemAtPosition(position);
+                //
+                builder.setTitle("");
+                //edittext for input
+                final EditText editText = new EditText(getContext());
+
+            }
+        });
+
+
+
 
 
         return view;

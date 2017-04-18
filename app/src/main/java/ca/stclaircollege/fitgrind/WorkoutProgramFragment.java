@@ -161,7 +161,7 @@ public class  WorkoutProgramFragment extends Fragment {
                             switch (item.getItemId()) {
                                 case R.id.edit:
                                     FragmentTransaction trans = getActivity().getSupportFragmentManager().beginTransaction();
-                                    //trans.replace(R.id.content_main, Fragment.newInstance(.getId()));
+                                    //trans.replace(R.id.content_main, EditProgramFragment.newInstance(program.getId()));
                                     trans.addToBackStack(null);
                                     trans.commit();
                                     break;
