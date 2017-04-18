@@ -223,6 +223,7 @@ public class MainFragment extends Fragment {
             public void onClick(View view) {
                 FragmentManager fm = getActivity().getSupportFragmentManager();
                 FragmentTransaction trans = fm.beginTransaction();
+                trans.setCustomAnimations(R.anim.fade_in, R.anim.fade_out);
                 trans.replace(R.id.content_main, new AddFoodFragment());
                 trans.addToBackStack(null);
                 trans.commit();

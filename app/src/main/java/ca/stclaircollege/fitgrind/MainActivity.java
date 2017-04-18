@@ -96,29 +96,33 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_home) {
-            FragmentTransaction tran = fm.beginTransaction();
-            tran.replace(R.id.content_main, new MainFragment());
-            tran.commit();
+            FragmentTransaction trans = fm.beginTransaction();
+            trans.replace(R.id.content_main, new MainFragment());
+            trans.setCustomAnimations(R.anim.fade_in, R.anim.fade_out);
+            trans.commit();
 
         } else if (id == R.id.nav_diary) {
 
             FragmentTransaction trans = fm.beginTransaction();
             trans.replace(R.id.content_main, new ViewCalorieLogFragment());
+            trans.setCustomAnimations(R.anim.fade_in, R.anim.fade_out);
             trans.commit();
 
         } else if (id == R.id.nav_add_custom_food) {
 
             FragmentTransaction trans = fm.beginTransaction();
             trans.replace(R.id.content_main, new AddCustomFoodFragment());
+            trans.setCustomAnimations(R.anim.fade_in, R.anim.fade_out);
             trans.commit();
-
         } else if (id == R.id.nav_add_food) {
             FragmentTransaction trans = fm.beginTransaction();
             trans.replace(R.id.content_main, new AddFoodFragment());
+            trans.setCustomAnimations(R.anim.fade_in, R.anim.fade_out);
             trans.commit();
         } else if (id == R.id.nav_weight_log) {
             FragmentTransaction trans = fm.beginTransaction();
             trans.replace(R.id.content_main, new WeightLogFragment());
+            trans.setCustomAnimations(R.anim.fade_in, R.anim.fade_out);
             trans.commit();
         } else if (id == R.id.nav_workout_schedule) {
             startActivity(new Intent(MainActivity.this, TabbedActivity.class));
