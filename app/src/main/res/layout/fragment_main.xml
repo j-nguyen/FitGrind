@@ -80,7 +80,8 @@
                             android:layout_height="wrap_content"
                             android:id="@+id/calories_obtained_title"
                             android:textAlignment="center"
-                            android:textSize="@dimen/title_font_size" />
+                            android:textSize="@dimen/title_font_size"
+                            android:textStyle="normal|bold" />
 
                         <TextView
                             android:text="@string/calories_obtained"
