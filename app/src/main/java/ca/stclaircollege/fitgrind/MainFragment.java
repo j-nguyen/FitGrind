@@ -109,6 +109,7 @@ public class MainFragment extends Fragment {
                     edit.commit();
                     // start activity here
                     Intent intent = new Intent(getActivity(), SettingsActivity.class);
+                    getActivity().overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
                     startActivity(intent);
                 }
             });

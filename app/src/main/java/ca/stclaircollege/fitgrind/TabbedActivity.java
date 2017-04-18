@@ -56,6 +56,7 @@ public class TabbedActivity extends AppCompatActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
         setContentView(R.layout.activity_tabbed);
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
