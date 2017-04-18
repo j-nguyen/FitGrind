@@ -483,6 +483,11 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return db.delete(PROGRESS_TABLE_NAME, "id = ?", new String[]{String.valueOf(id)}) > 0;
     }
 
+    public boolean deleteProgressByWeight(long weightId) {
+        SQLiteDatabase db = getWritableDatabase();
+        return db.delete(PROGRESS_TABLE_NAME, "weight_id = ?", new String[]{String.valueOf(weightId)}) > 0;
+    }
+
     /**
      * Deletes the food based on id
      * @param id
@@ -521,6 +526,23 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             do {
                 results.add(new Weight(cursor.getLong(0), cursor.getDouble(1), cursor.getString(2)));
             } while(cursor.moveToNext());
+        }
+        return results;
+    }
+
+    public ArrayList<Progress> selectAllProgress() {
+        // use a readable db
+        SQLiteDatabase db = getReadableDatabase();
+        // create a blank arraylist
+        ArrayList<Progress> results = new ArrayList<Progress>();
+        // create sql
+        Cursor cursor = db.rawQuery("SELECT id, resource FROM " + PROGRESS_TABLE_NAME, null);
+        if (cursor.moveToFirst()) {
+            // iterate through the processsed sql
+            do {
+                // 0 = id, 1 = resourcce id
+                results.add(new Progress(cursor.getLong(0), cursor.getString(1)));
+            } while (cursor.moveToNext());
         }
         return results;
     }
@@ -753,5 +775,25 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         Cursor cursor = db.rawQuery("SELECT strftime('%Y-%m-%d', date) FROM food_log ORDER by date DESC LIMIT 1;", null);
         if (cursor.moveToLast()) result = cursor.getString(0);
         return result;
+    }
+
+    /**
+     * Checks if the progress table is empty
+     * @return boolean value
+     */
+    public boolean isProgressEmpty() {
+        // read the db
+        SQLiteDatabase db = getReadableDatabase();
+        // create a sql for count
+        Cursor cursor = db.rawQuery("SELECT count(*) FROM progress", null);
+        // check
+        if (cursor.moveToFirst()) {
+            // if there's a ton then we know there's something here
+            if (cursor.getInt(0) == 0) {
+                return true;
+            }
+            return false;
+        }
+        return false;
     }
 }

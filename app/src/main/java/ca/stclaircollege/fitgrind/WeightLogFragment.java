@@ -17,6 +17,7 @@ import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.FileProvider;
 import android.support.v7.widget.PopupMenu;
 import android.text.InputType;
@@ -265,14 +266,25 @@ public class WeightLogFragment extends Fragment {
             }
         });
 
-        // now we want to set-up event listeners for the button
-//        mViewProgressButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//
-//            }
-//        });
-//
+        //   now we want to set-up event listeners for the button
+        mViewProgressButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // we want to open using an activity so we have the trash icon on the top right
+                // we also want to check for view progress on the button. if there's no photo then we shouldn't put anying there
+                DatabaseHandler db = new DatabaseHandler(getContext());
+                if (db.isProgressEmpty()) {
+                    Toast.makeText(getActivity(), R.string.db_empty, Toast.LENGTH_LONG).show();
+                } else {
+                    Intent intent = new Intent(getActivity(), ViewProgressActivity.class);
+                    if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
+                        startActivity(intent);
+                    }
+                }
+                db.close();
+            }
+        });
+
         return view;
     }
 
@@ -356,7 +368,7 @@ public class WeightLogFragment extends Fragment {
 
                                     dialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                                         @Override
-                                        public void onClick(DialogInterface dialogInterface, int i) {}
+                                        public void onClick(DialogInterface dialogInterface, int i) { dialogInterface.dismiss(); }
                                     });
 
                                     dialog.show();
@@ -364,13 +376,12 @@ public class WeightLogFragment extends Fragment {
                                     break;
                                 case R.id.delete:
                                     DatabaseHandler db = new DatabaseHandler(getContext());
-                                    System.out.println(weightItem.getId());
                                     if (db.deleteWeight(weightItem.getId())) {
                                         // remove from the array too
                                         weightList.remove(position);
                                         ((BaseAdapter) mListView.getAdapter()).notifyDataSetChanged();
-                                        // delete from photo too, if it exists
-                                        db.deleteProgress(weightItem.getId());
+                                        // we also want to delete from progress too if it exists
+                                        db.deleteProgressByWeight(weightItem.getId());
                                         Toast.makeText(getActivity(), R.string.db_delete_success, Toast.LENGTH_SHORT).show();
                                     }
                                     db.close();

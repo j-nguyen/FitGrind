@@ -37,6 +37,7 @@
     <string name="db_insert_success">Successfully inserted!</string>
     <string name="db_update_success">Successfully updated!</string>
     <string name="db_delete_success">Successfully deleted!</string>
+    <string name="db_empty">Empty progress! You cannot view this unless you\'ve inserted a photo!</string>
     <string name="invalid_field">Some fields have not been entered! Please enter all the information.</string>
     <string name="invalid_days">You must wait %d more day(s), until you can record another weight.</string>
 
