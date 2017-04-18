@@ -7,6 +7,13 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+
+import com.squareup.picasso.Picasso;
+
+import java.io.File;
+
+import ca.stclaircollege.fitgrind.database.Progress;
 
 
 /**
@@ -24,8 +31,8 @@ public class ViewProgressLogFragment extends Fragment {
     private static final String ARG_PARAM2 = "param2";
 
     // TODO: Rename and change types of parameters
-    private long mId;
-    private String mResource;
+    private Progress mProgress;
+    private ImageView mImageView;
 
     private OnFragmentInteractionListener mListener;
 
@@ -37,16 +44,14 @@ public class ViewProgressLogFragment extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param mId Parameter 1.
-     * @param mResource Parameter 2.
+     * @param progress Parameter 1.
      * @return A new instance of fragment ViewProgressLogFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static ViewProgressLogFragment newInstance(long mId, String mResource) {
+    public static ViewProgressLogFragment newInstance(Progress progress) {
         ViewProgressLogFragment fragment = new ViewProgressLogFragment();
         Bundle args = new Bundle();
-        args.putLong(ARG_PARAM1, mId);
-        args.putString(ARG_PARAM2, mResource);
+        args.putParcelable(ARG_PARAM1, progress);
         fragment.setArguments(args);
         return fragment;
     }
@@ -55,8 +60,7 @@ public class ViewProgressLogFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mId = getArguments().getLong(ARG_PARAM1);
-            mResource = getArguments().getString(ARG_PARAM2);
+            mProgress = getArguments().getParcelable(ARG_PARAM1);
         }
     }
 
@@ -67,13 +71,12 @@ public class ViewProgressLogFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_view_progress_log, container, false);
 
         // connect
+        mImageView = (ImageView) view.findViewById(R.id.progress_imageview);
 
         // check resource
-        if (mResource != null) {
-
-            // setup
-
-
+        if (mProgress != null) {
+            // Use Picasso set-up the imageview
+            Picasso.with(getActivity()).load(new File(mProgress.getResource())).into(mImageView);
         }
 
         return view;

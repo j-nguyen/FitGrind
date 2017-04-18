@@ -50,7 +50,7 @@ public class ViewProgressFragment extends Fragment {
         DatabaseHandler db = new DatabaseHandler(getContext());
         final ArrayList<Progress> progress = db.selectAllProgress();
         mPageAdapter = new SectionPagerAdapter(getChildFragmentManager(), progress);
-        
+
         // set the adapter and view pager
         mViewPager.setAdapter(mPageAdapter);
         indicator.setViewPager(mViewPager);
@@ -69,6 +69,7 @@ public class ViewProgressFragment extends Fragment {
         @Override
         public Fragment getItem(int position) {
             // we can use the arraylist in newInstance() method.
+            return ViewProgressLogFragment.newInstance(progressList.get(position));
         }
 
         @Override
