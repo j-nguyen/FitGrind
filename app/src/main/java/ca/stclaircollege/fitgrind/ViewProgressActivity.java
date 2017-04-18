@@ -39,8 +39,8 @@ public class ViewProgressActivity extends AppCompatActivity implements ViewProgr
         // create the page adapter here
         DatabaseHandler db = new DatabaseHandler(this);
         final ArrayList<Progress> progress = db.selectAllProgress();
-        currProgress = (progress.get(0) != null) ? progress.get(0) : null;
         mPageAdapter = new SectionPagerAdapter(getSupportFragmentManager(), progress);
+        currProgress = progress.get(mViewPager.getCurrentItem());
 
         // set the adapter and view pager
         mViewPager.setAdapter(mPageAdapter);

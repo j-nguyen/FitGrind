@@ -271,10 +271,17 @@ public class WeightLogFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 // we want to open using an activity so we have the trash icon on the top right
-                Intent intent = new Intent(getActivity(), ViewProgressActivity.class);
-                if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
-                    startActivity(intent);
+                // we also want to check for view progress on the button. if there's no photo then we shouldn't put anying there
+                DatabaseHandler db = new DatabaseHandler(getContext());
+                if (db.isProgressEmpty()) {
+                    Toast.makeText(getActivity(), R.string.db_empty, Toast.LENGTH_LONG).show();
+                } else {
+                    Intent intent = new Intent(getActivity(), ViewProgressActivity.class);
+                    if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
+                        startActivity(intent);
+                    }
                 }
+                db.close();
             }
         });
 

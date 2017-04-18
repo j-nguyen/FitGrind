@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.github.chrisbanes.photoview.PhotoView;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -32,7 +33,7 @@ public class ViewProgressLogFragment extends Fragment {
 
     // TODO: Rename and change types of parameters
     private Progress mProgress;
-    private ImageView mImageView;
+    private PhotoView mImageView;
 
     private OnFragmentInteractionListener mListener;
 
@@ -71,12 +72,25 @@ public class ViewProgressLogFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_view_progress_log, container, false);
 
         // connect
-        mImageView = (ImageView) view.findViewById(R.id.progress_imageview);
+        mImageView = (PhotoView) view.findViewById(R.id.progress_imageview);
 
         // check resource
         if (mProgress != null) {
             // Use Picasso set-up the imageview
             Picasso.with(getActivity()).load(new File(mProgress.getResource())).into(mImageView);
+
+            // we also want to set up the listener too
+            mImageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    // hide or view action bar depending on state
+                    if (getActivity().getActionBar().isShowing()) {
+                        getActivity().getActionBar().hide();
+                    } else {
+                        getActivity().getActionBar().show();
+                    }
+                }
+            });
         }
 
         return view;

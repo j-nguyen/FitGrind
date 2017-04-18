@@ -776,4 +776,24 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         if (cursor.moveToLast()) result = cursor.getString(0);
         return result;
     }
+
+    /**
+     * Checks if the progress table is empty
+     * @return boolean value
+     */
+    public boolean isProgressEmpty() {
+        // read the db
+        SQLiteDatabase db = getReadableDatabase();
+        // create a sql for count
+        Cursor cursor = db.rawQuery("SELECT count(*) FROM progress", null);
+        // check
+        if (cursor.moveToFirst()) {
+            // if there's a ton then we know there's something here
+            if (cursor.getInt(0) == 0) {
+                return true;
+            }
+            return false;
+        }
+        return false;
+    }
 }
