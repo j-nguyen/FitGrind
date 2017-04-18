@@ -1,19 +1,28 @@
 package ca.stclaircollege.fitgrind;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.PopupMenu;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import java.util.ArrayList;
+
+import ca.stclaircollege.fitgrind.database.Cardio;
 import ca.stclaircollege.fitgrind.database.Exercise;
 import ca.stclaircollege.fitgrind.database.DatabaseHandler;
+import ca.stclaircollege.fitgrind.database.Exercise;
+import ca.stclaircollege.fitgrind.database.Strength;
+import ca.stclaircollege.fitgrind.database.WorkoutType;
 
 
 /**
@@ -36,7 +45,7 @@ public class ExerciseFragment extends Fragment {
 
     ListView list;
     CustomAdapter customAdapter;
-    ArrayList<Exercise> exercisesList;
+    ArrayList<WorkoutType> exercisesList;
 
     private OnFragmentInteractionListener mListener;
 
@@ -80,38 +89,40 @@ public class ExerciseFragment extends Fragment {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Intent intent = new Intent(getActivity(), AddExerciseActivity.class);
+                startActivity(intent);
             }
         });
 
         list = (ListView) view.findViewById(R.id.exerciselist);
         DatabaseHandler db = new DatabaseHandler(getContext());
-        final ArrayList<Exercise> exercisesList = new ArrayList<Exercise>();
-        //exercisesList = db.selectAllWorkout();
+//        final ArrayList<Strength> exercisesList = new ArrayList<Strength>();
+        exercisesList = db.selectAllWorkout();
         db.close();
-//        exercisesList.add(new Exercise("text", "test", "test"));
-//        exercisesList.add(new Exercise("text", "test", "test"));
+//        System.out.println(exercisesList.size());
+        exercisesList.add(new Strength("asd", 1, 2, 2.2));
+        exercisesList.add(new Cardio("oppo", 2.2));
 //        exercisesList.add(new Exercise("text", "test", "test"));
         
-        final ExerciseFragment.CustomAdapter adapter = new ExerciseFragment.CustomAdapter(getContext(), exercisesList);
-        list.setAdapter(adapter);
+        customAdapter = new CustomAdapter(getContext(), exercisesList);
+        list.setAdapter(customAdapter);
 
 
-        if(mParam1 != null){
-            TextView text = (TextView) view.findViewById(R.id.day);
-            text.setText(mParam1);
-        }
+//        if(mParam1 != null){
+//            TextView text = (TextView) view.findViewById(R.id.day);
+//            text.setText(mParam1);
+//        }
 
         return view;
     }
 
-    public class CustomAdapter extends ArrayAdapter<Exercise> {
-        public CustomAdapter(Context context, ArrayList<Exercise> items) {
+    public class CustomAdapter extends ArrayAdapter<WorkoutType> {
+        public CustomAdapter(Context context, ArrayList<WorkoutType> items) {
             super(context, 0, items);
         }
         //get each item and assign a view to it
         public View getView(int position, View convertView, ViewGroup parent){
-            final Exercise item = getItem(position);
+            WorkoutType item = getItem(position);
             if(convertView == null){
                 convertView = LayoutInflater.from(getContext()).inflate(R.layout.exercise_view, parent, false);
             }
@@ -120,11 +131,48 @@ public class ExerciseFragment extends Fragment {
             TextView exerciseName = (TextView) convertView.findViewById(R.id.exerciseName);
             exerciseName.setText(item.getName());
 
-            TextView set = (TextView) convertView.findViewById(R.id.exerciseSet);
-            set.setText(item.getSet());
+            if(item instanceof Strength) {
+                Strength mItem = (Strength) item;
+                System.out.println(mItem.getSet());
+                TextView set = (TextView) convertView.findViewById(R.id.exerciseSet);
+                set.setText("" + mItem.getSet());
 
-            TextView length = (TextView) convertView.findViewById(R.id.exerciseRep);
-            length.setText(item.getRep());
+                TextView rep = (TextView) convertView.findViewById(R.id.exerciseRep);
+                rep.setText("" + mItem.getReptitions());
+
+                TextView weight = (TextView) convertView.findViewById(R.id.exerciseWeight);
+                weight.setText("" + mItem.getWeight());
+            } else if (item instanceof Cardio){
+                Cardio mItem = (Cardio) item;
+                TextView time = (TextView) convertView.findViewById(R.id.exerciseTime);
+                time.setText("" + mItem.getTime());
+            }
+
+            //image view button edit exercise
+            final ImageView menuButton = (ImageView) convertView.findViewById(R.id.editExercise);
+            menuButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // pop up menu
+                    PopupMenu menu = new PopupMenu(getContext(), menuButton);
+                    //inflate the pop up menu with the xml
+                    menu.getMenuInflater().inflate(R.menu.popup_menu, menu.getMenu());
+
+                    menu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                        @Override
+                        public boolean onMenuItemClick(MenuItem item) {
+                            switch (item.getItemId()) {
+
+                            }
+
+
+                            return false;
+
+                        }
+                    });
+                }
+
+            });
 
             return  convertView;
         }

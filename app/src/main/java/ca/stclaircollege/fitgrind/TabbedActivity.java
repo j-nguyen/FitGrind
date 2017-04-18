@@ -28,8 +28,7 @@ public class TabbedActivity extends AppCompatActivity implements
     WorkoutProgramFragment.OnFragmentInteractionListener,
     TimeFragment.OnFragmentInteractionListener,
     WorkoutExerciseFragment.OnFragmentInteractionListener,
-    ExerciseFragment.OnFragmentInteractionListener,
-    AddProgramFragment.OnFragmentInteractionListener{
+    ExerciseFragment.OnFragmentInteractionListener {
 
     private Toolbar toolbar;
     private TabLayout tabLayout;
@@ -88,14 +87,6 @@ public class TabbedActivity extends AppCompatActivity implements
         viewPager.setAdapter(adapter);
     }
 
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_tabbed, menu);
-        return true;
-    }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -104,8 +95,8 @@ public class TabbedActivity extends AppCompatActivity implements
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        if (id == android.R.id.home) {
+            finish();
         }
 
         return super.onOptionsItemSelected(item);
