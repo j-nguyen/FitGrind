@@ -525,6 +525,23 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return results;
     }
 
+    public ArrayList<Progress> selectAllProgress() {
+        // use a readable db
+        SQLiteDatabase db = getReadableDatabase();
+        // create a blank arraylist
+        ArrayList<Progress> results = new ArrayList<Progress>();
+        // create sql
+        Cursor cursor = db.rawQuery("SELECT id, resource FROM " + PROGRESS_TABLE_NAME, null);
+        if (cursor.moveToFirst()) {
+            // iterate through the processsed sql
+            do {
+                // 0 = id, 1 = resourcce id
+                results.add(new Progress(cursor.getLong(0), cursor.getString(1)));
+            } while (cursor.moveToNext());
+        }
+        return results;
+    }
+
     /**
      * Gets all the routine available that the person made.
      * @return an ArrayList of Program

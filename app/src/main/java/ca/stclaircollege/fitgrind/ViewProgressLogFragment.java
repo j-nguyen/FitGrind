@@ -4,77 +4,79 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.util.ArrayList;
-
-import ca.stclaircollege.fitgrind.database.DatabaseHandler;
-import ca.stclaircollege.fitgrind.database.Progress;
-import me.relex.circleindicator.CircleIndicator;
-
 
 /**
- * This class handles the viewpager aspect
+ * A simple {@link Fragment} subclass.
+ * Activities that contain this fragment must implement the
+ * {@link ViewProgressLogFragment.OnFragmentInteractionListener} interface
+ * to handle interaction events.
+ * Use the {@link ViewProgressLogFragment#newInstance} factory method to
+ * create an instance of this fragment.
  */
-public class ViewProgressFragment extends Fragment {
+public class ViewProgressLogFragment extends Fragment {
+    // TODO: Rename parameter arguments, choose names that match
+    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+    private static final String ARG_PARAM1 = "param1";
+    private static final String ARG_PARAM2 = "param2";
 
-    private ViewPager mViewPager;
+    // TODO: Rename and change types of parameters
+    private long mId;
+    private String mResource;
 
     private OnFragmentInteractionListener mListener;
-    private SectionPagerAdapter mPageAdapter;
 
-    public ViewProgressFragment() {}
+    public ViewProgressLogFragment() {
+        // Required empty public constructor
+    }
+
+    /**
+     * Use this factory method to create a new instance of
+     * this fragment using the provided parameters.
+     *
+     * @param mId Parameter 1.
+     * @param mResource Parameter 2.
+     * @return A new instance of fragment ViewProgressLogFragment.
+     */
+    // TODO: Rename and change types and number of parameters
+    public static ViewProgressLogFragment newInstance(long mId, String mResource) {
+        ViewProgressLogFragment fragment = new ViewProgressLogFragment();
+        Bundle args = new Bundle();
+        args.putLong(ARG_PARAM1, mId);
+        args.putString(ARG_PARAM2, mResource);
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            mId = getArguments().getLong(ARG_PARAM1);
+            mResource = getArguments().getString(ARG_PARAM2);
+        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_view_progress, container, false);
+        View view = inflater.inflate(R.layout.fragment_view_progress_log, container, false);
 
-        // connect our design here
-        mViewPager = (ViewPager) view.findViewById(R.id.progress_viewpager);
-        CircleIndicator indicator = (CircleIndicator) view.findViewById(R.id.indicator);
+        // connect
 
-        // create the page adapter here
-        DatabaseHandler db = new DatabaseHandler(getContext());
-        final ArrayList<Progress> progress = db.selectAllProgress();
-        mPageAdapter = new SectionPagerAdapter(getChildFragmentManager(), progress);
-        
-        // set the adapter and view pager
-        mViewPager.setAdapter(mPageAdapter);
-        indicator.setViewPager(mViewPager);
+        // check resource
+        if (mResource != null) {
+
+            // setup
+
+
+        }
 
         return view;
-    }
-
-    private class SectionPagerAdapter extends FragmentPagerAdapter {
-        private ArrayList<Progress> progressList;
-
-        public SectionPagerAdapter(FragmentManager fm, ArrayList<Progress> progressList) {
-            super(fm);
-            this.progressList = progressList;
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            // we can use the arraylist in newInstance() method.
-        }
-
-        @Override
-        public int getCount() {
-            return progressList.size();
-        }
     }
 
     // TODO: Rename method, update argument and hook method into UI event
