@@ -17,6 +17,7 @@ import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.FileProvider;
 import android.support.v7.widget.PopupMenu;
 import android.text.InputType;
@@ -265,14 +266,19 @@ public class WeightLogFragment extends Fragment {
             }
         });
 
-        // now we want to set-up event listeners for the button
-//        mViewProgressButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//
-//            }
-//        });
-//
+        //   now we want to set-up event listeners for the button
+        mViewProgressButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // we want to open up a viewpager.
+                // we can do this by creating a fragment transaction
+                FragmentTransaction trans = getActivity().getSupportFragmentManager().beginTransaction();
+                trans.replace(R.id.content_main, new ViewProgressFragment());
+                trans.addToBackStack(null);
+                trans.commit();
+            }
+        });
+
         return view;
     }
 
@@ -356,7 +362,7 @@ public class WeightLogFragment extends Fragment {
 
                                     dialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                                         @Override
-                                        public void onClick(DialogInterface dialogInterface, int i) {}
+                                        public void onClick(DialogInterface dialogInterface, int i) { dialogInterface.dismiss(); }
                                     });
 
                                     dialog.show();

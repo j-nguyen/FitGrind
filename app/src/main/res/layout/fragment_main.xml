@@ -36,7 +36,8 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:baselineAligned="false">
 
                     <LinearLayout
                         android:orientation="vertical"
@@ -108,8 +109,7 @@
             android:divider="@android:color/transparent"
             android:dividerHeight="@dimen/padding"
             android:layout_marginTop="@dimen/padding"
-            android:headerDividersEnabled="false"
-            android:elevation="2dp" />
+            android:headerDividersEnabled="false" />
 
     </LinearLayout>
 
@@ -120,14 +120,12 @@
         app:fabSize="normal"
         app:srcCompat="@drawable/ic_add_black_24dp"
         android:id="@+id/fab"
-        android:layout_alignParentLeft="false"
-        android:layout_centerHorizontal="false"
-        android:layout_alignWithParentIfMissing="false"
-        android:layout_alignParentStart="false"
-        android:layout_margin="@dimen/fab_margin"
-        android:layout_alignParentEnd="false"
+        android:layout_marginLeft="@dimen/fab_margin"
+        android:layout_marginRight="@dimen/fab_margin"
+        android:layout_marginBottom="16dp"
+        android:layout_centerInParent="false"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true" />
+        android:layout_alignParentEnd="true" />
 
 
 </RelativeLayout>
