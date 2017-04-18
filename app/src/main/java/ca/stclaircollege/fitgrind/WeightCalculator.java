@@ -30,6 +30,28 @@ public class WeightCalculator {
         lifestyle = Double.parseDouble(SP.getString("lifestyle_key", "1.2"));
         deficit = Double.parseDouble(SP.getString("weight_per_week", "500"));
 
+        // now we check and calculate BMR formula based on given results.
+        // this will calculate how much to maintain weight
+        if (gender.equals("Male")) {
+            BMR = (10 * weight + 6.25 * height - 5 * age + 5) * lifestyle;
+        } else {
+            // now do it for female
+            BMR = (10 * weight + 6.25 * height - 5 * age - 161) * lifestyle;
+        }
+
+        // and now based on the given results we can do this
+        BMR = (weightgoal > weight) ? BMR + deficit : BMR - deficit;
+    }
+
+    public WeightCalculator(SharedPreferences SP) {
+        gender = SP.getString("gender_keys", "Male");
+        age = Double.parseDouble(SP.getString("age", "0"));
+        height = Double.parseDouble(SP.getString("height", "0")) * CONVERT_TO_CM;
+        weight = Double.parseDouble(SP.getString("weight", "0")) * CONVERT_TO_KG;
+        weightgoal = Double.parseDouble(SP.getString("weight_goal", "0")) * CONVERT_TO_KG;
+        lifestyle = Double.parseDouble(SP.getString("lifestyle_key", "1.2"));
+        deficit = Double.parseDouble(SP.getString("weight_per_week", "500"));
+
         /*
          For men: BMR = 10 x weight (kg) + 6.25 x height (cm) – 5 x age (years) + 5
          For women: BMR = 10 x weight (kg) + 6.25 x height (cm) – 5 x age (years) – 161
@@ -50,6 +72,10 @@ public class WeightCalculator {
 
     public double getBMR() {
         return Math.floor(BMR);
+    }
+
+    public String getCurrentWeight() {
+        return String.format("%.0f lbs",(weight / CONVERT_TO_KG));
     }
 
     public String getCalorieGoal() {

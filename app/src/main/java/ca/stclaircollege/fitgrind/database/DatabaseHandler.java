@@ -42,7 +42,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final String PROGRESS_TABLE_NAME = "progress";
 
     // put it in a hashmap key
-    private static HashMap<String, String> NUTRIENT_KEYS = new HashMap<String, String>();
+    private static final HashMap<String, String> NUTRIENT_KEYS = new HashMap<String, String>();
     private static final HashMap<String, String> CALORIE_KEY = new HashMap<String, String>();
 
     // initialize for our static provider
@@ -118,8 +118,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final String CREATE_PROGRESS_TABLE =
             "CREATE TABLE progress (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
-                "resource TEXT, " +
-                "date DATETIME DEFAULT (DATETIME(CURRENT_TIMESTAMP, 'LOCALTIME')));";
+                "weight_id INTEGER REFERENCES weight_log (id), " +
+                "resource TEXT);";
 
     private static final String CREATE_WORKOUTDAY_TABLE =
             "CREATE TABLE workout_day (" +
@@ -218,6 +218,18 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return db.insert(WORKOUTROUTINE_TABLE_NAME, null, values);
     }
 
+    public long insertWeight(Weight weight) {
+        // create a writeable db
+        SQLiteDatabase db = getWritableDatabase();
+        // create content values
+        ContentValues values = new ContentValues();
+        // put the properties
+        values.put("weight", weight.getWeight());
+        values.put("date", weight.getDate());
+        // return
+        return db.insert(WEIGHTLOG_TABLE_NAME, null, values);
+    }
+
     /**
      * Inserts a workout, with the cardio object
      * @param cardio
@@ -249,12 +261,13 @@ public class DatabaseHandler extends SQLiteOpenHelper {
      * Inserts your 'weight-log' picture weekly.
      * @param progress
      */
-    public boolean insertProgress(Progress progress) {
+    public boolean insertProgress(Progress progress, long weightId) {
         SQLiteDatabase db = getWritableDatabase();
         // Create the content values
         ContentValues values = new ContentValues();
         // input the values
         values.put("resource", progress.getResource());
+        values.put("weight_id", weightId);
         // insert the db
         return db.insert(PROGRESS_TABLE_NAME, null, values) > 0;
     }
@@ -407,13 +420,25 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     public boolean updateFood(Food food) {
         // Create db
-        SQLiteDatabase db = getReadableDatabase();
+        SQLiteDatabase db = getWritableDatabase();
         // Create the content values
         ContentValues values = new ContentValues();
         // we'll just go through every list, but we'll need to get the hash map entry set again
         for (Nutrient nutrient : food.getNutrients()) values.put(NUTRIENT_KEYS.get(nutrient.getNutrient()), nutrient.getValue());
         // get the rows affected
         return db.update(FOOD_TABLE_NAME, values, "id = ?", new String[]{String.valueOf(food.getId())}) > 0;
+    }
+
+    public boolean updateWeight(Weight weight) {
+        // create update db
+        SQLiteDatabase db = getWritableDatabase();
+        // create content values
+        ContentValues values = new ContentValues();
+        // put values in
+        values.put("weight", weight.getWeight());
+        values.put("date", weight.getDate());
+        // return rows affected
+        return db.update(WEIGHTLOG_TABLE_NAME, values, "id = ?", new String[]{String.valueOf(weight.getId())}) > 0;
     }
 
     /**
@@ -458,6 +483,11 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return db.delete(PROGRESS_TABLE_NAME, "id = ?", new String[]{String.valueOf(id)}) > 0;
     }
 
+    public boolean deleteProgressByWeight(long weightId) {
+        SQLiteDatabase db = getWritableDatabase();
+        return db.delete(PROGRESS_TABLE_NAME, "weight_id = ?", new String[]{String.valueOf(weightId)}) > 0;
+    }
+
     /**
      * Deletes the food based on id
      * @param id
@@ -468,6 +498,53 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         // deletes both of them and checks if both are deleted
         return db.delete(FOOD_TABLE_NAME, "id = ?", new String[]{String.valueOf(id)}) > 0 &&
                 db.delete(FOODLOG_TABLE_NAME, "id = ?", new String[]{String.valueOf(id)}) > 0;
+    }
+
+    /**
+     * Deletes the weight log based on id
+     * @param id
+     * @return true or false, true if query is successful
+     */
+    public boolean deleteWeight(long id) {
+        SQLiteDatabase db = getWritableDatabase();
+        return db.delete(WEIGHTLOG_TABLE_NAME, "id = ?", new String[]{String.valueOf(id)}) > 0;
+    }
+
+    /*
+     * READ METHODS / SELECT METHODS
+     */
+
+    public ArrayList<Weight> selectAllWeightLog() {
+        // get a readable db
+        SQLiteDatabase db = getReadableDatabase();
+        // create blank arraylist
+        ArrayList<Weight> results = new ArrayList<Weight>();;
+        // create sql
+        Cursor cursor = db.rawQuery("SELECT * FROM " + WEIGHTLOG_TABLE_NAME, null);
+        if (cursor.moveToFirst()) {
+            // iterate through
+            do {
+                results.add(new Weight(cursor.getLong(0), cursor.getDouble(1), cursor.getString(2)));
+            } while(cursor.moveToNext());
+        }
+        return results;
+    }
+
+    public ArrayList<Progress> selectAllProgress() {
+        // use a readable db
+        SQLiteDatabase db = getReadableDatabase();
+        // create a blank arraylist
+        ArrayList<Progress> results = new ArrayList<Progress>();
+        // create sql
+        Cursor cursor = db.rawQuery("SELECT id, resource FROM " + PROGRESS_TABLE_NAME, null);
+        if (cursor.moveToFirst()) {
+            // iterate through the processsed sql
+            do {
+                // 0 = id, 1 = resourcce id
+                results.add(new Progress(cursor.getLong(0), cursor.getString(1)));
+            } while (cursor.moveToNext());
+        }
+        return results;
     }
 
     /**
@@ -545,6 +622,25 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
 
     /**
+     * Selects progress at id
+     * @param id
+     * @return an object is found, null if not
+     */
+    public Progress selectProgress(long id) {
+        Progress progress = null;
+        // create db
+        SQLiteDatabase db = getReadableDatabase();
+        // create a query cursor to check
+        Cursor cursor = db.rawQuery("SELECT * FROM progress WHERE weight_id = ?", new String[]{String.valueOf(id)});
+        if (cursor.moveToFirst()) {
+            // move to last because we know what it is now
+            cursor.moveToLast();
+            progress = new Progress(cursor.getLong(0), cursor.getString(2));
+        }
+        return progress;
+    }
+
+    /**
      * Retrieves a log of food, from the past x days.
      * @return FoodLog object. We know the exact amount the size of the outer, which is 7 for 7 days.
      */
@@ -573,6 +669,34 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return foodLog;
     }
 
+    public double[] selectNutrientsAt(int day) {
+        double[] nutrients = null;
+        // get db
+        SQLiteDatabase db = getReadableDatabase();
+        // create the dates
+        String now = getCurrDateMinus(day);
+        String sql = "SELECT SUM(food.calories), SUM(food.total_fat), SUM(food.carbohydrate), SUM(food.protein) FROM food_log INNER JOIN food ON food_log.food_id = food.id " +
+                "WHERE food_log.date BETWEEN ? AND ?;";
+        Cursor cursor = db.rawQuery(sql, new String[]{now + " 00:00:00", now + "23:59:59"});
+        // check
+        if (cursor.moveToFirst()) {
+            nutrients = new double[4];
+            cursor.moveToLast();
+            // and now get the value
+            nutrients[0] = cursor.getDouble(0);
+            nutrients[1] = cursor.getDouble(1);
+            nutrients[2] = cursor.getDouble(2);
+            nutrients[3] = cursor.getDouble(3);
+        }
+        // return -1
+        return nutrients;
+    }
+
+    /**
+     * Selects calories
+     * @param day
+     * @return calories value
+     */
     public double selectCaloriesAt(int day) {
         double calories = -1;
         // get db
@@ -586,7 +710,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             cursor.moveToLast();
             // and now get the value
-            calories =  cursor.getDouble(0);
+            calories = cursor.getDouble(0);
         }
         // return -1
         return calories;
@@ -652,5 +776,25 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         Cursor cursor = db.rawQuery("SELECT strftime('%Y-%m-%d', date) FROM food_log ORDER by date DESC LIMIT 1;", null);
         if (cursor.moveToLast()) result = cursor.getString(0);
         return result;
+    }
+
+    /**
+     * Checks if the progress table is empty
+     * @return boolean value
+     */
+    public boolean isProgressEmpty() {
+        // read the db
+        SQLiteDatabase db = getReadableDatabase();
+        // create a sql for count
+        Cursor cursor = db.rawQuery("SELECT count(*) FROM progress", null);
+        // check
+        if (cursor.moveToFirst()) {
+            // if there's a ton then we know there's something here
+            if (cursor.getInt(0) == 0) {
+                return true;
+            }
+            return false;
+        }
+        return false;
     }
 }
