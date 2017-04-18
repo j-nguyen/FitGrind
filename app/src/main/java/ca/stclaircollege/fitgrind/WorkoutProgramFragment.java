@@ -1,6 +1,7 @@
 package ca.stclaircollege.fitgrind;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -9,7 +10,9 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.PopupMenu;
+import android.text.Layout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -19,6 +22,7 @@ import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -128,15 +132,17 @@ public class  WorkoutProgramFragment extends Fragment {
         public CustomAdapter(Context context, ArrayList<Program> items) {
             super(context, 0, items);
         }
+
         //get each item and assign a view to it
         public View getView(final int position, View convertView, ViewGroup parent){
             final Program program = getItem(position);
+
             if(convertView == null){
                 convertView = LayoutInflater.from(getContext()).inflate(R.layout.program_view, parent, false);
             }
 
             //set the listview items
-            TextView name = (TextView) convertView.findViewById(R.id.programName);
+            final TextView name = (TextView) convertView.findViewById(R.id.programName);
             name.setText(program.getName());
 
             TextView description = (TextView) convertView.findViewById(R.id.programDescription);
@@ -160,11 +166,46 @@ public class  WorkoutProgramFragment extends Fragment {
                         public boolean onMenuItemClick(MenuItem item) {
                             switch (item.getItemId()) {
                                 case R.id.edit:
-                                    FragmentTransaction trans = getActivity().getSupportFragmentManager().beginTransaction();
-                                    //trans.replace(R.id.content_main, EditProgramFragment.newInstance(program.getId()));
-                                    trans.addToBackStack(null);
-                                    trans.commit();
+                                    AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                                    //
+                                    builder.setTitle("Edit " + program.getName());
+                                    //edittext for input
+//                                    final EditText editText = new EditText(getContext());
+                                    View dialogView = LayoutInflater.from(getActivity()).inflate(R.layout.view_edited_program, null);
+                                    // get edit text
+                                    final EditText editText = (EditText) dialogView.findViewById(R.id.editNameEditText);
+                                    final EditText editText2 = (EditText) dialogView.findViewById(R.id.editDescriptionEditText);
+
+                                    // setup the text from program
+                                    editText.setText(program.getName());
+                                    editText2.setText(program.getDescription());
+
+                                    builder.setView(dialogView);
+                                    // Set up the buttons
+                                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            program.setName(editText.getText().toString());
+                                            program.setDescription(editText2.getText().toString());
+                                            // if it clicked ok, we need to create a db instance and make sure it goes through and works
+                                            DatabaseHandler db = new DatabaseHandler(getContext());
+                                            // start the query
+                                            if (db.updateRoutine(program)) {
+                                                ((BaseAdapter) list.getAdapter()).notifyDataSetChanged();
+                                                Toast.makeText(getContext(), R.string.db_update_success, Toast.LENGTH_SHORT).show();
+                                            }
+
+                                        }
+                                    });
+                                    builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            dialog.dismiss();
+                                        }
+                                    });
+                                    builder.show();
                                     break;
+
                                 case R.id.delete:
                                     //delete from db
                                     DatabaseHandler db = new DatabaseHandler(getContext());

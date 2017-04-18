@@ -1,42 +1,36 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:columnCount="2"
+    android:useDefaultMargins="true">
 
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
+    <!-- TODO: Update blank fragment layout -->
+    <TextView
+        android:text="Edit Name"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="@dimen/padding">
+        android:id="@+id/editNameLabel"
+        android:layout_column="0" />
 
-        <TextView
-            android:text="TextView"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:id="@+id/program_name"
-            android:textSize="@dimen/listview_font_size"
-            android:textStyle="bold"
-            android:gravity="center_horizontal" />
+    <EditText
+        android:layout_width="190dp"
+        android:layout_height="wrap_content"
+        android:inputType="textPersonName"
+        android:id="@+id/editNameEditText"
+        android:layout_column="1" />
 
-        <TextView
-            android:text="TextView"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:id="@+id/program_value"
-            android:textSize="@dimen/listview_font_size"
-            android:gravity="center_horizontal" />
+    <TextView
+        android:text="Edit Description"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/editDescriptionLabel"
+        android:layout_column="0" />
 
-        <ImageView
-            app:srcCompat="@drawable/ic_chevron_right_black_24dp"
-            android:id="@+id/chevron"
-            android:layout_weight="0.5"
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:cropToPadding="false"
-            android:adjustViewBounds="false" />
-    </LinearLayout>
+    <EditText
+        android:layout_width="190dp"
+        android:layout_height="wrap_content"
+        android:inputType="textPersonName"
+        android:id="@+id/editDescriptionEditText"
+        android:layout_column="1" />
 
-</LinearLayout>
+</GridLayout>
