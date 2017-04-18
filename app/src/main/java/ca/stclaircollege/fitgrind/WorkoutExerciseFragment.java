@@ -11,6 +11,8 @@ import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
+import android.widget.TextView;
 
 
 /**
@@ -74,11 +76,67 @@ public class WorkoutExerciseFragment extends Fragment {
         sectionPagerAdapter = new SectionPagerAdapter(getChildFragmentManager());
         viewPager = (ViewPager) view.findViewById(R.id.exerciseContent);
         viewPager.setAdapter(sectionPagerAdapter);
-        if(savedInstanceState == null){
-            Snackbar.make(view, "Swipe left for more gear", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show();
-        }
+//        if(savedInstanceState == null){
+//            Snackbar.make(view, "Swipe left for more gear", Snackbar.LENGTH_LONG)
+//                    .setAction("Action", null).show();
+//        }
+        final TextView day = (TextView) view.findViewById(R.id.day);
+        ImageButton backButton = (ImageButton) view.findViewById(R.id.exercise_back_button);
+        ImageButton forwardButton = (ImageButton) view.findViewById(R.id.exercise_forward_button);
 
+        day.setText("Sunday");
+        // set up listeners for viewpager
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {}
+
+            //set the textview title
+            @Override
+            public void onPageSelected(int position) {
+                switch (position) {
+                    case 0: day.setText("Sunday"); break;
+                    case 1: day.setText("Monday"); break;
+                    case 2: day.setText("Tuesday"); break;
+                    case 3: day.setText("Wednesday"); break;
+                    case 4: day.setText("Thursday"); break;
+                    case 5: day.setText("Friday"); break;
+                    case 6: day.setText("Saturday"); break;
+                    default: day.setText("Sunday"); break;
+                }
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {}
+        });
+
+        //viewpaher back
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int location = viewPager.getCurrentItem();
+                if(location > 0) {
+                    location--;
+                    viewPager.setCurrentItem(location);
+                } else if (location == 0){
+                    viewPager.setCurrentItem(viewPager.getChildCount());
+                }
+            }
+        });
+
+        //move viewpager forward
+        forwardButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int location = viewPager.getCurrentItem();
+                location++;
+                if(location >= viewPager.getChildCount()+5) {
+                    location++;
+                    viewPager.setCurrentItem(0);
+                } else {
+                    viewPager.setCurrentItem(location);
+                }
+            }
+        });
         return view;
     }
 

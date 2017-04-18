@@ -587,13 +587,14 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 workoutList.add(new Cardio(cursor.getInt(0), cursor.getString(1), cursor.getInt(2), cursor.getDouble(3)));
             } while (cursor.moveToNext());
         }
+        cursor.close();
         // now we check for other log
-        cursor = db.rawQuery("SELECT * FROM exercise INNER JOIN strength_log ON exercise.id = strength.exercise_id", null);
-        if (cursor.moveToFirst()) {
+        Cursor cursor2 = db.rawQuery("SELECT * FROM exercise INNER JOIN strength_log ON exercise.id = strength_log.exercise_id", null);
+        if (cursor2.moveToFirst()) {
             do {
                 // add for strength log
-                workoutList.add(new Strength(cursor.getInt(0), cursor.getString(1), cursor.getInt(2), cursor.getInt(3), cursor.getInt(4), cursor.getDouble(5)));
-            } while (cursor.moveToNext());
+                workoutList.add(new Strength(cursor2.getInt(0), cursor2.getString(1), cursor2.getInt(2), cursor2.getInt(3), cursor2.getInt(4), cursor2.getDouble(5)));
+            } while (cursor2.moveToNext());
         }
         db.close();
         return workoutList;

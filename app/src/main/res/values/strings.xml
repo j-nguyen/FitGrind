@@ -106,6 +106,9 @@
     <string name="potassium_hint">Enter potassium value</string>
     <string name="iron_hint">Enter Iron value</string>
     <string name="iron_label">Iron (mg):</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="recent_log_title">Recent Logged Entries</string>
     <string name="title_log_day">Food Logs</string>
     <string name="height_ft">height_ft</string>
