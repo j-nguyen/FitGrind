@@ -270,12 +270,11 @@ public class WeightLogFragment extends Fragment {
         mViewProgressButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // we want to open up a viewpager.
-                // we can do this by creating a fragment transaction
-                FragmentTransaction trans = getActivity().getSupportFragmentManager().beginTransaction();
-                trans.replace(R.id.content_main, new ViewProgressFragment());
-                trans.addToBackStack(null);
-                trans.commit();
+                // we want to open using an activity so we have the trash icon on the top right
+                Intent intent = new Intent(getActivity(), ViewProgressActivity.class);
+                if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
+                    startActivity(intent);
+                }
             }
         });
 
