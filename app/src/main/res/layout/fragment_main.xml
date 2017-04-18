@@ -126,7 +126,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:clickable="true"
-        app:fabSize="normal"
         app:srcCompat="@drawable/ic_add_black_24dp"
         android:id="@+id/fab"
         android:layout_marginLeft="@dimen/fab_margin"
@@ -134,7 +133,8 @@
         android:layout_marginBottom="16dp"
         android:layout_centerInParent="false"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentEnd="true"
+        app:fabSize="normal" />
 
 
 </RelativeLayout>

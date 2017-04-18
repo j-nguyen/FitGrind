@@ -149,6 +149,7 @@ public class MainFragment extends Fragment {
                 // Create a fragmentManager
                 FragmentManager fm = getActivity().getSupportFragmentManager();
                 FragmentTransaction trans = fm.beginTransaction();
+                trans.setCustomAnimations(R.anim.fade_in, R.anim.fade_out);
                 trans.replace(R.id.content_main, new ViewCalorieLogFragment());
                 trans.addToBackStack(null);
                 trans.commit();
