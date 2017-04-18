@@ -483,6 +483,11 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return db.delete(PROGRESS_TABLE_NAME, "id = ?", new String[]{String.valueOf(id)}) > 0;
     }
 
+    public boolean deleteProgressByWeight(long weightId) {
+        SQLiteDatabase db = getWritableDatabase();
+        return db.delete(PROGRESS_TABLE_NAME, "weight_id = ?", new String[]{String.valueOf(weightId)}) > 0;
+    }
+
     /**
      * Deletes the food based on id
      * @param id

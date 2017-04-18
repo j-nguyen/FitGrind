@@ -369,13 +369,12 @@ public class WeightLogFragment extends Fragment {
                                     break;
                                 case R.id.delete:
                                     DatabaseHandler db = new DatabaseHandler(getContext());
-                                    System.out.println(weightItem.getId());
                                     if (db.deleteWeight(weightItem.getId())) {
                                         // remove from the array too
                                         weightList.remove(position);
                                         ((BaseAdapter) mListView.getAdapter()).notifyDataSetChanged();
-                                        // delete from photo too, if it exists
-                                        db.deleteProgress(weightItem.getId());
+                                        // we also want to delete from progress too if it exists
+                                        db.deleteProgressByWeight(weightItem.getId());
                                         Toast.makeText(getActivity(), R.string.db_delete_success, Toast.LENGTH_SHORT).show();
                                     }
                                     db.close();

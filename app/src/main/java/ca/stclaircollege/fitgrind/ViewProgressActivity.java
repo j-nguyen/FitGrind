@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -21,6 +22,7 @@ public class ViewProgressActivity extends AppCompatActivity implements ViewProgr
 
     private ViewPager mViewPager;
     private SectionPagerAdapter mPageAdapter;
+    private Progress currProgress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,18 +39,33 @@ public class ViewProgressActivity extends AppCompatActivity implements ViewProgr
         // create the page adapter here
         DatabaseHandler db = new DatabaseHandler(this);
         final ArrayList<Progress> progress = db.selectAllProgress();
+        currProgress = (progress.get(0) != null) ? progress.get(0) : null;
         mPageAdapter = new SectionPagerAdapter(getSupportFragmentManager(), progress);
 
         // set the adapter and view pager
         mViewPager.setAdapter(mPageAdapter);
         indicator.setViewPager(mViewPager);
+
+        // set event listener for pages
+        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {}
+
+            @Override
+            public void onPageSelected(int position) {
+                currProgress = progress.get(position);
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {}
+        });
     }
 
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
+        getMenuInflater().inflate(R.menu.image_menu, menu);
         return true;
     }
 
@@ -63,6 +80,14 @@ public class ViewProgressActivity extends AppCompatActivity implements ViewProgr
         if (id == android.R.id.home) {
             // destroy this activity
             finish();
+        } else if (id == R.id.action_delete) {
+            // if it's delete then we create a db to delete
+            DatabaseHandler db = new DatabaseHandler(this);
+            // if we can successfully delete, we can finish activity and close
+            if (currProgress != null && db.deleteProgress(currProgress.getId())) {
+                Toast.makeText(this, R.string.db_delete_success, Toast.LENGTH_SHORT).show();
+                finish();
+            }
         }
 
         return super.onOptionsItemSelected(item);
