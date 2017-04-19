@@ -163,6 +163,7 @@ public class ExerciseFragment extends Fragment {
                     PopupMenu menu = new PopupMenu(getContext(), menuButton);
                     //inflate the pop up menu with the xml
                     menu.getMenuInflater().inflate(R.menu.popup_menu, menu.getMenu());
+                    System.out.println("2");
 
                     menu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                         @Override
@@ -200,7 +201,7 @@ public class ExerciseFragment extends Fragment {
                                                 // if it clicked ok, we need to create a db instance and make sure it goes through and works
                                                 DatabaseHandler db = new DatabaseHandler(getContext());
                                                 // start the query
-                                                if (db.updateWorkout((Strength) item, ) {
+                                                if (db.updateWorkout((Strength) item)) {
                                                     ((BaseAdapter) list.getAdapter()).notifyDataSetChanged();
                                                     Toast.makeText(getContext(), R.string.db_update_success, Toast.LENGTH_SHORT).show();
                                                 }
@@ -242,7 +243,7 @@ public class ExerciseFragment extends Fragment {
                                                 // if it clicked ok, we need to create a db instance and make sure it goes through and works
                                                 DatabaseHandler db = new DatabaseHandler(getContext());
                                                 // start the query
-                                                if (db.updateRoutine(((Cardio) item).getCardioId())) {
+                                                if (db.updateWorkout((Cardio) item)) {
                                                     ((BaseAdapter) list.getAdapter()).notifyDataSetChanged();
                                                     Toast.makeText(getContext(), R.string.db_update_success, Toast.LENGTH_SHORT).show();
                                                 }
