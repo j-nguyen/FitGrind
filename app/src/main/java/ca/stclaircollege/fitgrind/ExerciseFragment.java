@@ -17,6 +17,7 @@ import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -125,6 +126,8 @@ public class ExerciseFragment extends Fragment {
             if(convertView == null){
                 convertView = LayoutInflater.from(getContext()).inflate(R.layout.exercise_view, parent, false);
             }
+            LinearLayout strengthLayout = (LinearLayout) convertView.findViewById(R.id.strengthLayout);
+            LinearLayout cardioLayout = (LinearLayout) convertView.findViewById(R.id.cardioLayout);
 
             //set the listview items
             final TextView exerciseName = (TextView) convertView.findViewById(R.id.exerciseName);
@@ -140,10 +143,19 @@ public class ExerciseFragment extends Fragment {
 
                 TextView weight = (TextView) convertView.findViewById(R.id.exerciseWeight);
                 weight.setText("" + mItem.getWeight());
+
+                //hide cardrio layout
+                cardioLayout.setVisibility(View.GONE);
+                strengthLayout.setVisibility(View.VISIBLE);
+
             } else if (item instanceof Cardio){
                 Cardio mItem = (Cardio) item;
                 TextView time = (TextView) convertView.findViewById(R.id.exerciseTime);
                 time.setText("" + mItem.getTime());
+
+                //hide strength
+                strengthLayout.setVisibility(View.GONE);
+                cardioLayout.setVisibility(View.VISIBLE);
             }
 
             //image view button edit exercise
