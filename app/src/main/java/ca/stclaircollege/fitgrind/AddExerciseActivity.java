@@ -84,50 +84,62 @@ public class AddExerciseActivity extends AppCompatActivity implements
             @Override
             public void onClick(View v) {
 
-//                Strength strength = new Strength(exerciseName.getText().toString(), Integer.parseInt(set.getText().toString()), Integer.parseInt(rep.getText().toString()), Double.parseDouble(weight.getText().toString()));
-//                DatabaseHandler db = new DatabaseHandler(getApplicationContext());
-//                db.insertWorkout(strength,long, long);
+                if(isFieldFilled()) {
+                    String name = exerciseName.getText().toString();
+                    // we add one to this list because AUTOINCREMENT starts at 1
+                    long exerciseId = spinner.getSelectedItemPosition() + 1;
+                    long dayId = daySpinner.getSelectedItemPosition() + 1;
 
-                String name = exerciseName.getText().toString();
-                // we add one to this list because AUTOINCREMENT starts at 1
-                long exerciseId = spinner.getSelectedItemPosition() + 1;
-                long dayId = daySpinner.getSelectedItemPosition() + 1;
+                    // check if strength or cardio by checking id
+                    WorkoutType item = null;
 
-                // check if strength or cardio by checking id
-                WorkoutType item = null;
+                    if (exerciseId == 1) {
+                        item = new Strength(name, Integer.parseInt(set.getText().toString()), Integer.parseInt(rep.getText().toString()), Double.parseDouble(weight.getText().toString()));
+                    } else if (exerciseId == 2) {
+                        item = new Cardio(name, Double.parseDouble(time.getText().toString()));
+                    }
 
-                if (exerciseId == 1) {
-                    item = new Strength(name, Integer.parseInt(set.getText().toString()), Integer.parseInt(rep.getText().toString()), Double.parseDouble(weight.getText().toString()));
-                } else if (exerciseId == 2) {
-                    item = new Cardio(name, Double.parseDouble(time.getText().toString()));
-                }
+                    // create db to start
+                    DatabaseHandler db = new DatabaseHandler(getApplicationContext());
 
-                // create db to start
-                DatabaseHandler db = new DatabaseHandler(getApplicationContext());
+                    boolean result;
 
-                boolean result;
+                    if (item instanceof Strength) {
+                        result = db.insertWorkout((Strength) item, exerciseId, dayId);
+                    } else {
+                        result = db.insertWorkout((Cardio) item, exerciseId, dayId);
+                    }
 
-                if (item instanceof Strength) {
-                    result = db.insertWorkout((Strength) item, exerciseId, dayId);
+                    db.close();
+                    System.out.println(result);
+                    if (result) {
+                        // success
+                        // create an intent too
+                        Intent intent = new Intent();
+                        intent.putExtra("item", item);
+                        setResult(RESULT_OK, intent);
+                        finish();
+                        Toast.makeText(AddExerciseActivity.this, R.string.db_insert_success, Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(AddExerciseActivity.this, R.string.db_error, Toast.LENGTH_SHORT).show();
+                    }
                 } else {
-                    result = db.insertWorkout((Cardio) item, exerciseId, dayId);
-                }
-
-                db.close();
-                System.out.println(result);
-                if (result) {
-                    // success
-                    // create an intent too
-                    Intent intent = new Intent();
-                    intent.putExtra("item", item);
-                    setResult(RESULT_OK, intent);
-                    finish();
-                    Toast.makeText(AddExerciseActivity.this, R.string.db_insert_success, Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(AddExerciseActivity.this, R.string.db_error, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AddExerciseActivity.this, R.string.invalid_field, Toast.LENGTH_SHORT).show();
                 }
             }
         });
+    }
+
+    /**
+     * This function checks if the field is filled
+     * @return boolean value
+     */
+    public boolean isFieldFilled() {
+        return !isEmpty(exerciseName) && !isEmpty(set) && !isEmpty(rep) && !isEmpty(weight) && !isEmpty(time);
+    }
+
+    private boolean isEmpty(EditText e) {
+        return e.getText().toString().trim().length() == 0;
     }
 
     @Override
