@@ -172,7 +172,6 @@ public class WeightLogFragment extends Fragment {
                         e.printStackTrace();
                     }
                 }
-
                 // check to make sure it's there
                 if (diff >= 7) {
                     // once it clicks, instead of opening up another fragment, this time we're going to open a dialog instead.
