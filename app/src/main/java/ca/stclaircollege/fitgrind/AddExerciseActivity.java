@@ -135,7 +135,7 @@ public class AddExerciseActivity extends AppCompatActivity implements
      * @return boolean value
      */
     public boolean isFieldFilled() {
-        return !isEmpty(exerciseName) && !isEmpty(set) && !isEmpty(rep) && !isEmpty(weight) && !isEmpty(time);
+        return !isEmpty(exerciseName) && !isEmpty(set) && !isEmpty(rep) && !isEmpty(weight);
     }
 
     private boolean isEmpty(EditText e) {

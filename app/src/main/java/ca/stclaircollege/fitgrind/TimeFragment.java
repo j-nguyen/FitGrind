@@ -1,5 +1,6 @@
 package ca.stclaircollege.fitgrind;
 
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -11,6 +12,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.text.InputFilter;
 import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -97,6 +99,8 @@ public class TimeFragment extends Fragment {
                 // set up the edit text
                 final EditText input = new EditText(getContext());
                 input.setInputType(InputType.TYPE_CLASS_NUMBER);
+                //set max input field
+                input.setFilters(new InputFilter[] {new InputFilter.LengthFilter(5)});
 
                 // set the view
                 dialog.setView(input);
@@ -106,19 +110,19 @@ public class TimeFragment extends Fragment {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         int seconds = Integer.parseInt(input.getText().toString());
-                        int number = Integer.valueOf(input.getText().toString())*1000;
+                        long number = Long.valueOf(input.getText().toString())*1000;
                         //count down (seconds)
-                        new CountDownTimer(number, 1000) {
+                        final CountDownTimer timer = new CountDownTimer(number, 1000) {
                             public void onTick(long millisUntilFinished) {
                                 textView.setText("Time Remaining: " + millisUntilFinished / 1000);
                             }
 
                             public void onFinish() {
-                                textView.setText("Done!");
+                                textView.setText("Finished!");
                             }
                         }.start();
 
-                        Intent intent = new Intent(AlarmClock.ACTION_SET_TIMER)
+                        final Intent intent = new Intent(AlarmClock.ACTION_SET_TIMER)
                                 .putExtra(AlarmClock.EXTRA_MESSAGE, "Time's Up")
                                 .putExtra(AlarmClock.EXTRA_LENGTH, seconds)
                                 .putExtra(AlarmClock.EXTRA_SKIP_UI, true);
