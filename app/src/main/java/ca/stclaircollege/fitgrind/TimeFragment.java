@@ -1,12 +1,18 @@
 package ca.stclaircollege.fitgrind;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.AlarmClock;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+
+import static android.R.id.message;
 
 
 /**
@@ -64,7 +70,27 @@ public class TimeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_time, container, false);
+        View view = inflater.inflate(R.layout.fragment_time, container, false);
+        final EditText editText = (EditText) view.findViewById(R.id.minute);
+        Button button = (Button) view.findViewById(R.id.button);
+
+
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int seconds = Integer.parseInt(editText.getText().toString());
+                Intent intent = new Intent(AlarmClock.ACTION_SET_TIMER)
+                        .putExtra(AlarmClock.EXTRA_MESSAGE, "Times up")
+                        .putExtra(AlarmClock.EXTRA_LENGTH, seconds)
+                        .putExtra(AlarmClock.EXTRA_SKIP_UI, true);
+                if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
+                    startActivity(intent);
+                }
+
+            }
+        });
+
+        return view;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
