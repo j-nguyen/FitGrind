@@ -410,7 +410,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         int row = db.update(EXERCISE_TABLE_NAME, values, "id = ?", new String[]{String.valueOf(strength.getId())});
         // update on this field
         values.clear();
-        values.put("exercise_id", exerciseId);
         values.put("set", strength.getSet());
         values.put("rep", strength.getReptitions());
         values.put("weight", strength.getWeight());
