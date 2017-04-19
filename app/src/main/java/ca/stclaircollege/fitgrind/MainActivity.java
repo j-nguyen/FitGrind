@@ -122,6 +122,13 @@ public class MainActivity extends AppCompatActivity
             trans.commit();
         } else if (id == R.id.nav_workout_schedule) {
             startActivity(new Intent(MainActivity.this, TabbedActivity.class));
+        } else if (id == R.id.nav_helpful_link) {
+            // Create an intent to launch website
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setData(Uri.parse("https://www.bodybuilding.com/fun/back-to-basics-9-essential-workout-tips.html"));
+            if (intent.resolveActivity(getPackageManager()) != null) {
+                startActivity(intent);
+            }
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
