@@ -101,9 +101,52 @@ public class  WorkoutProgramFragment extends Fragment {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getActivity(), AddProgramActivity.class);
-                //startActivity(intent);
-                startActivityForResult(intent, LIST_REQUEST);
+                // create a dialog instead of the activity intent
+                AlertDialog.Builder dialog = new AlertDialog.Builder(getContext());
+                dialog.setTitle("Create New Program");
+                // create a view to inflate from
+                View dialogView = LayoutInflater.from(getActivity()).inflate(R.layout.view_edited_program, null);
+
+                // set up the edit text
+                final EditText name = (EditText) dialogView.findViewById(R.id.editNameEditText);
+                final EditText desc = (EditText) dialogView.findViewById(R.id.editDescriptionEditText);
+                // set the view
+                dialog.setView(dialogView);
+
+                // create event listeners for ok and cancel
+
+                dialog.setPositiveButton("Okay", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        // Create db handler
+                        DatabaseHandler db = new DatabaseHandler(getContext());
+                        Program program = new Program(name.getText().toString(), desc.getText().toString());
+                        long id = db.insertProgram(program);
+                        db.close();
+                        // check for id
+                        if (id != -1) {
+                            // set the id so we can add it to the array
+                            program.setId(id);
+                            // add it to the arraylist and notify data set
+                            programsList.add(program);
+                            ((BaseAdapter) list.getAdapter()).notifyDataSetChanged();
+                            // create a toast
+                            Toast.makeText(getContext(), R.string.db_insert_success, Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(getContext(), R.string.db_error, Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+
+                dialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                    }
+                });
+
+                // show dialog
+                dialog.show();
             }
         });
         list = (ListView) view.findViewById(R.id.workoutProgramList);
@@ -227,15 +270,6 @@ public class  WorkoutProgramFragment extends Fragment {
             });
 
             return  convertView;
-        }
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data){
-        if(requestCode == LIST_REQUEST && resultCode == getActivity().RESULT_OK) {
-            Program program = data.getExtras().getParcelable("program");
-            programsList.add(program);
-            adapter.notifyDataSetChanged();
         }
     }
 

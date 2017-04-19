@@ -375,9 +375,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     /**
      * Updates with the cardio table
      * @param cardio
-     * @param exerciseId
      */
-    public boolean updateWorkout(Cardio cardio, long exerciseId) {
+    public boolean updateWorkout(Cardio cardio) {
         // writeable db
         SQLiteDatabase db = getWritableDatabase();
         // create content values
@@ -388,18 +387,16 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         int row = db.update(EXERCISE_TABLE_NAME, values, "id = ?", new String[]{String.valueOf(cardio.getId())});
         // now update on this workout
         values.clear(); // clear
-        values.put("exercise_id", exerciseId);
         values.put("time", cardio.getTime());
-        int secondRow = db.update(CARDIOLOG_TABLE_NAME, values, "exercise_id = ?", new String[]{String.valueOf(exerciseId)});
+        int secondRow = db.update(CARDIOLOG_TABLE_NAME, values, "exercise_id = ?", new String[]{String.valueOf(cardio.getCardioId())});
         return row > 0 && secondRow > 0;
     }
 
     /**
      * Updates with the strength table
      * @param strength
-     * @param exerciseId
      */
-    public boolean updateWorkout(Strength strength, long exerciseId) {
+    public boolean updateWorkout(Strength strength) {
         // create db
         SQLiteDatabase db = getWritableDatabase();
         // create the content values
@@ -410,11 +407,10 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         int row = db.update(EXERCISE_TABLE_NAME, values, "id = ?", new String[]{String.valueOf(strength.getId())});
         // update on this field
         values.clear();
-        values.put("exercise_id", exerciseId);
         values.put("set", strength.getSet());
         values.put("rep", strength.getReptitions());
         values.put("weight", strength.getWeight());
-        int secondRow = db.update(STRENGTHLOG_TABLE_NAME, values, "exercise_id = ?", new String[]{String.valueOf(exerciseId)});
+        int secondRow = db.update(STRENGTHLOG_TABLE_NAME, values, "exercise_id = ?", new String[]{String.valueOf(strength.getStrengthId())});
         return row > 0 && secondRow > 0;
     }
 
