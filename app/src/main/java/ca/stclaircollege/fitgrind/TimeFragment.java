@@ -1,16 +1,25 @@
 package ca.stclaircollege.fitgrind;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.AlarmClock;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
+import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
+
+import ca.stclaircollege.fitgrind.database.DatabaseHandler;
+import ca.stclaircollege.fitgrind.database.Program;
 
 import static android.R.id.message;
 
@@ -71,22 +80,47 @@ public class TimeFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_time, container, false);
-        final EditText editText = (EditText) view.findViewById(R.id.minute);
-        Button button = (Button) view.findViewById(R.id.button);
 
-
-        button.setOnClickListener(new View.OnClickListener() {
+        FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fabTimer);
+        fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                int seconds = Integer.parseInt(editText.getText().toString());
-                Intent intent = new Intent(AlarmClock.ACTION_SET_TIMER)
-                        .putExtra(AlarmClock.EXTRA_MESSAGE, "Times up")
-                        .putExtra(AlarmClock.EXTRA_LENGTH, seconds)
-                        .putExtra(AlarmClock.EXTRA_SKIP_UI, true);
-                if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
-                    startActivity(intent);
-                }
+                // create a dialog instead of the activity intent
+                AlertDialog.Builder dialog = new AlertDialog.Builder(getContext());
+                dialog.setTitle("Set Count Down Alarm (Seconds)");
+                // create a view to inflate from
 
+                // set up the edit text
+                final EditText input = new EditText(getContext());
+
+                // set the view
+                input.setInputType(InputType.TYPE_CLASS_NUMBER);
+                dialog.setView(input);
+
+                // create event listeners for ok and cancel
+                dialog.setPositiveButton("Okay", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        int seconds = Integer.parseInt(input.getText().toString());
+                        Intent intent = new Intent(AlarmClock.ACTION_SET_TIMER)
+                                .putExtra(AlarmClock.EXTRA_MESSAGE, "Time's Up")
+                                .putExtra(AlarmClock.EXTRA_LENGTH, seconds)
+                                .putExtra(AlarmClock.EXTRA_SKIP_UI, true);
+                        if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
+                            startActivity(intent);
+                        }
+                    }
+                });
+
+                dialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                    }
+                });
+
+                // show dialog
+                dialog.show();
             }
         });
 
