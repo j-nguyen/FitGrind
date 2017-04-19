@@ -166,11 +166,6 @@ public class TabbedActivity extends AppCompatActivity implements
         }
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int  resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-    }
-
     public void onFragmentInteraction(Uri uri) {
 
     }

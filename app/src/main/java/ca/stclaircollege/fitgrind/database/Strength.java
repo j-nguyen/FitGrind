@@ -19,6 +19,7 @@ public class Strength extends WorkoutType {
     }
 
     public Strength(long id, String name, long strengthId, int set, int reptitions, double weight) {
+        this.id = id;
         this.strengthId = strengthId;
         this.name = name;
         this.set = set;
