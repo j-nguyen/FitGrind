@@ -83,8 +83,8 @@ public class WorkoutExerciseFragment extends Fragment {
         final TextView day = (TextView) view.findViewById(R.id.day);
         ImageButton backButton = (ImageButton) view.findViewById(R.id.exercise_back_button);
         ImageButton forwardButton = (ImageButton) view.findViewById(R.id.exercise_forward_button);
-
         day.setText("Sunday");
+
         // set up listeners for viewpager
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -147,21 +147,21 @@ public class WorkoutExerciseFragment extends Fragment {
         public Fragment getItem(int position){
             switch(position){
                 case 0:
-                    return ExerciseFragment.newInstance("Sunday", "");
+                    return ExerciseFragment.newInstance(1);
                 case 1:
-                    return ExerciseFragment.newInstance("Monday", "");
+                    return ExerciseFragment.newInstance(2);
                 case 2:
-                    return ExerciseFragment.newInstance("Tuesday", "");
+                    return ExerciseFragment.newInstance(3);
                 case 3:
-                    return ExerciseFragment.newInstance("Wednesday", "");
+                    return ExerciseFragment.newInstance(4);
                 case 4:
-                    return ExerciseFragment.newInstance("Thursday", "");
+                    return ExerciseFragment.newInstance(5);
                 case 5:
-                    return ExerciseFragment.newInstance("Friday ", "");
+                    return ExerciseFragment.newInstance(6);
                 case 6:
-                    return ExerciseFragment.newInstance("Saturday", "");
+                    return ExerciseFragment.newInstance(7);
                 default:
-                    return ExerciseFragment.newInstance("Sunday", "");
+                    return ExerciseFragment.newInstance(1);
             }
         }
         public int getCount(){

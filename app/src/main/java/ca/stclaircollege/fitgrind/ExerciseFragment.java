@@ -20,13 +20,9 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import java.util.ArrayList;
-
 import ca.stclaircollege.fitgrind.database.Cardio;
-import ca.stclaircollege.fitgrind.database.Exercise;
 import ca.stclaircollege.fitgrind.database.DatabaseHandler;
-import ca.stclaircollege.fitgrind.database.Exercise;
 import ca.stclaircollege.fitgrind.database.Strength;
 import ca.stclaircollege.fitgrind.database.WorkoutType;
 
@@ -42,12 +38,11 @@ import ca.stclaircollege.fitgrind.database.WorkoutType;
 public class ExerciseFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    private static final int ADD_EXERCISE_REQUEST = 1;
 
     // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private int mParam2;
 
     ListView list;
     CustomAdapter customAdapter;
@@ -63,16 +58,14 @@ public class ExerciseFragment extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
+     * @param param2 Parameter 1.
      * @return A new instance of fragment ExerciseFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static ExerciseFragment newInstance(String param1, String param2) {
+    public static ExerciseFragment newInstance(int param2) {
         ExerciseFragment fragment = new ExerciseFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putInt(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
     }
@@ -81,8 +74,7 @@ public class ExerciseFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            mParam2 = getArguments().getInt(ARG_PARAM2);
         }
     }
 
@@ -96,18 +88,18 @@ public class ExerciseFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), AddExerciseActivity.class);
-                startActivity(intent);
+                startActivityForResult(intent, ADD_EXERCISE_REQUEST);
             }
         });
 
         list = (ListView) view.findViewById(R.id.exerciselist);
         DatabaseHandler db = new DatabaseHandler(getContext());
 //        final ArrayList<Strength> exercisesList = new ArrayList<Strength>();
-        exercisesList = db.selectAllWorkout();
+        exercisesList = db.selectAllWorkoutAt(mParam2);
         db.close();
 //        System.out.println(exercisesList.size());
-        exercisesList.add(new Strength("asd", 1, 2, 2.2));
-        exercisesList.add(new Cardio("oppo", 2.2));
+//        exercisesList.add(new Strength("asd", 1, 2, 2.2));
+//        exercisesList.add(new Cardio("oppo", 2.2));
 //        exercisesList.add(new Exercise("text", "test", "test"));
         
         customAdapter = new CustomAdapter(getContext(), exercisesList);
@@ -128,7 +120,8 @@ public class ExerciseFragment extends Fragment {
         }
         //get each item and assign a view to it
         public View getView(final int position, View convertView, ViewGroup parent){
-            WorkoutType item = getItem(position);
+            final WorkoutType item = getItem(position);
+
             if(convertView == null){
                 convertView = LayoutInflater.from(getContext()).inflate(R.layout.exercise_view, parent, false);
             }
@@ -139,7 +132,6 @@ public class ExerciseFragment extends Fragment {
 
             if(item instanceof Strength) {
                 Strength mItem = (Strength) item;
-                System.out.println(mItem.getSet());
                 TextView set = (TextView) convertView.findViewById(R.id.exerciseSet);
                 set.setText("" + mItem.getSet());
 
@@ -156,6 +148,7 @@ public class ExerciseFragment extends Fragment {
 
             //image view button edit exercise
             final ImageView menuButton = (ImageView) convertView.findViewById(R.id.editExercise);
+
             menuButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -163,12 +156,11 @@ public class ExerciseFragment extends Fragment {
                     PopupMenu menu = new PopupMenu(getContext(), menuButton);
                     //inflate the pop up menu with the xml
                     menu.getMenuInflater().inflate(R.menu.popup_menu, menu.getMenu());
-                    System.out.println("2");
 
                     menu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                         @Override
-                        public boolean onMenuItemClick(final MenuItem item) {
-                            switch (item.getItemId()) {
+                        public boolean onMenuItemClick(MenuItem mItem) {
+                            switch (mItem.getItemId()) {
                                 case R.id.edit:
                                     if (item instanceof Strength) {
                                         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
@@ -215,7 +207,6 @@ public class ExerciseFragment extends Fragment {
                                             }
                                         });
                                         builder.show();
-                                        break;
 
                                     } else if (item instanceof Cardio){
 
@@ -257,23 +248,20 @@ public class ExerciseFragment extends Fragment {
                                             }
                                         });
                                         builder.show();
-                                        break;
-
-
                                     }
-
+                                    break;
                                 case R.id.delete:
                                     //delete from db
                                     DatabaseHandler db = new DatabaseHandler(getContext());
                                     if(item instanceof Strength) {
-                                        if (db.deleteStrengthWorkout(item.getItemId())) {
+                                        if (db.deleteStrengthWorkout(item.getId())) {
                                             exercisesList.remove(position);
                                             // we also wanna make a notify update
                                             ((BaseAdapter) list.getAdapter()).notifyDataSetChanged();
                                             Toast.makeText(getContext(), R.string.db_delete_success, Toast.LENGTH_SHORT).show();
                                     }
                                     } else if (item instanceof Cardio) {
-                                        if (db.deleteCardioWorkout(item.getItemId())) {
+                                        if (db.deleteCardioWorkout(item.getId())) {
                                             exercisesList.remove(position);
                                             ((BaseAdapter) list.getAdapter()).notifyDataSetChanged();
                                             Toast.makeText(getContext(), R.string.db_delete_success, Toast.LENGTH_SHORT).show();
@@ -282,14 +270,38 @@ public class ExerciseFragment extends Fragment {
                                     db.close();
                                     break;
                             }
+
                             return true;
                         }
                     });
+                    // show menu
+                    menu.show();
                 }
 
             });
 
             return  convertView;
+        }
+    }
+    
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        
+        if (requestCode == ADD_EXERCISE_REQUEST && resultCode == getActivity().RESULT_OK) {
+            if (data.getExtras().getParcelable("item") instanceof Strength) {
+                Strength item = (Strength) data.getExtras().getParcelable("item");
+
+                // add and update
+                exercisesList.add(item);
+                ((BaseAdapter) list.getAdapter()).notifyDataSetChanged();
+            } else if (data.getExtras().getParcelable("item") instanceof Cardio) {
+                Cardio item = (Cardio) data.getExtras().getParcelable("item");
+
+                // add and update
+                exercisesList.add(item);
+                ((BaseAdapter) list.getAdapter()).notifyDataSetChanged();
+            }
         }
     }
 
