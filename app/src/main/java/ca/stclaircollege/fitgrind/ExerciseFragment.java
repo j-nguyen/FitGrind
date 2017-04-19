@@ -1,20 +1,26 @@
 package ca.stclaircollege.fitgrind;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.PopupMenu;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import java.util.ArrayList;
 
 import ca.stclaircollege.fitgrind.database.Cardio;
@@ -121,14 +127,14 @@ public class ExerciseFragment extends Fragment {
             super(context, 0, items);
         }
         //get each item and assign a view to it
-        public View getView(int position, View convertView, ViewGroup parent){
+        public View getView(final int position, View convertView, ViewGroup parent){
             WorkoutType item = getItem(position);
             if(convertView == null){
                 convertView = LayoutInflater.from(getContext()).inflate(R.layout.exercise_view, parent, false);
             }
 
             //set the listview items
-            TextView exerciseName = (TextView) convertView.findViewById(R.id.exerciseName);
+            final TextView exerciseName = (TextView) convertView.findViewById(R.id.exerciseName);
             exerciseName.setText(item.getName());
 
             if(item instanceof Strength) {
@@ -157,17 +163,126 @@ public class ExerciseFragment extends Fragment {
                     PopupMenu menu = new PopupMenu(getContext(), menuButton);
                     //inflate the pop up menu with the xml
                     menu.getMenuInflater().inflate(R.menu.popup_menu, menu.getMenu());
+                    System.out.println("2");
 
                     menu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                         @Override
-                        public boolean onMenuItemClick(MenuItem item) {
+                        public boolean onMenuItemClick(final MenuItem item) {
                             switch (item.getItemId()) {
+                                case R.id.edit:
+                                    if (item instanceof Strength) {
+                                        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                                        //
+                                        builder.setTitle("Edit " + ((Strength) item).getName());
+                                        //edittext for input
+                                        //final EditText editText = new EditText(getContext());
+                                        View dialogView = LayoutInflater.from(getActivity()).inflate(R.layout.view_edited_exercise, null);
+                                        // get edit text
+                                        final EditText editText = (EditText) dialogView.findViewById(R.id.editNameEditText);
+                                        final EditText editText2 = (EditText) dialogView.findViewById(R.id.editSetEditText);
+                                        final EditText editText3 = (EditText) dialogView.findViewById(R.id.editRepEditText);
+                                        final EditText editText4 = (EditText) dialogView.findViewById(R.id.editWeightEditText);
 
+                                        // setup the text from program
+                                        editText.setText(((Strength) item).getName());
+                                        editText2.setText(""+((Strength) item).getSet());
+                                        editText3.setText(""+((Strength) item).getReptitions());
+                                        editText4.setText(""+(((Strength) item).getWeight()));
+
+                                        builder.setView(dialogView);
+                                        // Set up the buttons
+                                        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                ((Strength) item).setName(editText.getText().toString());
+                                                ((Strength) item).setSet(Integer.parseInt(editText2.getText().toString()));
+                                                ((Strength) item).setReptitions(Integer.parseInt(editText3.getText().toString()));
+                                                ((Strength) item).setWeight(Double.parseDouble(editText4.getText().toString()));
+                                                // if it clicked ok, we need to create a db instance and make sure it goes through and works
+                                                DatabaseHandler db = new DatabaseHandler(getContext());
+                                                // start the query
+                                                if (db.updateWorkout((Strength) item)) {
+                                                    ((BaseAdapter) list.getAdapter()).notifyDataSetChanged();
+                                                    Toast.makeText(getContext(), R.string.db_update_success, Toast.LENGTH_SHORT).show();
+                                                }
+
+                                            }
+                                        });
+                                        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                dialog.dismiss();
+                                            }
+                                        });
+                                        builder.show();
+                                        break;
+
+                                    } else if (item instanceof Cardio){
+
+                                        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                                        //
+                                        builder.setTitle("Edit " + ((Cardio) item).getName());
+                                        //edittext for input
+//                                    final EditText editText = new EditText(getContext());
+                                        View dialogView = LayoutInflater.from(getActivity()).inflate(R.layout.view_edited_cardio, null);
+                                        // get edit text
+                                        final EditText editText = (EditText) dialogView.findViewById(R.id.editNameEditText);
+                                        final EditText editText2 = (EditText) dialogView.findViewById(R.id.editTimeEditText);
+
+                                        // setup the text from program
+                                        editText.setText(((Cardio) item).getName());
+                                        editText2.setText(""+(((Cardio) item).getTime()));
+
+                                        builder.setView(dialogView);
+                                        // Set up the buttons
+                                        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                ((Cardio) item).setName(editText.getText().toString());
+                                                ((Cardio) item).setTime(Double.parseDouble(editText2.getText().toString()));
+                                                // if it clicked ok, we need to create a db instance and make sure it goes through and works
+                                                DatabaseHandler db = new DatabaseHandler(getContext());
+                                                // start the query
+                                                if (db.updateWorkout((Cardio) item)) {
+                                                    ((BaseAdapter) list.getAdapter()).notifyDataSetChanged();
+                                                    Toast.makeText(getContext(), R.string.db_update_success, Toast.LENGTH_SHORT).show();
+                                                }
+
+                                            }
+                                        });
+                                        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                dialog.dismiss();
+                                            }
+                                        });
+                                        builder.show();
+                                        break;
+
+
+                                    }
+
+                                case R.id.delete:
+                                    //delete from db
+                                    DatabaseHandler db = new DatabaseHandler(getContext());
+                                    if(item instanceof Strength) {
+                                        if (db.deleteStrengthWorkout(item.getItemId())) {
+                                            exercisesList.remove(position);
+                                            // we also wanna make a notify update
+                                            ((BaseAdapter) list.getAdapter()).notifyDataSetChanged();
+                                            Toast.makeText(getContext(), R.string.db_delete_success, Toast.LENGTH_SHORT).show();
+                                    }
+                                    } else if (item instanceof Cardio) {
+                                        if (db.deleteCardioWorkout(item.getItemId())) {
+                                            exercisesList.remove(position);
+                                            ((BaseAdapter) list.getAdapter()).notifyDataSetChanged();
+                                            Toast.makeText(getContext(), R.string.db_delete_success, Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                    db.close();
+                                    break;
                             }
-
-
-                            return false;
-
+                            return true;
                         }
                     });
                 }

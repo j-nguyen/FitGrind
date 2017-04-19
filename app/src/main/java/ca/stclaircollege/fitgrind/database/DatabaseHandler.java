@@ -388,7 +388,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         // now update on this workout
         values.clear(); // clear
         values.put("time", cardio.getTime());
-        int secondRow = db.update(CARDIOLOG_TABLE_NAME, values, "exercise_id = ?", new String[]{String.valueOf(cardio.getCardioId())});
+        int secondRow = db.update(CARDIOLOG_TABLE_NAME, values, "id = ?", new String[]{String.valueOf(cardio.getCardioId())});
         return row > 0 && secondRow > 0;
     }
 
@@ -410,7 +410,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         values.put("set", strength.getSet());
         values.put("rep", strength.getReptitions());
         values.put("weight", strength.getWeight());
-        int secondRow = db.update(STRENGTHLOG_TABLE_NAME, values, "exercise_id = ?", new String[]{String.valueOf(strength.getStrengthId())});
+        int secondRow = db.update(STRENGTHLOG_TABLE_NAME, values, "id = ?", new String[]{String.valueOf(strength.getStrengthId())});
         return row > 0 && secondRow > 0;
     }
 
