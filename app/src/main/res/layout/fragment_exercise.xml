@@ -21,7 +21,9 @@
         <ListView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/exerciselist">
+        android:id="@+id/exerciselist"
+            android:divider="@android:color/transparent"
+            android:dividerHeight="@dimen/padding">
     </ListView>
 
     </LinearLayout>

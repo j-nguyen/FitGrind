@@ -2,7 +2,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:columnCount="2"
-    android:useDefaultMargins="true">
+    android:useDefaultMargins="true"
+    android:padding="@dimen/padding">
 
     <!-- TODO: Update blank fragment layout -->
     <TextView
@@ -29,9 +30,10 @@
     <EditText
         android:layout_width="190dp"
         android:layout_height="wrap_content"
-        android:inputType="textPersonName"
         android:id="@+id/editSetEditText"
-        android:layout_column="1" />
+        android:layout_column="1"
+        android:maxLength="9"
+        android:inputType="number|numberDecimal" />
 
     <TextView
         android:text="Edit Rep"
@@ -43,9 +45,10 @@
     <EditText
         android:layout_width="190dp"
         android:layout_height="wrap_content"
-        android:inputType="textPersonName"
         android:id="@+id/editRepEditText"
-        android:layout_column="1" />
+        android:layout_column="1"
+        android:maxLength="9"
+        android:inputType="number|numberDecimal" />
 
     <TextView
         android:text="Edit Weight"
@@ -57,8 +60,9 @@
     <EditText
         android:layout_width="190dp"
         android:layout_height="wrap_content"
-        android:inputType="textPersonName"
         android:id="@+id/editWeightEditText"
-        android:layout_column="1" />
+        android:layout_column="1"
+        android:maxLength="9"
+        android:inputType="number|numberDecimal" />
 
 </GridLayout>

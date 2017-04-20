@@ -92,13 +92,7 @@ public class WorkoutExerciseActivity extends AppCompatActivity implements
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int location = viewPager.getCurrentItem();
-                if (location > 0) {
-                    location--;
-                    viewPager.setCurrentItem(location);
-                } else if (location == 0) {
-                    viewPager.setCurrentItem(viewPager.getChildCount());
-                }
+                viewPager.setCurrentItem(viewPager.getCurrentItem()-1, true);
             }
         });
 
@@ -106,14 +100,7 @@ public class WorkoutExerciseActivity extends AppCompatActivity implements
         forwardButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int location = viewPager.getCurrentItem();
-                location++;
-                if (location >= viewPager.getChildCount() + 5) {
-                    location++;
-                    viewPager.setCurrentItem(0);
-                } else {
-                    viewPager.setCurrentItem(location);
-                }
+                viewPager.setCurrentItem(viewPager.getCurrentItem()+1, true);
             }
         });
 

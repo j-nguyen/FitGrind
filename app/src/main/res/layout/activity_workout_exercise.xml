@@ -23,7 +23,7 @@
                 app:srcCompat="@drawable/ic_chevron_left_black_24dp"
                 android:id="@+id/exercise_back_button"
                 android:layout_weight="1"
-                android:background="@android:color/transparent" />
+                android:background="@drawable/highlight_button" />
 
             <TextView
                 android:text="TextView"
@@ -31,7 +31,8 @@
                 android:layout_height="match_parent"
                 android:id="@+id/day"
                 android:layout_weight="1"
-                android:gravity="center" />
+                android:gravity="center"
+                android:textColor="@color/secondaryText" />
 
             <ImageButton
                 android:layout_width="wrap_content"
@@ -39,7 +40,7 @@
                 app:srcCompat="@drawable/ic_chevron_right_black_24dp"
                 android:id="@+id/exercise_forward_button"
                 android:layout_weight="1"
-                android:background="@android:color/transparent" />
+                android:background="@drawable/highlight_button" />
 
         </LinearLayout>
     </LinearLayout>

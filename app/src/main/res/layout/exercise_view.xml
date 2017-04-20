@@ -26,7 +26,8 @@
                 android:id="@+id/exerciseName"
                 android:layout_weight="1"
                 android:textSize="@dimen/food_title_font_size"
-                android:textStyle="normal|bold" />
+                android:textStyle="normal|bold"
+                android:textColor="@color/primaryText" />
 
             <ImageView
                 android:layout_width="wrap_content"
@@ -58,6 +59,7 @@
                 android:layout_height="match_parent"
                 android:id="@+id/setLabel"
                 android:layout_weight="1"
+                android:textColor="@color/secondaryText"
                 android:textStyle="normal|bold" />
 
             <TextView
@@ -80,6 +82,7 @@
                 android:layout_height="match_parent"
                 android:id="@+id/repLabel"
                 android:layout_weight="1"
+                android:textColor="@color/secondaryText"
                 android:textStyle="normal|bold" />
 
             <TextView
@@ -102,6 +105,7 @@
                 android:layout_height="match_parent"
                 android:id="@+id/weightLabel"
                 android:layout_weight="1"
+                android:textColor="@color/secondaryText"
                 android:textStyle="normal|bold" />
 
             <TextView
@@ -126,6 +130,7 @@
                 android:layout_height="match_parent"
                 android:id="@+id/timeLabel"
                 android:layout_weight="1"
+                android:textColor="@color/secondaryText"
                 android:textStyle="normal|bold" />
 
             <TextView

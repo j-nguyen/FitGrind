@@ -462,6 +462,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
      */
     public boolean deleteStrengthWorkout(long id) {
         SQLiteDatabase db = getWritableDatabase();
+        int fRow = db.delete(WORKOUT_TABLE_NAME, "exercise_id = ?", new String[]{String.valueOf(id)});
         int sRow = db.delete(STRENGTHLOG_TABLE_NAME, "exercise_id = ?", new String[]{String.valueOf(id)});
         int tRow = db.delete(EXERCISE_TABLE_NAME, "id = ?", new String[]{String.valueOf(id)});
         return sRow > 0 && tRow > 0;
