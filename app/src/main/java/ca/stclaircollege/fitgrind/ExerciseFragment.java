@@ -88,14 +88,6 @@ public class ExerciseFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_exercise, container, false);
-        FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fabExercise);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), AddExerciseActivity.class);
-                startActivityForResult(intent, ADD_EXERCISE_REQUEST);
-            }
-        });
 
         list = (ListView) view.findViewById(R.id.exerciselist);
         DatabaseHandler db = new DatabaseHandler(getContext());
@@ -113,6 +105,7 @@ public class ExerciseFragment extends Fragment {
         public CustomAdapter(Context context, ArrayList<WorkoutType> items) {
             super(context, 0, items);
         }
+
         //get each item and assign a view to it
         public View getView(final int position, View convertView, ViewGroup parent){
             final WorkoutType item = getItem(position);
@@ -136,7 +129,7 @@ public class ExerciseFragment extends Fragment {
                 rep.setText("" + mItem.getReptitions());
 
                 TextView weight = (TextView) convertView.findViewById(R.id.exerciseWeight);
-                weight.setText("" + mItem.getWeight());
+                weight.setText("" + mItem.getWeight() + " lbs");
 
                 //hide cardio layout
                 cardioLayout.setVisibility(View.GONE);
@@ -145,7 +138,7 @@ public class ExerciseFragment extends Fragment {
             } else if (item instanceof Cardio){
                 Cardio mItem = (Cardio) item;
                 TextView time = (TextView) convertView.findViewById(R.id.exerciseTime);
-                time.setText("" + mItem.getTime());
+                time.setText(mItem.getTime());
 
                 //hide strength
                 strengthLayout.setVisibility(View.GONE);
@@ -235,7 +228,7 @@ public class ExerciseFragment extends Fragment {
                                             @Override
                                             public void onClick(DialogInterface dialog, int which) {
                                                 ((Cardio) item).setName(editText.getText().toString());
-                                                ((Cardio) item).setTime(Double.parseDouble(editText2.getText().toString()));
+                                                ((Cardio) item).setTime(editText2.getText().toString());
                                                 // if it clicked ok, we need to create a db instance and make sure it goes through and works
                                                 DatabaseHandler db = new DatabaseHandler(getContext());
                                                 // start the query
@@ -288,27 +281,6 @@ public class ExerciseFragment extends Fragment {
             return  convertView;
         }
     }
-    
-//    @Override
-//    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-//
-//        if (requestCode == ADD_EXERCISE_REQUEST && resultCode == getActivity().RESULT_OK) {
-//            if (data.getExtras().getParcelable("item") instanceof Strength) {
-//                Strength item = (Strength) data.getExtras().getParcelable("item");
-//
-//                // add and update
-//                exercisesList.add(item);
-//                ((BaseAdapter) list.getAdapter()).notifyDataSetChanged();
-//            } else if (data.getExtras().getParcelable("item") instanceof Cardio) {
-//                Cardio item = (Cardio) data.getExtras().getParcelable("item");
-//
-//                // add and update
-//                exercisesList.add(item);
-//                ((BaseAdapter) list.getAdapter()).notifyDataSetChanged();
-//            }
-//        }
-//    }
 
     public void addItem(WorkoutType item) {
         exercisesList.add(item);

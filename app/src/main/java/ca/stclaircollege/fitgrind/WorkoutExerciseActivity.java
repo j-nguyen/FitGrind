@@ -199,10 +199,12 @@ public class WorkoutExerciseActivity extends AppCompatActivity implements
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
         if (requestCode == ADD_EXERCISE_REQUEST && resultCode == RESULT_OK && data != null) {
-            WorkoutType item = (WorkoutType) data.getExtras().getParcelable("item");
+            WorkoutType item = data.getExtras().getParcelable("item");
+//            System.out.println(item.getName());
+//            WorkoutType item = data.getExtras().getParcelable("item");
             ((ExerciseFragment) sectionPagerAdapter.getRegisteredFragment(viewPager.getCurrentItem())).addItem(item);
-            
         }
 
         super.onActivityResult(requestCode, resultCode, data);

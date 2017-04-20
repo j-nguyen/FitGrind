@@ -141,7 +141,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             "CREATE TABLE cardio_log (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
                 "exercise_id INTEGER REFERENCES exercise(id), " +
-                "time FLOAT);";
+                "time VARCHAR(11));";
 
     private static final String CREATE_STRENGTHLOG_TABLE =
             "CREATE TABLE strength_log (" +
@@ -243,7 +243,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         values.put("name", cardio.getName());
         // after inserting we want the id
         long id = db.insert(EXERCISE_TABLE_NAME, null, values);
-        // now we wanna insert on the row
         values.clear(); // clear
         values.put("exercise_id", id);
         values.put("time", cardio.getTime());
@@ -255,21 +254,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         values.put("day_id", dayId);
         long secondRow = db.insert(WORKOUT_TABLE_NAME, null, values);
         return row > 0 && secondRow > 0;
-    }
-
-    /**
-     * Inserts your 'weight-log' picture weekly.
-     * @param progress
-     */
-    public boolean insertProgress(Progress progress, long weightId) {
-        SQLiteDatabase db = getWritableDatabase();
-        // Create the content values
-        ContentValues values = new ContentValues();
-        // input the values
-        values.put("resource", progress.getResource());
-        values.put("weight_id", weightId);
-        // insert the db
-        return db.insert(PROGRESS_TABLE_NAME, null, values) > 0;
     }
 
     /**
@@ -299,6 +283,21 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         values.put("day_id", dayId);
         long secondRow = db.insert(WORKOUT_TABLE_NAME, null, values);
         return row > 0 && secondRow > 0;
+    }
+
+    /**
+     * Inserts your 'weight-log' picture weekly.
+     * @param progress
+     */
+    public boolean insertProgress(Progress progress, long weightId) {
+        SQLiteDatabase db = getWritableDatabase();
+        // Create the content values
+        ContentValues values = new ContentValues();
+        // input the values
+        values.put("resource", progress.getResource());
+        values.put("weight_id", weightId);
+        // insert the db
+        return db.insert(PROGRESS_TABLE_NAME, null, values) > 0;
     }
 
     /**
@@ -578,7 +577,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             do {
                 // now we can get the info for cardio log
-                workoutList.add(new Cardio(cursor.getInt(0), cursor.getString(1), cursor.getInt(2), cursor.getDouble(3)));
+                workoutList.add(new Cardio(cursor.getInt(0), cursor.getString(1), cursor.getInt(2), cursor.getString(3)));
             } while (cursor.moveToNext());
         }
         cursor.close();

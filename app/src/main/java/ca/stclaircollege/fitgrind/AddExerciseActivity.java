@@ -33,6 +33,8 @@ public class AddExerciseActivity extends AppCompatActivity implements
     LinearLayout strengthLayout;
     LinearLayout cardioLayout;
 
+    boolean isStrengthSelected = true;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,11 +70,13 @@ public class AddExerciseActivity extends AppCompatActivity implements
                     if (cardioLayout.getVisibility() == View.VISIBLE) {
                         cardioLayout.setVisibility(View.GONE);
                         strengthLayout.setVisibility(View.VISIBLE);
+                        isStrengthSelected = true;
                     }
                 } else {
                     if (strengthLayout.getVisibility() == View.VISIBLE) {
                         strengthLayout.setVisibility(View.GONE);
                         cardioLayout.setVisibility(View.VISIBLE);
+                        isStrengthSelected = false;
                     }
                 }
             }
@@ -85,46 +89,64 @@ public class AddExerciseActivity extends AppCompatActivity implements
             @Override
             public void onClick(View v) {
 
-                if(isFieldFilled() && programId != -1) {
-                    String name = exerciseName.getText().toString();
-                    // we add one to this list because AUTOINCREMENT starts at 1
-                    long exerciseId = spinner.getSelectedItemPosition() + 1;
-                    long dayId = daySpinner.getSelectedItemPosition() + 1;
 
-                    // check if strength or cardio by checking id
-                    WorkoutType item = null;
+                // TODO: Fix this awful code
 
-                    if (exerciseId == 1) {
-                        item = new Strength(name, Integer.parseInt(set.getText().toString()), Integer.parseInt(rep.getText().toString()), Double.parseDouble(weight.getText().toString()));
-                    } else if (exerciseId == 2) {
-                        item = new Cardio(name, Double.parseDouble(time.getText().toString()));
-                    }
+                String name = exerciseName.getText().toString();
+                // we add one to this list because AUTOINCREMENT starts at 1
+                long dayId = daySpinner.getSelectedItemPosition() + 1;
 
-                    // create db to start
-                    DatabaseHandler db = new DatabaseHandler(getApplicationContext());
+                Intent intent = new Intent();
 
-                    boolean result;
 
-                    if (item instanceof Strength) {
-                        result = db.insertWorkout((Strength) item, programId, dayId);
+                if(isStrengthSelected) {
+
+                    if (isStrengthFieldsFilled()) {
+
+                        Strength item = new Strength(name, Integer.parseInt(set.getText().toString()), Integer.parseInt(rep.getText().toString()), Double.parseDouble(weight.getText().toString()));
+
+                        // create db to start
+                        DatabaseHandler db = new DatabaseHandler(getApplicationContext());
+                        boolean result = db.insertWorkout(item, programId, dayId);
+                        db.close();
+
+                        if (result) {
+                            // success
+                            // create an intent too
+                            intent.putExtra("item", item);
+                            setResult(RESULT_OK, intent);
+                            finish();
+                            Toast.makeText(AddExerciseActivity.this, R.string.db_insert_success, Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(AddExerciseActivity.this, R.string.db_error, Toast.LENGTH_SHORT).show();
+                        }
                     } else {
-                        result = db.insertWorkout((Cardio) item, programId, dayId);
+                        Toast.makeText(AddExerciseActivity.this, R.string.invalid_field, Toast.LENGTH_SHORT).show();
                     }
 
-                    db.close();
-                    if (result) {
-                        // success
-                        // create an intent too
-                        Intent intent = new Intent();
-                        intent.putExtra("item", item);
-                        setResult(RESULT_OK, intent);
-                        finish();
-                        Toast.makeText(AddExerciseActivity.this, R.string.db_insert_success, Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(AddExerciseActivity.this, R.string.db_error, Toast.LENGTH_SHORT).show();
-                    }
                 } else {
-                    Toast.makeText(AddExerciseActivity.this, R.string.invalid_field, Toast.LENGTH_SHORT).show();
+                    if (isCardioFieldsFilled()) {
+                        Cardio item = new Cardio(name, time.getText().toString());
+
+                        // create db to start
+                        DatabaseHandler db = new DatabaseHandler(getApplicationContext());
+                        boolean result = db.insertWorkout(item, programId, dayId);
+                        db.close();
+
+                        if (result) {
+                            // success
+                            // create an intent too
+                            intent.putExtra("item", item);
+                            setResult(RESULT_OK, intent);
+                            finish();
+
+                            Toast.makeText(AddExerciseActivity.this, R.string.db_insert_success, Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(AddExerciseActivity.this, R.string.db_error, Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        Toast.makeText(AddExerciseActivity.this, R.string.invalid_field, Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
         });
@@ -134,8 +156,12 @@ public class AddExerciseActivity extends AppCompatActivity implements
      * This function checks if the field is filled
      * @return boolean value
      */
-    public boolean isFieldFilled() {
+    public boolean isStrengthFieldsFilled() {
         return !isEmpty(exerciseName) && !isEmpty(set) && !isEmpty(rep) && !isEmpty(weight);
+    }
+
+    public boolean isCardioFieldsFilled() {
+        return !isEmpty(exerciseName) && !isEmpty(time);
     }
 
     private boolean isEmpty(EditText e) {

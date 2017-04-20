@@ -26,20 +26,4 @@
 
     </LinearLayout>
 
-    <android.support.design.widget.FloatingActionButton
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:clickable="true"
-        app:fabSize="normal"
-        app:srcCompat="@drawable/ic_add_black_24dp"
-        android:id="@+id/fabExercise"
-        android:layout_alignParentLeft="false"
-        android:layout_alignParentRight="false"
-        android:layout_centerHorizontal="false"
-        android:layout_alignWithParentIfMissing="false"
-        android:layout_alignParentStart="false"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:layout_margin="@dimen/fab_margin" />
-
 </RelativeLayout>
