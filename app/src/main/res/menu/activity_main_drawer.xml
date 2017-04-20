@@ -44,6 +44,11 @@
             android:title="@string/workout_tips"
             android:icon="@drawable/ic_help_black_24dp"/>
 
+        <item
+            android:id="@+id/nav_credits"
+            android:title="Credits"
+            android:icon="@drawable/ic_info_black_24dp" />
+
     </group>
 
 </menu>
