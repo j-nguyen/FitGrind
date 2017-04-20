@@ -38,6 +38,7 @@ public class AddExerciseActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_exercise);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        final long programId = getIntent().getLongExtra("id", -1);
 
         exerciseName = (EditText) findViewById(R.id.exerciseEditText);
         set = (EditText) findViewById(R.id.setEditText);
@@ -84,7 +85,7 @@ public class AddExerciseActivity extends AppCompatActivity implements
             @Override
             public void onClick(View v) {
 
-                if(isFieldFilled()) {
+                if(isFieldFilled() && programId != -1) {
                     String name = exerciseName.getText().toString();
                     // we add one to this list because AUTOINCREMENT starts at 1
                     long exerciseId = spinner.getSelectedItemPosition() + 1;
@@ -105,9 +106,9 @@ public class AddExerciseActivity extends AppCompatActivity implements
                     boolean result;
 
                     if (item instanceof Strength) {
-                        result = db.insertWorkout((Strength) item, exerciseId, dayId);
+                        result = db.insertWorkout((Strength) item, programId, dayId);
                     } else {
-                        result = db.insertWorkout((Cardio) item, exerciseId, dayId);
+                        result = db.insertWorkout((Cardio) item, programId, dayId);
                     }
 
                     db.close();

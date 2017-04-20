@@ -163,6 +163,7 @@ public class  WorkoutProgramFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(getActivity(), WorkoutExerciseActivity.class);
+                intent.putExtra("id", programsList.get(position).getId());
                 startActivity(intent);
             }
         });
