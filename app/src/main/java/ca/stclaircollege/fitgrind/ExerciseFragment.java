@@ -39,11 +39,13 @@ import ca.stclaircollege.fitgrind.database.WorkoutType;
 public class ExerciseFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+    private static final String ARG_PARAM = "param";
     private static final String ARG_PARAM2 = "param2";
     private static final int ADD_EXERCISE_REQUEST = 1;
 
     // TODO: Rename and change types of parameters
     private int mParam2;
+    private long mParam;
 
     ListView list;
     CustomAdapter customAdapter;
@@ -63,10 +65,11 @@ public class ExerciseFragment extends Fragment {
      * @return A new instance of fragment ExerciseFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static ExerciseFragment newInstance(int param2) {
+    public static ExerciseFragment newInstance(int param2, long param) {
         ExerciseFragment fragment = new ExerciseFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_PARAM2, param2);
+        args.putLong(ARG_PARAM, param);
         fragment.setArguments(args);
         return fragment;
     }
@@ -76,6 +79,7 @@ public class ExerciseFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mParam2 = getArguments().getInt(ARG_PARAM2);
+            mParam = getArguments().getLong(ARG_PARAM);
         }
     }
 
@@ -95,22 +99,12 @@ public class ExerciseFragment extends Fragment {
 
         list = (ListView) view.findViewById(R.id.exerciselist);
         DatabaseHandler db = new DatabaseHandler(getContext());
-//        final ArrayList<Strength> exercisesList = new ArrayList<Strength>();
-        exercisesList = db.selectAllWorkoutAt(mParam2);
+
+        exercisesList = db.selectAllWorkoutAt(mParam2, mParam);
         db.close();
-//        System.out.println(exercisesList.size());
-//        exercisesList.add(new Strength("asd", 1, 2, 2.2));
-//        exercisesList.add(new Cardio("oppo", 2.2));
-//        exercisesList.add(new Exercise("text", "test", "test"));
-        
+
         customAdapter = new CustomAdapter(getContext(), exercisesList);
         list.setAdapter(customAdapter);
-
-
-//        if(mParam1 != null){
-//            TextView text = (TextView) view.findViewById(R.id.day);
-//            text.setText(mParam1);
-//        }
 
         return view;
     }
@@ -144,7 +138,7 @@ public class ExerciseFragment extends Fragment {
                 TextView weight = (TextView) convertView.findViewById(R.id.exerciseWeight);
                 weight.setText("" + mItem.getWeight());
 
-                //hide cardrio layout
+                //hide cardio layout
                 cardioLayout.setVisibility(View.GONE);
                 strengthLayout.setVisibility(View.VISIBLE);
 
@@ -226,7 +220,6 @@ public class ExerciseFragment extends Fragment {
                                         //
                                         builder.setTitle("Edit " + ((Cardio) item).getName());
                                         //edittext for input
-//                                    final EditText editText = new EditText(getContext());
                                         View dialogView = LayoutInflater.from(getActivity()).inflate(R.layout.view_edited_cardio, null);
                                         // get edit text
                                         final EditText editText = (EditText) dialogView.findViewById(R.id.editNameEditText);
@@ -296,25 +289,30 @@ public class ExerciseFragment extends Fragment {
         }
     }
     
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        
-        if (requestCode == ADD_EXERCISE_REQUEST && resultCode == getActivity().RESULT_OK) {
-            if (data.getExtras().getParcelable("item") instanceof Strength) {
-                Strength item = (Strength) data.getExtras().getParcelable("item");
+//    @Override
+//    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+//
+//        if (requestCode == ADD_EXERCISE_REQUEST && resultCode == getActivity().RESULT_OK) {
+//            if (data.getExtras().getParcelable("item") instanceof Strength) {
+//                Strength item = (Strength) data.getExtras().getParcelable("item");
+//
+//                // add and update
+//                exercisesList.add(item);
+//                ((BaseAdapter) list.getAdapter()).notifyDataSetChanged();
+//            } else if (data.getExtras().getParcelable("item") instanceof Cardio) {
+//                Cardio item = (Cardio) data.getExtras().getParcelable("item");
+//
+//                // add and update
+//                exercisesList.add(item);
+//                ((BaseAdapter) list.getAdapter()).notifyDataSetChanged();
+//            }
+//        }
+//    }
 
-                // add and update
-                exercisesList.add(item);
-                ((BaseAdapter) list.getAdapter()).notifyDataSetChanged();
-            } else if (data.getExtras().getParcelable("item") instanceof Cardio) {
-                Cardio item = (Cardio) data.getExtras().getParcelable("item");
-
-                // add and update
-                exercisesList.add(item);
-                ((BaseAdapter) list.getAdapter()).notifyDataSetChanged();
-            }
-        }
+    public void addItem(WorkoutType item) {
+        exercisesList.add(item);
+        ((BaseAdapter) list.getAdapter()).notifyDataSetChanged();
     }
 
     // TODO: Rename method, update argument and hook method into UI event

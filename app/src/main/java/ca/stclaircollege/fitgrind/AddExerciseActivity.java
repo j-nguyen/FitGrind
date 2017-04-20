@@ -112,7 +112,6 @@ public class AddExerciseActivity extends AppCompatActivity implements
                     }
 
                     db.close();
-                    System.out.println(result);
                     if (result) {
                         // success
                         // create an intent too

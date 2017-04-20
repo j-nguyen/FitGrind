@@ -24,7 +24,6 @@ public class MainActivity extends AppCompatActivity
                     MainFragment.OnFragmentInteractionListener,
                     AddFoodFragment.OnFragmentInteractionListener,
                     ViewFoodFragment.OnFragmentInteractionListener,
-                    WorkoutExerciseFragment.OnFragmentInteractionListener,
                     ExerciseFragment.OnFragmentInteractionListener,
                     ViewCalorieLogFragment.OnFragmentInteractionListener, ViewCalorieDayLogFragment.OnFragmentInteractionListener,
                     EditFoodFragment.OnFragmentInteractionListener, AddCustomFoodFragment.OnFragmentInteractionListener,

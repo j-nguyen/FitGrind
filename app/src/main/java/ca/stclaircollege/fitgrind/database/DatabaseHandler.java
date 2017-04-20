@@ -568,13 +568,13 @@ public class DatabaseHandler extends SQLiteOpenHelper {
      * Method to retrieve all of the workout.
      * @return An abstract list of all the workouts. You will need to use polymorphism to find it out
      */
-    public ArrayList<WorkoutType> selectAllWorkoutAt(long dayId) {
+    public ArrayList<WorkoutType> selectAllWorkoutAt(long dayId, long routineId) {
         // to find out which one to return, we will use an abstract class in which that it relates to both
         // get db
         SQLiteDatabase db = getReadableDatabase();
         ArrayList<WorkoutType> workoutList = new ArrayList<WorkoutType>();
         // check for cardio log
-        Cursor cursor = db.rawQuery("SELECT * FROM exercise INNER JOIN cardio_log ON exercise.id = cardio_log.exercise_id INNER JOIN workout ON exercise.id = workout.exercise_id WHERE day_id = ?", new String[]{String.valueOf(dayId)});
+        Cursor cursor = db.rawQuery("SELECT * FROM exercise INNER JOIN cardio_log ON exercise.id = cardio_log.exercise_id INNER JOIN workout ON exercise.id = workout.exercise_id WHERE day_id = ? AND routine_id = ?", new String[]{String.valueOf(dayId), String.valueOf(routineId)});
         if (cursor.moveToFirst()) {
             do {
                 // now we can get the info for cardio log
@@ -583,7 +583,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         }
         cursor.close();
         // now we check for other log
-        Cursor cursor2 = db.rawQuery("SELECT * FROM exercise INNER JOIN strength_log ON exercise.id = strength_log.exercise_id INNER JOIN workout ON exercise.id = workout.exercise_id WHERE day_id = ?", new String[]{String.valueOf(dayId)});
+        Cursor cursor2 = db.rawQuery("SELECT * FROM exercise INNER JOIN strength_log ON exercise.id = strength_log.exercise_id INNER JOIN workout ON exercise.id = workout.exercise_id WHERE day_id = ? AND routine_id = ?", new String[]{String.valueOf(dayId), String.valueOf(routineId)});
         if (cursor2.moveToFirst()) {
             do {
                 // add for strength log
