@@ -109,6 +109,7 @@ public class MainFragment extends Fragment {
                     edit.commit();
                     // start activity here
                     Intent intent = new Intent(getActivity(), SettingsActivity.class);
+                    getActivity().overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
                     startActivity(intent);
                 }
             });
@@ -148,6 +149,7 @@ public class MainFragment extends Fragment {
                 // Create a fragmentManager
                 FragmentManager fm = getActivity().getSupportFragmentManager();
                 FragmentTransaction trans = fm.beginTransaction();
+                trans.setCustomAnimations(R.anim.fade_in, R.anim.fade_out);
                 trans.replace(R.id.content_main, new ViewCalorieLogFragment());
                 trans.addToBackStack(null);
                 trans.commit();
@@ -223,6 +225,7 @@ public class MainFragment extends Fragment {
             public void onClick(View view) {
                 FragmentManager fm = getActivity().getSupportFragmentManager();
                 FragmentTransaction trans = fm.beginTransaction();
+                trans.setCustomAnimations(R.anim.fade_in, R.anim.fade_out);
                 trans.replace(R.id.content_main, new AddFoodFragment());
                 trans.addToBackStack(null);
                 trans.commit();

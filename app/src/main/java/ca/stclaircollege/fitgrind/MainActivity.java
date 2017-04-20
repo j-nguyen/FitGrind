@@ -27,7 +27,7 @@ public class MainActivity extends AppCompatActivity
                     ExerciseFragment.OnFragmentInteractionListener,
                     ViewCalorieLogFragment.OnFragmentInteractionListener, ViewCalorieDayLogFragment.OnFragmentInteractionListener,
                     EditFoodFragment.OnFragmentInteractionListener, AddCustomFoodFragment.OnFragmentInteractionListener,
-                    WeightLogFragment.OnFragmentInteractionListener {
+                    WeightLogFragment.OnFragmentInteractionListener, CreditsFragment.OnFragmentInteractionListener {
 
     // create fragment manager
     FragmentManager fm = getSupportFragmentManager();
@@ -35,6 +35,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -95,29 +96,33 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_home) {
-            FragmentTransaction tran = fm.beginTransaction();
-            tran.replace(R.id.content_main, new MainFragment());
-            tran.commit();
+            FragmentTransaction trans = fm.beginTransaction();
+            trans.replace(R.id.content_main, new MainFragment());
+            trans.setCustomAnimations(R.anim.fade_in, R.anim.fade_out);
+            trans.commit();
 
         } else if (id == R.id.nav_diary) {
 
             FragmentTransaction trans = fm.beginTransaction();
             trans.replace(R.id.content_main, new ViewCalorieLogFragment());
+            trans.setCustomAnimations(R.anim.fade_in, R.anim.fade_out);
             trans.commit();
 
         } else if (id == R.id.nav_add_custom_food) {
 
             FragmentTransaction trans = fm.beginTransaction();
             trans.replace(R.id.content_main, new AddCustomFoodFragment());
+            trans.setCustomAnimations(R.anim.fade_in, R.anim.fade_out);
             trans.commit();
-
         } else if (id == R.id.nav_add_food) {
             FragmentTransaction trans = fm.beginTransaction();
             trans.replace(R.id.content_main, new AddFoodFragment());
+            trans.setCustomAnimations(R.anim.fade_in, R.anim.fade_out);
             trans.commit();
         } else if (id == R.id.nav_weight_log) {
             FragmentTransaction trans = fm.beginTransaction();
             trans.replace(R.id.content_main, new WeightLogFragment());
+            trans.setCustomAnimations(R.anim.fade_in, R.anim.fade_out);
             trans.commit();
         } else if (id == R.id.nav_workout_schedule) {
             startActivity(new Intent(MainActivity.this, TabbedActivity.class));
@@ -128,6 +133,10 @@ public class MainActivity extends AppCompatActivity
             if (intent.resolveActivity(getPackageManager()) != null) {
                 startActivity(intent);
             }
+        } else if (id == R.id.nav_credits) {
+            FragmentTransaction trans = fm.beginTransaction();
+            trans.replace(R.id.content_main, new CreditsFragment());
+            trans.commit();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
