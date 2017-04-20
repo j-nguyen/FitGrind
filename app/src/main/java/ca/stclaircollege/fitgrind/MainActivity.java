@@ -27,7 +27,7 @@ public class MainActivity extends AppCompatActivity
                     ExerciseFragment.OnFragmentInteractionListener,
                     ViewCalorieLogFragment.OnFragmentInteractionListener, ViewCalorieDayLogFragment.OnFragmentInteractionListener,
                     EditFoodFragment.OnFragmentInteractionListener, AddCustomFoodFragment.OnFragmentInteractionListener,
-                    WeightLogFragment.OnFragmentInteractionListener {
+                    WeightLogFragment.OnFragmentInteractionListener, CreditsFragment.OnFragmentInteractionListener {
 
     // create fragment manager
     FragmentManager fm = getSupportFragmentManager();
@@ -128,6 +128,10 @@ public class MainActivity extends AppCompatActivity
             if (intent.resolveActivity(getPackageManager()) != null) {
                 startActivity(intent);
             }
+        } else if (id == R.id.nav_credits) {
+            FragmentTransaction trans = fm.beginTransaction();
+            trans.replace(R.id.content_main, new CreditsFragment());
+            trans.commit();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
