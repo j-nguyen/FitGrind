@@ -112,13 +112,13 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final String CREATE_FOODLOG_TABLE =
             "CREATE TABLE food_log (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
-                "food_id INTEGER REFERENCES food(id), " +
+                "food_id INTEGER REFERENCES food(id) ON DELETE CASCADE, " +
                 "date DATETIME DEFAULT (DATETIME(CURRENT_TIMESTAMP, 'LOCALTIME')));";
 
     private static final String CREATE_PROGRESS_TABLE =
             "CREATE TABLE progress (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
-                "weight_id INTEGER REFERENCES weight_log (id), " +
+                "weight_id INTEGER REFERENCES weight_log (id) ON DELETE CASCADE, " +
                 "resource TEXT);";
 
     private static final String CREATE_WORKOUTDAY_TABLE =
@@ -140,13 +140,13 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final String CREATE_CARDIOLOG_TABLE =
             "CREATE TABLE cardio_log (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
-                "exercise_id INTEGER REFERENCES exercise(id), " +
+                "exercise_id INTEGER REFERENCES exercise(id) ON DELETE CASCADE, " +
                 "time VARCHAR(11));";
 
     private static final String CREATE_STRENGTHLOG_TABLE =
             "CREATE TABLE strength_log (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
-                "exercise_id INTEGER REFERENCES exercise(id), " +
+                "exercise_id INTEGER REFERENCES exercise(id) ON DELETE CASCADE, " +
                 "sets INTEGER, " +
                 "rep INTEGER, " +
                 "weight FLOAT);";
@@ -154,8 +154,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final String CREATE_WORKOUT_TABLE =
             "CREATE TABLE workout (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
-                "routine_id INTEGER REFERENCES workout_routine(id), " +
-                "exercise_id INTEGER REFERENCES exercise(id), " +
+                "routine_id INTEGER REFERENCES workout_routine(id) ON DELETE CASCADE, " +
+                "exercise_id INTEGER REFERENCES exercise(id) ON DELETE CASCADE, " +
                 "day_id INTEGER REFERENCES workout_day(id));";
 
     public DatabaseHandler(Context context) {
@@ -199,6 +199,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + WORKOUT_TABLE_NAME);
         // relaunch onCreate
         onCreate(db);
+    }
+
+    // this enables me to use DELETE CASCADE which helps the headache of deleting nay child rows.
+    @Override
+    public void onConfigure(SQLiteDatabase db){
+        db.setForeignKeyConstraintsEnabled(true);
     }
 
     // now we wanna create our crud operations in here. We will need a ton
@@ -451,9 +457,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
      */
     public boolean deleteCardioWorkout(long id) {
         SQLiteDatabase db = getWritableDatabase();
-        int sRow = db.delete(CARDIOLOG_TABLE_NAME, "exercise_id = ?", new String[]{String.valueOf(id)});
-        int tRow = db.delete(EXERCISE_TABLE_NAME, "id = ?", new String[]{String.valueOf(id)});
-        return sRow > 0 && tRow > 0;
+        return db.delete(CARDIOLOG_TABLE_NAME, "exercise_id = ?", new String[]{String.valueOf(id)}) > 0;
     }
 
     /**
@@ -462,10 +466,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
      */
     public boolean deleteStrengthWorkout(long id) {
         SQLiteDatabase db = getWritableDatabase();
-        int fRow = db.delete(WORKOUT_TABLE_NAME, "exercise_id = ?", new String[]{String.valueOf(id)});
-        int sRow = db.delete(STRENGTHLOG_TABLE_NAME, "exercise_id = ?", new String[]{String.valueOf(id)});
-        int tRow = db.delete(EXERCISE_TABLE_NAME, "id = ?", new String[]{String.valueOf(id)});
-        return sRow > 0 && tRow > 0;
+        return db.delete(STRENGTHLOG_TABLE_NAME, "id = ?", new String[]{String.valueOf(id)}) > 0;
     }
 
     /**
@@ -490,8 +491,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public boolean deleteFood(long id) {
         SQLiteDatabase db = getWritableDatabase();
         // deletes both of them and checks if both are deleted
-        return db.delete(FOOD_TABLE_NAME, "id = ?", new String[]{String.valueOf(id)}) > 0 &&
-                db.delete(FOODLOG_TABLE_NAME, "id = ?", new String[]{String.valueOf(id)}) > 0;
+        return db.delete(FOOD_TABLE_NAME, "id = ?", new String[]{String.valueOf(id)}) > 0;
     }
 
     /**

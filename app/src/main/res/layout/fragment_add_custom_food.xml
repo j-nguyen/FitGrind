@@ -431,7 +431,9 @@
                 android:id="@+id/submitButton"
                 android:text="Submit"
                 android:layout_gravity="right"
-                android:layout_margin="@dimen/submit_margin" />
+                android:layout_margin="@dimen/submit_margin"
+                android:backgroundTint="@color/buttonSecondaryColor"
+                android:textColor="@android:color/white" />
 
         </LinearLayout>
     </ScrollView>
