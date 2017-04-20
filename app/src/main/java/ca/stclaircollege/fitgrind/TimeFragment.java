@@ -109,30 +109,34 @@ public class TimeFragment extends Fragment {
                 dialog.setPositiveButton("Okay", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        int seconds = Integer.parseInt(input.getText().toString());
-                        long number = Long.valueOf(input.getText().toString())*1000;
-                        //count down (seconds)
-                        final CountDownTimer timer = new CountDownTimer(number, 1000) {
-                            public void onTick(long millisUntilFinished) {
-                                textView.setText("Time Remaining: " + millisUntilFinished / 1000);
-                            }
+                        if (input.getText().toString().trim().length() != 0) {
+                            int seconds = Integer.parseInt(input.getText().toString());
+                            long number = Long.valueOf(input.getText().toString()) * 1000;
+                            //count down (seconds)
+                            final CountDownTimer timer = new CountDownTimer(number, 1000) {
+                                public void onTick(long millisUntilFinished) {
+                                    textView.setText("Time Remaining: " + millisUntilFinished / 1000);
+                                }
 
-                            public void onFinish() {
-                                textView.setText("Finished!");
-                            }
-                        }.start();
+                                public void onFinish() {
+                                    textView.setText("Finished!");
+                                }
+                            }.start();
 
-                        final Intent intent = new Intent(AlarmClock.ACTION_SET_TIMER)
-                                .putExtra(AlarmClock.EXTRA_MESSAGE, "Time's Up")
-                                .putExtra(AlarmClock.EXTRA_LENGTH, seconds)
-                                .putExtra(AlarmClock.EXTRA_SKIP_UI, true);
-                        if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
-                            startActivity(intent);
-                        }
-                        //checks if there is a installed software
-                        else{
-                            Snackbar snackbar = Snackbar.make(getActivity().findViewById(android.R.id.content), "No installed software to complete the task", Snackbar.LENGTH_SHORT);
-                            snackbar.show();
+                            final Intent intent = new Intent(AlarmClock.ACTION_SET_TIMER)
+                                    .putExtra(AlarmClock.EXTRA_MESSAGE, "Time's Up")
+                                    .putExtra(AlarmClock.EXTRA_LENGTH, seconds)
+                                    .putExtra(AlarmClock.EXTRA_SKIP_UI, true);
+                            if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
+                                startActivity(intent);
+                            }
+                            //checks if there is a installed software
+                            else {
+                                Snackbar snackbar = Snackbar.make(getActivity().findViewById(android.R.id.content), "No installed software to complete the task", Snackbar.LENGTH_SHORT);
+                                snackbar.show();
+                            }
+                        } else {
+                            Toast.makeText(getActivity(), R.string.invalid_field, Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
