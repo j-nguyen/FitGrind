@@ -2,7 +2,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:columnCount="2"
-    android:useDefaultMargins="true">
+    android:useDefaultMargins="true"
+    android:padding="@dimen/padding">
 
     <!-- TODO: Update blank fragment layout -->
     <TextView

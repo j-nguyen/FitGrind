@@ -17,6 +17,7 @@ import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -38,11 +39,13 @@ import ca.stclaircollege.fitgrind.database.WorkoutType;
 public class ExerciseFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+    private static final String ARG_PARAM = "param";
     private static final String ARG_PARAM2 = "param2";
     private static final int ADD_EXERCISE_REQUEST = 1;
 
     // TODO: Rename and change types of parameters
     private int mParam2;
+    private long mParam;
 
     ListView list;
     CustomAdapter customAdapter;
@@ -62,10 +65,11 @@ public class ExerciseFragment extends Fragment {
      * @return A new instance of fragment ExerciseFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static ExerciseFragment newInstance(int param2) {
+    public static ExerciseFragment newInstance(int param2, long param) {
         ExerciseFragment fragment = new ExerciseFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_PARAM2, param2);
+        args.putLong(ARG_PARAM, param);
         fragment.setArguments(args);
         return fragment;
     }
@@ -75,6 +79,7 @@ public class ExerciseFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mParam2 = getArguments().getInt(ARG_PARAM2);
+            mParam = getArguments().getLong(ARG_PARAM);
         }
     }
 
@@ -83,33 +88,15 @@ public class ExerciseFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_exercise, container, false);
-        FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fabExercise);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), AddExerciseActivity.class);
-                startActivityForResult(intent, ADD_EXERCISE_REQUEST);
-            }
-        });
 
         list = (ListView) view.findViewById(R.id.exerciselist);
         DatabaseHandler db = new DatabaseHandler(getContext());
-//        final ArrayList<Strength> exercisesList = new ArrayList<Strength>();
-        exercisesList = db.selectAllWorkoutAt(mParam2);
+
+        exercisesList = db.selectAllWorkoutAt(mParam2, mParam);
         db.close();
-//        System.out.println(exercisesList.size());
-//        exercisesList.add(new Strength("asd", 1, 2, 2.2));
-//        exercisesList.add(new Cardio("oppo", 2.2));
-//        exercisesList.add(new Exercise("text", "test", "test"));
-        
+
         customAdapter = new CustomAdapter(getContext(), exercisesList);
         list.setAdapter(customAdapter);
-
-
-//        if(mParam1 != null){
-//            TextView text = (TextView) view.findViewById(R.id.day);
-//            text.setText(mParam1);
-//        }
 
         return view;
     }
@@ -118,6 +105,7 @@ public class ExerciseFragment extends Fragment {
         public CustomAdapter(Context context, ArrayList<WorkoutType> items) {
             super(context, 0, items);
         }
+
         //get each item and assign a view to it
         public View getView(final int position, View convertView, ViewGroup parent){
             final WorkoutType item = getItem(position);
@@ -125,6 +113,8 @@ public class ExerciseFragment extends Fragment {
             if(convertView == null){
                 convertView = LayoutInflater.from(getContext()).inflate(R.layout.exercise_view, parent, false);
             }
+            LinearLayout strengthLayout = (LinearLayout) convertView.findViewById(R.id.strengthLayout);
+            LinearLayout cardioLayout = (LinearLayout) convertView.findViewById(R.id.cardioLayout);
 
             //set the listview items
             final TextView exerciseName = (TextView) convertView.findViewById(R.id.exerciseName);
@@ -139,11 +129,20 @@ public class ExerciseFragment extends Fragment {
                 rep.setText("" + mItem.getReptitions());
 
                 TextView weight = (TextView) convertView.findViewById(R.id.exerciseWeight);
-                weight.setText("" + mItem.getWeight());
+                weight.setText("" + mItem.getWeight() + " lbs");
+
+                //hide cardio layout
+                cardioLayout.setVisibility(View.GONE);
+                strengthLayout.setVisibility(View.VISIBLE);
+
             } else if (item instanceof Cardio){
                 Cardio mItem = (Cardio) item;
                 TextView time = (TextView) convertView.findViewById(R.id.exerciseTime);
-                time.setText("" + mItem.getTime());
+                time.setText(mItem.getTime());
+
+                //hide strength
+                strengthLayout.setVisibility(View.GONE);
+                cardioLayout.setVisibility(View.VISIBLE);
             }
 
             //image view button edit exercise
@@ -214,7 +213,6 @@ public class ExerciseFragment extends Fragment {
                                         //
                                         builder.setTitle("Edit " + ((Cardio) item).getName());
                                         //edittext for input
-//                                    final EditText editText = new EditText(getContext());
                                         View dialogView = LayoutInflater.from(getActivity()).inflate(R.layout.view_edited_cardio, null);
                                         // get edit text
                                         final EditText editText = (EditText) dialogView.findViewById(R.id.editNameEditText);
@@ -230,7 +228,7 @@ public class ExerciseFragment extends Fragment {
                                             @Override
                                             public void onClick(DialogInterface dialog, int which) {
                                                 ((Cardio) item).setName(editText.getText().toString());
-                                                ((Cardio) item).setTime(Double.parseDouble(editText2.getText().toString()));
+                                                ((Cardio) item).setTime(editText2.getText().toString());
                                                 // if it clicked ok, we need to create a db instance and make sure it goes through and works
                                                 DatabaseHandler db = new DatabaseHandler(getContext());
                                                 // start the query
@@ -283,26 +281,10 @@ public class ExerciseFragment extends Fragment {
             return  convertView;
         }
     }
-    
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        
-        if (requestCode == ADD_EXERCISE_REQUEST && resultCode == getActivity().RESULT_OK) {
-            if (data.getExtras().getParcelable("item") instanceof Strength) {
-                Strength item = (Strength) data.getExtras().getParcelable("item");
 
-                // add and update
-                exercisesList.add(item);
-                ((BaseAdapter) list.getAdapter()).notifyDataSetChanged();
-            } else if (data.getExtras().getParcelable("item") instanceof Cardio) {
-                Cardio item = (Cardio) data.getExtras().getParcelable("item");
-
-                // add and update
-                exercisesList.add(item);
-                ((BaseAdapter) list.getAdapter()).notifyDataSetChanged();
-            }
-        }
+    public void addItem(WorkoutType item) {
+        exercisesList.add(item);
+        ((BaseAdapter) list.getAdapter()).notifyDataSetChanged();
     }
 
     // TODO: Rename method, update argument and hook method into UI event

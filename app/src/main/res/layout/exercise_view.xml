@@ -7,6 +7,7 @@
     card_view:contentPadding="@dimen/padding"
     android:layout_margin="@dimen/cardview_calorie_margin">
 
+
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
@@ -25,7 +26,8 @@
                 android:id="@+id/exerciseName"
                 android:layout_weight="1"
                 android:textSize="@dimen/food_title_font_size"
-                android:textStyle="normal|bold" />
+                android:textStyle="normal|bold"
+                android:textColor="@color/primaryText" />
 
             <ImageView
                 android:layout_width="wrap_content"
@@ -42,6 +44,11 @@
             android:layout_weight="1" />
 
         <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/strengthLayout">
+        <LinearLayout
             android:orientation="horizontal"
             android:layout_width="wrap_content"
             android:layout_height="match_parent">
@@ -52,6 +59,7 @@
                 android:layout_height="match_parent"
                 android:id="@+id/setLabel"
                 android:layout_weight="1"
+                android:textColor="@color/secondaryText"
                 android:textStyle="normal|bold" />
 
             <TextView
@@ -74,6 +82,7 @@
                 android:layout_height="match_parent"
                 android:id="@+id/repLabel"
                 android:layout_weight="1"
+                android:textColor="@color/secondaryText"
                 android:textStyle="normal|bold" />
 
             <TextView
@@ -96,6 +105,7 @@
                 android:layout_height="match_parent"
                 android:id="@+id/weightLabel"
                 android:layout_weight="1"
+                android:textColor="@color/secondaryText"
                 android:textStyle="normal|bold" />
 
             <TextView
@@ -106,11 +116,13 @@
                 android:layout_weight="1"
                 android:paddingLeft="5dp" />
         </LinearLayout>
+        </LinearLayout>
 
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:id="@+id/cardioLayout">
 
             <TextView
                 android:text="Time:"
@@ -118,6 +130,7 @@
                 android:layout_height="match_parent"
                 android:id="@+id/timeLabel"
                 android:layout_weight="1"
+                android:textColor="@color/secondaryText"
                 android:textStyle="normal|bold" />
 
             <TextView

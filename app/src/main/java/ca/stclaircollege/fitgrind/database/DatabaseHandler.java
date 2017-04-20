@@ -141,7 +141,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             "CREATE TABLE cardio_log (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
                 "exercise_id INTEGER REFERENCES exercise(id), " +
-                "time FLOAT);";
+                "time VARCHAR(11));";
 
     private static final String CREATE_STRENGTHLOG_TABLE =
             "CREATE TABLE strength_log (" +
@@ -243,7 +243,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         values.put("name", cardio.getName());
         // after inserting we want the id
         long id = db.insert(EXERCISE_TABLE_NAME, null, values);
-        // now we wanna insert on the row
         values.clear(); // clear
         values.put("exercise_id", id);
         values.put("time", cardio.getTime());
@@ -255,21 +254,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         values.put("day_id", dayId);
         long secondRow = db.insert(WORKOUT_TABLE_NAME, null, values);
         return row > 0 && secondRow > 0;
-    }
-
-    /**
-     * Inserts your 'weight-log' picture weekly.
-     * @param progress
-     */
-    public boolean insertProgress(Progress progress, long weightId) {
-        SQLiteDatabase db = getWritableDatabase();
-        // Create the content values
-        ContentValues values = new ContentValues();
-        // input the values
-        values.put("resource", progress.getResource());
-        values.put("weight_id", weightId);
-        // insert the db
-        return db.insert(PROGRESS_TABLE_NAME, null, values) > 0;
     }
 
     /**
@@ -299,6 +283,21 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         values.put("day_id", dayId);
         long secondRow = db.insert(WORKOUT_TABLE_NAME, null, values);
         return row > 0 && secondRow > 0;
+    }
+
+    /**
+     * Inserts your 'weight-log' picture weekly.
+     * @param progress
+     */
+    public boolean insertProgress(Progress progress, long weightId) {
+        SQLiteDatabase db = getWritableDatabase();
+        // Create the content values
+        ContentValues values = new ContentValues();
+        // input the values
+        values.put("resource", progress.getResource());
+        values.put("weight_id", weightId);
+        // insert the db
+        return db.insert(PROGRESS_TABLE_NAME, null, values) > 0;
     }
 
     /**
@@ -463,6 +462,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
      */
     public boolean deleteStrengthWorkout(long id) {
         SQLiteDatabase db = getWritableDatabase();
+        int fRow = db.delete(WORKOUT_TABLE_NAME, "exercise_id = ?", new String[]{String.valueOf(id)});
         int sRow = db.delete(STRENGTHLOG_TABLE_NAME, "exercise_id = ?", new String[]{String.valueOf(id)});
         int tRow = db.delete(EXERCISE_TABLE_NAME, "id = ?", new String[]{String.valueOf(id)});
         return sRow > 0 && tRow > 0;
@@ -568,22 +568,22 @@ public class DatabaseHandler extends SQLiteOpenHelper {
      * Method to retrieve all of the workout.
      * @return An abstract list of all the workouts. You will need to use polymorphism to find it out
      */
-    public ArrayList<WorkoutType> selectAllWorkoutAt(long dayId) {
+    public ArrayList<WorkoutType> selectAllWorkoutAt(long dayId, long routineId) {
         // to find out which one to return, we will use an abstract class in which that it relates to both
         // get db
         SQLiteDatabase db = getReadableDatabase();
         ArrayList<WorkoutType> workoutList = new ArrayList<WorkoutType>();
         // check for cardio log
-        Cursor cursor = db.rawQuery("SELECT * FROM exercise INNER JOIN cardio_log ON exercise.id = cardio_log.exercise_id INNER JOIN workout ON exercise.id = workout.exercise_id WHERE day_id = ?", new String[]{String.valueOf(dayId)});
+        Cursor cursor = db.rawQuery("SELECT * FROM exercise INNER JOIN cardio_log ON exercise.id = cardio_log.exercise_id INNER JOIN workout ON exercise.id = workout.exercise_id WHERE day_id = ? AND routine_id = ?", new String[]{String.valueOf(dayId), String.valueOf(routineId)});
         if (cursor.moveToFirst()) {
             do {
                 // now we can get the info for cardio log
-                workoutList.add(new Cardio(cursor.getInt(0), cursor.getString(1), cursor.getInt(2), cursor.getDouble(3)));
+                workoutList.add(new Cardio(cursor.getInt(0), cursor.getString(1), cursor.getInt(2), cursor.getString(3)));
             } while (cursor.moveToNext());
         }
         cursor.close();
         // now we check for other log
-        Cursor cursor2 = db.rawQuery("SELECT * FROM exercise INNER JOIN strength_log ON exercise.id = strength_log.exercise_id INNER JOIN workout ON exercise.id = workout.exercise_id WHERE day_id = ?", new String[]{String.valueOf(dayId)});
+        Cursor cursor2 = db.rawQuery("SELECT * FROM exercise INNER JOIN strength_log ON exercise.id = strength_log.exercise_id INNER JOIN workout ON exercise.id = workout.exercise_id WHERE day_id = ? AND routine_id = ?", new String[]{String.valueOf(dayId), String.valueOf(routineId)});
         if (cursor2.moveToFirst()) {
             do {
                 // add for strength log

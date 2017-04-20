@@ -163,6 +163,7 @@ public class  WorkoutProgramFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(getActivity(), WorkoutExerciseActivity.class);
+                intent.putExtra("id", programsList.get(position).getId());
                 startActivity(intent);
             }
         });
@@ -253,6 +254,7 @@ public class  WorkoutProgramFragment extends Fragment {
                                     //delete from db
                                     DatabaseHandler db = new DatabaseHandler(getContext());
                                     if (db.deleteRoutine(program.getId())) {
+
                                         programsList.remove(position);
                                         // we also wanna make a notify update
                                         ((BaseAdapter) list.getAdapter()).notifyDataSetChanged();
