@@ -12,7 +12,7 @@
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:padding="@dimen/padding">
 
         <LinearLayout
@@ -27,7 +27,8 @@
                 android:id="@+id/exerciseName"
                 android:layout_weight="1"
                 android:layout_width="0dp"
-                android:gravity="center_horizontal" />
+                android:gravity="center_horizontal"
+                android:textSize="@dimen/listview_font_size" />
 
             <EditText
                 android:layout_width="wrap_content"
@@ -70,7 +71,7 @@
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:visibility="visible"
             android:id="@+id/StrengthLayout">
 
@@ -86,7 +87,8 @@
                     android:layout_weight="1"
                     android:layout_marginLeft="3dp"
                     android:layout_width="0dp"
-                    android:gravity="center_horizontal" />
+                    android:gravity="center_horizontal"
+                    android:textSize="@dimen/listview_font_size" />
 
                 <EditText
                     android:layout_width="wrap_content"
@@ -111,7 +113,8 @@
                     android:layout_weight="1"
                     android:layout_marginLeft="3dp"
                     android:layout_width="0dp"
-                    android:gravity="center_horizontal" />
+                    android:gravity="center_horizontal"
+                    android:textSize="@dimen/listview_font_size" />
 
                 <EditText
                     android:layout_width="wrap_content"
@@ -136,7 +139,8 @@
                     android:layout_weight="1"
                     android:layout_marginLeft="3dp"
                     android:layout_width="0dp"
-                    android:gravity="center_horizontal" />
+                    android:gravity="center_horizontal"
+                    android:textSize="@dimen/listview_font_size" />
 
                 <EditText
                     android:layout_width="wrap_content"
@@ -154,7 +158,7 @@
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:id="@+id/CardioLayout"
             android:visibility="visible">
 
@@ -170,7 +174,8 @@
                     android:layout_weight="1"
                     android:layout_marginLeft="3dp"
                     android:layout_width="0dp"
-                    android:gravity="center_horizontal" />
+                    android:gravity="center_horizontal"
+                    android:textSize="@dimen/listview_font_size" />
 
                 <EditText
                     android:layout_width="wrap_content"
@@ -185,16 +190,25 @@
         </LinearLayout>
 
         <LinearLayout
-            android:orientation="horizontal"
+            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:gravity="center_vertical">
 
-            <Button
-                android:text="Add Exercise "
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/exerciseSubmitButton"
-                android:layout_weight="1" />
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <Button
+                    android:text="Add Exercise "
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/exerciseSubmitButton"
+                    android:layout_weight="1"
+                    android:backgroundTint="@color/buttonPrimaryColor"
+                    android:textColor="@android:color/white" />
+            </LinearLayout>
         </LinearLayout>
 
     </LinearLayout>
