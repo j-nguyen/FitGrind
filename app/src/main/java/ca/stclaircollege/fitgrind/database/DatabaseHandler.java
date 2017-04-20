@@ -154,8 +154,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final String CREATE_WORKOUT_TABLE =
             "CREATE TABLE workout (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
-                "routine_id INTEGER REFERENCES workout_routine(id), " +
-                "exercise_id INTEGER REFERENCES exercise(id), " +
+                "routine_id INTEGER REFERENCES workout_routine(id) ON DELETE CASCADE, " +
+                "exercise_id INTEGER REFERENCES exercise(id) ON DELETE CASCADE, " +
                 "day_id INTEGER REFERENCES workout_day(id));";
 
     public DatabaseHandler(Context context) {
@@ -199,6 +199,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + WORKOUT_TABLE_NAME);
         // relaunch onCreate
         onCreate(db);
+    }
+
+    // this enables me to use DELETE CASCADE which helps the headache of deleting nay child rows.
+    @Override
+    public void onConfigure(SQLiteDatabase db){
+        db.setForeignKeyConstraintsEnabled(true);
     }
 
     // now we wanna create our crud operations in here. We will need a ton

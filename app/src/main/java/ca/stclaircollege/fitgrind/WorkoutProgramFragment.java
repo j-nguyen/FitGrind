@@ -254,7 +254,6 @@ public class  WorkoutProgramFragment extends Fragment {
                                     //delete from db
                                     DatabaseHandler db = new DatabaseHandler(getContext());
                                     if (db.deleteRoutine(program.getId())) {
-
                                         programsList.remove(position);
                                         // we also wanna make a notify update
                                         ((BaseAdapter) list.getAdapter()).notifyDataSetChanged();
