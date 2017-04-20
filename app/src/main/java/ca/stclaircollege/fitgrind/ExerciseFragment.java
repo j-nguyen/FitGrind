@@ -138,7 +138,7 @@ public class ExerciseFragment extends Fragment {
             } else if (item instanceof Cardio){
                 Cardio mItem = (Cardio) item;
                 TextView time = (TextView) convertView.findViewById(R.id.exerciseTime);
-                time.setText(mItem.getTime());
+                time.setText("" + mItem.getTime() + " minutes");
 
                 //hide strength
                 strengthLayout.setVisibility(View.GONE);
@@ -219,7 +219,7 @@ public class ExerciseFragment extends Fragment {
                                         final EditText editText2 = (EditText) dialogView.findViewById(R.id.editTimeEditText);
 
                                         // setup the text from program
-                                        editText.setText(((Cardio) item).getName());
+                                        editText.setText(item.getName());
                                         editText2.setText(""+(((Cardio) item).getTime()));
 
                                         builder.setView(dialogView);
@@ -228,7 +228,7 @@ public class ExerciseFragment extends Fragment {
                                             @Override
                                             public void onClick(DialogInterface dialog, int which) {
                                                 ((Cardio) item).setName(editText.getText().toString());
-                                                ((Cardio) item).setTime(editText2.getText().toString());
+                                                ((Cardio) item).setTime(Double.parseDouble(editText2.getText().toString()));
                                                 // if it clicked ok, we need to create a db instance and make sure it goes through and works
                                                 DatabaseHandler db = new DatabaseHandler(getContext());
                                                 // start the query

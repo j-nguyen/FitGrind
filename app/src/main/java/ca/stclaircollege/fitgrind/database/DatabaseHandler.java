@@ -141,7 +141,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             "CREATE TABLE cardio_log (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
                 "exercise_id INTEGER REFERENCES exercise(id) ON DELETE CASCADE, " +
-                "time VARCHAR(11));";
+                "time FLOAT);";
 
     private static final String CREATE_STRENGTHLOG_TABLE =
             "CREATE TABLE strength_log (" +
@@ -457,7 +457,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
      */
     public boolean deleteCardioWorkout(long id) {
         SQLiteDatabase db = getWritableDatabase();
-        return db.delete(CARDIOLOG_TABLE_NAME, "exercise_id = ?", new String[]{String.valueOf(id)}) > 0;
+        return db.delete(CARDIOLOG_TABLE_NAME, "id = ?", new String[]{String.valueOf(id)}) > 0;
     }
 
     /**
@@ -578,7 +578,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             do {
                 // now we can get the info for cardio log
-                workoutList.add(new Cardio(cursor.getInt(0), cursor.getString(1), cursor.getInt(2), cursor.getString(3)));
+                workoutList.add(new Cardio(cursor.getInt(0), cursor.getString(1), cursor.getInt(2), Double.parseDouble(cursor.getString(cursor.getColumnIndex("cardio_log.time")))));
             } while (cursor.moveToNext());
         }
         cursor.close();
@@ -587,7 +587,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         if (cursor2.moveToFirst()) {
             do {
                 // add for strength log
-                workoutList.add(new Strength(cursor2.getInt(0), cursor2.getString(1), cursor2.getInt(2), cursor2.getInt(3), cursor2.getInt(4), cursor2.getDouble(5)));
+                workoutList.add(new Strength(cursor2.getInt(0), cursor2.getString(1), cursor2.getInt(2), cursor2.getInt(3), cursor2.getInt(4), cursor2.getDouble(cursor2.getColumnIndex("strength_log.weight"))));
             } while (cursor2.moveToNext());
         }
         db.close();
