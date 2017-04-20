@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcel;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -118,22 +119,26 @@ public class  WorkoutProgramFragment extends Fragment {
                 dialog.setPositiveButton("Okay", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        // Create db handler
-                        DatabaseHandler db = new DatabaseHandler(getContext());
-                        Program program = new Program(name.getText().toString(), desc.getText().toString());
-                        long id = db.insertProgram(program);
-                        db.close();
-                        // check for id
-                        if (id != -1) {
-                            // set the id so we can add it to the array
-                            program.setId(id);
-                            // add it to the arraylist and notify data set
-                            programsList.add(program);
-                            ((BaseAdapter) list.getAdapter()).notifyDataSetChanged();
-                            // create a toast
-                            Toast.makeText(getContext(), R.string.db_insert_success, Toast.LENGTH_SHORT).show();
+                        if (name.getText().toString().trim().length() != 0 && desc.getText().toString().trim().length() != 0) {
+                            // Create db handler
+                            DatabaseHandler db = new DatabaseHandler(getContext());
+                            Program program = new Program(name.getText().toString(), desc.getText().toString());
+                            long id = db.insertProgram(program);
+                            db.close();
+                            // check for id
+                            if (id != -1) {
+                                // set the id so we can add it to the array
+                                program.setId(id);
+                                // add it to the arraylist and notify data set
+                                programsList.add(program);
+                                ((BaseAdapter) list.getAdapter()).notifyDataSetChanged();
+                                // create a toast
+                                Toast.makeText(getContext(), R.string.db_insert_success, Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(getContext(), R.string.db_error, Toast.LENGTH_SHORT).show();
+                            }
                         } else {
-                            Toast.makeText(getContext(), R.string.db_error, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(), R.string.invalid_field, Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
