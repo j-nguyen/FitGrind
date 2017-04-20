@@ -252,14 +252,14 @@ public class ExerciseFragment extends Fragment {
                                     //delete from db
                                     DatabaseHandler db = new DatabaseHandler(getContext());
                                     if(item instanceof Strength) {
-                                        if (db.deleteStrengthWorkout(item.getId())) {
+                                        if (db.deleteStrengthWorkout(((Strength) item).getStrengthId())) {
                                             exercisesList.remove(position);
                                             // we also wanna make a notify update
                                             ((BaseAdapter) list.getAdapter()).notifyDataSetChanged();
                                             Toast.makeText(getContext(), R.string.db_delete_success, Toast.LENGTH_SHORT).show();
                                     }
                                     } else if (item instanceof Cardio) {
-                                        if (db.deleteCardioWorkout(item.getId())) {
+                                        if (db.deleteCardioWorkout(((Cardio) item).getCardioId())) {
                                             exercisesList.remove(position);
                                             ((BaseAdapter) list.getAdapter()).notifyDataSetChanged();
                                             Toast.makeText(getContext(), R.string.db_delete_success, Toast.LENGTH_SHORT).show();
