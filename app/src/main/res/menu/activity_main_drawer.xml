@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <group android:checkableBehavior="single">
+    <group
+        android:id="@+id/view_settings"
+        android:checkableBehavior="single">
         <item
             android:id="@+id/nav_home"
             android:icon="@drawable/ic_home_black_24dp"
@@ -11,14 +13,6 @@
             android:icon="@drawable/ic_assignment_black_24dp"
             android:title="@string/calorie_log" />
         <item
-            android:id="@+id/nav_add_food"
-            android:icon="@drawable/ic_food"
-            android:title="@string/add_food" />
-        <item
-            android:id="@+id/nav_add_custom_food"
-            android:icon="@drawable/ic_food"
-            android:title="@string/add_custom_food" />
-        <item
             android:id="@+id/nav_weight_log"
             android:icon="@drawable/ic_scale_bathroom"
             android:title="@string/weight_log" />
@@ -26,26 +20,30 @@
             android:id="@+id/nav_workout_schedule"
             android:icon="@drawable/ic_today_black_24dp"
             android:title="@string/workout_schedule" />
-        <item
-            android:id="@+id/nav_progress_gallary"
-            android:icon="@drawable/ic_menu_gallery"
-            android:title="@string/progress_gallary" />
-        <item
-            android:id="@+id/nav_test"
-            android:title="test" />
     </group>
 
-    <!--<item android:title="Communicate">-->
-        <!--<menu>-->
-            <!--<item-->
-                <!--android:id="@+id/nav_share"-->
-                <!--android:icon="@drawable/ic_menu_share"-->
-                <!--android:title="Share" />-->
-            <!--<item-->
-                <!--android:id="@+id/nav_send"-->
-                <!--android:icon="@drawable/ic_menu_send"-->
-                <!--android:title="Send" />-->
-        <!--</menu>-->
-    <!--</item>-->
+    <item android:title="@string/add_title">
+        <menu>
+            <item
+                android:id="@+id/nav_add_custom_food"
+                android:icon="@drawable/ic_food"
+                android:title="@string/add_custom_food" />
+            <item
+                android:id="@+id/nav_add_food"
+                android:icon="@drawable/ic_food"
+                android:title="@string/add_food" />
+        </menu>
+    </item>
+
+    <group
+        android:checkableBehavior="single"
+        android:id="@+id/links">
+
+        <item
+            android:id="@+id/nav_helpful_link"
+            android:title="@string/workout_tips"
+            android:icon="@drawable/ic_help_black_24dp"/>
+
+    </group>
 
 </menu>

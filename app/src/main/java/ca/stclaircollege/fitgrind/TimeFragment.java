@@ -1,12 +1,32 @@
 package ca.stclaircollege.fitgrind;
 
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.CountDownTimer;
+import android.provider.AlarmClock;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
+import android.text.InputFilter;
+import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import ca.stclaircollege.fitgrind.database.DatabaseHandler;
+import ca.stclaircollege.fitgrind.database.Program;
+
+import static android.R.id.message;
 
 
 /**
@@ -64,7 +84,72 @@ public class TimeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_time, container, false);
+        View view = inflater.inflate(R.layout.fragment_time, container, false);
+        final TextView textView = (TextView) view.findViewById(R.id.timerTextView);
+
+        FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fabTimer);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // create a dialog instead of the activity intent
+                AlertDialog.Builder dialog = new AlertDialog.Builder(getContext());
+                dialog.setTitle("Set Count Down Alarm (Seconds)");
+                // create a view to inflate from
+
+                // set up the edit text
+                final EditText input = new EditText(getContext());
+                input.setInputType(InputType.TYPE_CLASS_NUMBER);
+                //set max input field
+                input.setFilters(new InputFilter[] {new InputFilter.LengthFilter(5)});
+
+                // set the view
+                dialog.setView(input);
+
+                // create event listeners for ok and cancel
+                dialog.setPositiveButton("Okay", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        int seconds = Integer.parseInt(input.getText().toString());
+                        long number = Long.valueOf(input.getText().toString())*1000;
+                        //count down (seconds)
+                        final CountDownTimer timer = new CountDownTimer(number, 1000) {
+                            public void onTick(long millisUntilFinished) {
+                                textView.setText("Time Remaining: " + millisUntilFinished / 1000);
+                            }
+
+                            public void onFinish() {
+                                textView.setText("Finished!");
+                            }
+                        }.start();
+
+                        final Intent intent = new Intent(AlarmClock.ACTION_SET_TIMER)
+                                .putExtra(AlarmClock.EXTRA_MESSAGE, "Time's Up")
+                                .putExtra(AlarmClock.EXTRA_LENGTH, seconds)
+                                .putExtra(AlarmClock.EXTRA_SKIP_UI, true);
+                        if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
+                            startActivity(intent);
+                        }
+                        //checks if there is a installed software
+                        else{
+                            Snackbar snackbar = Snackbar.make(getActivity().findViewById(android.R.id.content), "No installed software to complete the task", Snackbar.LENGTH_SHORT);
+                            snackbar.show();
+                        }
+                    }
+                });
+
+                dialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                    }
+                });
+
+                // show dialog
+                dialog.show();
+            }
+        });
+
+        return view;
     }
 
     // TODO: Rename method, update argument and hook method into UI event

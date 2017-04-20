@@ -18,4 +18,5 @@
     <dimen name="recorded_date_margin">-10dp</dimen>
     <dimen name="food_title_font_size">22sp</dimen>
     <dimen name="submit_margin">10dp</dimen>
+    <dimen name="circle_indicator">55dp</dimen>
 </resources>

@@ -182,14 +182,19 @@
         android:id="@+id/title_log"
         android:textStyle="normal|bold"
         android:textSize="@dimen/title_font_size"
+        android:textColor="@color/primaryText"
         android:padding="@dimen/padding" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/cardview_shadow_end_color" />
 
     <ListView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/calorie_listview"
         android:divider="@android:color/transparent"
-        android:dividerHeight="@dimen/padding"
-        android:layout_marginTop="@dimen/padding" />
+        android:dividerHeight="@dimen/padding" />
 
 </LinearLayout>

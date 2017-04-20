@@ -112,14 +112,14 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final String CREATE_FOODLOG_TABLE =
             "CREATE TABLE food_log (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
-                "food_id INTEGER REFERENCES food(id), " +
+                "food_id INTEGER REFERENCES food(id) ON DELETE CASCADE, " +
                 "date DATETIME DEFAULT (DATETIME(CURRENT_TIMESTAMP, 'LOCALTIME')));";
 
     private static final String CREATE_PROGRESS_TABLE =
             "CREATE TABLE progress (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
-                "resource TEXT, " +
-                "date DATETIME DEFAULT (DATETIME(CURRENT_TIMESTAMP, 'LOCALTIME')));";
+                "weight_id INTEGER REFERENCES weight_log (id) ON DELETE CASCADE, " +
+                "resource TEXT);";
 
     private static final String CREATE_WORKOUTDAY_TABLE =
             "CREATE TABLE workout_day (" +
@@ -140,13 +140,13 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final String CREATE_CARDIOLOG_TABLE =
             "CREATE TABLE cardio_log (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
-                "exercise_id INTEGER REFERENCES exercise(id), " +
-                "time FLOAT);";
+                "exercise_id INTEGER REFERENCES exercise(id) ON DELETE CASCADE, " +
+                "time VARCHAR(11));";
 
     private static final String CREATE_STRENGTHLOG_TABLE =
             "CREATE TABLE strength_log (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
-                "exercise_id INTEGER REFERENCES exercise(id), " +
+                "exercise_id INTEGER REFERENCES exercise(id) ON DELETE CASCADE, " +
                 "sets INTEGER, " +
                 "rep INTEGER, " +
                 "weight FLOAT);";
@@ -154,8 +154,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final String CREATE_WORKOUT_TABLE =
             "CREATE TABLE workout (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
-                "routine_id INTEGER REFERENCES workout_routine(id), " +
-                "exercise_id INTEGER REFERENCES exercise(id), " +
+                "routine_id INTEGER REFERENCES workout_routine(id) ON DELETE CASCADE, " +
+                "exercise_id INTEGER REFERENCES exercise(id) ON DELETE CASCADE, " +
                 "day_id INTEGER REFERENCES workout_day(id));";
 
     public DatabaseHandler(Context context) {
@@ -175,13 +175,13 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.execSQL(CREATE_STRENGTHLOG_TABLE);
         db.execSQL(CREATE_WORKOUT_TABLE);
         // next we will want to pre-populate the data. This way we know for sure it's there
+        db.execSQL("INSERT INTO workout_day(id, day) VALUES (null, 'Sunday');");
         db.execSQL("INSERT INTO workout_day(id, day) VALUES (null, 'Monday');");
         db.execSQL("INSERT INTO workout_day(id, day) VALUES (null, 'Tuesday');");
         db.execSQL("INSERT INTO workout_day(id, day) VALUES (null, 'Wednesday');");
         db.execSQL("INSERT INTO workout_day(id, day) VALUES (null, 'Thursday');");
         db.execSQL("INSERT INTO workout_day(id, day) VALUES (null, 'Friday');");
         db.execSQL("INSERT INTO workout_day(id, day) VALUES (null, 'Saturday');");
-        db.execSQL("INSERT INTO workout_day(id, day) VALUES (null, 'Sunday');");
     }
 
     @Override
@@ -199,6 +199,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + WORKOUT_TABLE_NAME);
         // relaunch onCreate
         onCreate(db);
+    }
+
+    // this enables me to use DELETE CASCADE which helps the headache of deleting nay child rows.
+    @Override
+    public void onConfigure(SQLiteDatabase db){
+        db.setForeignKeyConstraintsEnabled(true);
     }
 
     // now we wanna create our crud operations in here. We will need a ton
@@ -243,7 +249,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         values.put("name", cardio.getName());
         // after inserting we want the id
         long id = db.insert(EXERCISE_TABLE_NAME, null, values);
-        // now we wanna insert on the row
         values.clear(); // clear
         values.put("exercise_id", id);
         values.put("time", cardio.getTime());
@@ -255,20 +260,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         values.put("day_id", dayId);
         long secondRow = db.insert(WORKOUT_TABLE_NAME, null, values);
         return row > 0 && secondRow > 0;
-    }
-
-    /**
-     * Inserts your 'weight-log' picture weekly.
-     * @param progress
-     */
-    public boolean insertProgress(Progress progress) {
-        SQLiteDatabase db = getWritableDatabase();
-        // Create the content values
-        ContentValues values = new ContentValues();
-        // input the values
-        values.put("resource", progress.getResource());
-        // insert the db
-        return db.insert(PROGRESS_TABLE_NAME, null, values) > 0;
     }
 
     /**
@@ -287,7 +278,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         values.clear();
         // insert again
         values.put("exercise_id", id);
-        values.put("set", strength.getSet());
+        values.put("sets", strength.getSet());
         values.put("rep", strength.getReptitions());
         values.put("weight", strength.getWeight());
         long row = db.insert(STRENGTHLOG_TABLE_NAME, null, values);
@@ -298,6 +289,21 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         values.put("day_id", dayId);
         long secondRow = db.insert(WORKOUT_TABLE_NAME, null, values);
         return row > 0 && secondRow > 0;
+    }
+
+    /**
+     * Inserts your 'weight-log' picture weekly.
+     * @param progress
+     */
+    public boolean insertProgress(Progress progress, long weightId) {
+        SQLiteDatabase db = getWritableDatabase();
+        // Create the content values
+        ContentValues values = new ContentValues();
+        // input the values
+        values.put("resource", progress.getResource());
+        values.put("weight_id", weightId);
+        // insert the db
+        return db.insert(PROGRESS_TABLE_NAME, null, values) > 0;
     }
 
     /**
@@ -374,9 +380,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     /**
      * Updates with the cardio table
      * @param cardio
-     * @param exerciseId
      */
-    public boolean updateWorkout(Cardio cardio, long exerciseId) {
+    public boolean updateWorkout(Cardio cardio) {
         // writeable db
         SQLiteDatabase db = getWritableDatabase();
         // create content values
@@ -387,18 +392,16 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         int row = db.update(EXERCISE_TABLE_NAME, values, "id = ?", new String[]{String.valueOf(cardio.getId())});
         // now update on this workout
         values.clear(); // clear
-        values.put("exercise_id", exerciseId);
         values.put("time", cardio.getTime());
-        int secondRow = db.update(CARDIOLOG_TABLE_NAME, values, "exercise_id = ?", new String[]{String.valueOf(exerciseId)});
+        int secondRow = db.update(CARDIOLOG_TABLE_NAME, values, "id = ?", new String[]{String.valueOf(cardio.getCardioId())});
         return row > 0 && secondRow > 0;
     }
 
     /**
      * Updates with the strength table
      * @param strength
-     * @param exerciseId
      */
-    public boolean updateWorkout(Strength strength, long exerciseId) {
+    public boolean updateWorkout(Strength strength) {
         // create db
         SQLiteDatabase db = getWritableDatabase();
         // create the content values
@@ -409,11 +412,10 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         int row = db.update(EXERCISE_TABLE_NAME, values, "id = ?", new String[]{String.valueOf(strength.getId())});
         // update on this field
         values.clear();
-        values.put("exercise_id", exerciseId);
-        values.put("set", strength.getSet());
+        values.put("sets", strength.getSet());
         values.put("rep", strength.getReptitions());
         values.put("weight", strength.getWeight());
-        int secondRow = db.update(STRENGTHLOG_TABLE_NAME, values, "exercise_id = ?", new String[]{String.valueOf(exerciseId)});
+        int secondRow = db.update(STRENGTHLOG_TABLE_NAME, values, "id = ?", new String[]{String.valueOf(strength.getStrengthId())});
         return row > 0 && secondRow > 0;
     }
 
@@ -455,10 +457,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
      */
     public boolean deleteCardioWorkout(long id) {
         SQLiteDatabase db = getWritableDatabase();
-        int fRow = db.delete(CREATE_WORKOUT_TABLE, "exercise_id = ?", new String[]{String.valueOf(id)});
-        int sRow = db.delete(CARDIOLOG_TABLE_NAME, "exercise_id = ?", new String[]{String.valueOf(id)});
-        int tRow = db.delete(EXERCISE_TABLE_NAME, "id = ?", new String[]{String.valueOf(id)});
-        return fRow > 0 && sRow > 0 && tRow > 0;
+        return db.delete(CARDIOLOG_TABLE_NAME, "exercise_id = ?", new String[]{String.valueOf(id)}) > 0;
     }
 
     /**
@@ -467,10 +466,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
      */
     public boolean deleteStrengthWorkout(long id) {
         SQLiteDatabase db = getWritableDatabase();
-        int fRow = db.delete(CREATE_WORKOUT_TABLE, "exercise_id = ?", new String[]{String.valueOf(id)});
-        int sRow = db.delete(STRENGTHLOG_TABLE_NAME, "exercise_id = ?", new String[]{String.valueOf(id)});
-        int tRow = db.delete(EXERCISE_TABLE_NAME, "id = ?", new String[]{String.valueOf(id)});
-        return fRow > 0 && sRow > 0 && tRow > 0;
+        return db.delete(STRENGTHLOG_TABLE_NAME, "id = ?", new String[]{String.valueOf(id)}) > 0;
     }
 
     /**
@@ -482,6 +478,11 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return db.delete(PROGRESS_TABLE_NAME, "id = ?", new String[]{String.valueOf(id)}) > 0;
     }
 
+    public boolean deleteProgressByWeight(long weightId) {
+        SQLiteDatabase db = getWritableDatabase();
+        return db.delete(PROGRESS_TABLE_NAME, "weight_id = ?", new String[]{String.valueOf(weightId)}) > 0;
+    }
+
     /**
      * Deletes the food based on id
      * @param id
@@ -490,8 +491,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public boolean deleteFood(long id) {
         SQLiteDatabase db = getWritableDatabase();
         // deletes both of them and checks if both are deleted
-        return db.delete(FOOD_TABLE_NAME, "id = ?", new String[]{String.valueOf(id)}) > 0 &&
-                db.delete(FOODLOG_TABLE_NAME, "id = ?", new String[]{String.valueOf(id)}) > 0;
+        return db.delete(FOOD_TABLE_NAME, "id = ?", new String[]{String.valueOf(id)}) > 0;
     }
 
     /**
@@ -524,6 +524,23 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return results;
     }
 
+    public ArrayList<Progress> selectAllProgress() {
+        // use a readable db
+        SQLiteDatabase db = getReadableDatabase();
+        // create a blank arraylist
+        ArrayList<Progress> results = new ArrayList<Progress>();
+        // create sql
+        Cursor cursor = db.rawQuery("SELECT id, resource FROM " + PROGRESS_TABLE_NAME, null);
+        if (cursor.moveToFirst()) {
+            // iterate through the processsed sql
+            do {
+                // 0 = id, 1 = resourcce id
+                results.add(new Progress(cursor.getLong(0), cursor.getString(1)));
+            } while (cursor.moveToNext());
+        }
+        return results;
+    }
+
     /**
      * Gets all the routine available that the person made.
      * @return an ArrayList of Program
@@ -551,26 +568,27 @@ public class DatabaseHandler extends SQLiteOpenHelper {
      * Method to retrieve all of the workout.
      * @return An abstract list of all the workouts. You will need to use polymorphism to find it out
      */
-    public ArrayList<WorkoutType> selectAllWorkout() {
+    public ArrayList<WorkoutType> selectAllWorkoutAt(long dayId, long routineId) {
         // to find out which one to return, we will use an abstract class in which that it relates to both
         // get db
         SQLiteDatabase db = getReadableDatabase();
         ArrayList<WorkoutType> workoutList = new ArrayList<WorkoutType>();
         // check for cardio log
-        Cursor cursor = db.rawQuery("SELECT * FROM exercise INNER JOIN cardio_log ON exercise.id = cardio_log.exercise_id", null);
+        Cursor cursor = db.rawQuery("SELECT * FROM exercise INNER JOIN cardio_log ON exercise.id = cardio_log.exercise_id INNER JOIN workout ON exercise.id = workout.exercise_id WHERE day_id = ? AND routine_id = ?", new String[]{String.valueOf(dayId), String.valueOf(routineId)});
         if (cursor.moveToFirst()) {
             do {
                 // now we can get the info for cardio log
-                workoutList.add(new Cardio(cursor.getInt(0), cursor.getString(1), cursor.getInt(2), cursor.getDouble(3)));
+                workoutList.add(new Cardio(cursor.getInt(0), cursor.getString(1), cursor.getInt(2), cursor.getString(3)));
             } while (cursor.moveToNext());
         }
+        cursor.close();
         // now we check for other log
-        cursor = db.rawQuery("SELECT * FROM exercise INNER JOIN strength_log ON exercise.id = strength.exercise_id", null);
-        if (cursor.moveToFirst()) {
+        Cursor cursor2 = db.rawQuery("SELECT * FROM exercise INNER JOIN strength_log ON exercise.id = strength_log.exercise_id INNER JOIN workout ON exercise.id = workout.exercise_id WHERE day_id = ? AND routine_id = ?", new String[]{String.valueOf(dayId), String.valueOf(routineId)});
+        if (cursor2.moveToFirst()) {
             do {
                 // add for strength log
-                workoutList.add(new Strength(cursor.getInt(0), cursor.getString(1), cursor.getInt(2), cursor.getInt(3), cursor.getInt(4), cursor.getDouble(5)));
-            } while (cursor.moveToNext());
+                workoutList.add(new Strength(cursor2.getInt(0), cursor2.getString(1), cursor2.getInt(2), cursor2.getInt(3), cursor2.getInt(4), cursor2.getDouble(5)));
+            } while (cursor2.moveToNext());
         }
         db.close();
         return workoutList;
@@ -595,6 +613,25 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             for (String key : NUTRIENT_KEYS.values()) food.addNutrient(new Nutrient(CALORIE_KEY.get(key), cursor.getDouble(cursor.getColumnIndex(key))));
         }
         return food;
+    }
+
+    /**
+     * Selects progress at id
+     * @param id
+     * @return an object is found, null if not
+     */
+    public Progress selectProgress(long id) {
+        Progress progress = null;
+        // create db
+        SQLiteDatabase db = getReadableDatabase();
+        // create a query cursor to check
+        Cursor cursor = db.rawQuery("SELECT * FROM progress WHERE weight_id = ?", new String[]{String.valueOf(id)});
+        if (cursor.moveToFirst()) {
+            // move to last because we know what it is now
+            cursor.moveToLast();
+            progress = new Progress(cursor.getLong(0), cursor.getString(2));
+        }
+        return progress;
     }
 
     /**
@@ -733,5 +770,25 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         Cursor cursor = db.rawQuery("SELECT strftime('%Y-%m-%d', date) FROM food_log ORDER by date DESC LIMIT 1;", null);
         if (cursor.moveToLast()) result = cursor.getString(0);
         return result;
+    }
+
+    /**
+     * Checks if the progress table is empty
+     * @return boolean value
+     */
+    public boolean isProgressEmpty() {
+        // read the db
+        SQLiteDatabase db = getReadableDatabase();
+        // create a sql for count
+        Cursor cursor = db.rawQuery("SELECT count(*) FROM progress", null);
+        // check
+        if (cursor.moveToFirst()) {
+            // if there's a ton then we know there's something here
+            if (cursor.getInt(0) == 0) {
+                return true;
+            }
+            return false;
+        }
+        return false;
     }
 }

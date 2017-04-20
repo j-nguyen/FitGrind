@@ -1,46 +1,37 @@
 <GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="ca.stclaircollege.fitgrind.AddProgramFragment"
     android:columnCount="2"
-    android:useDefaultMargins="true">
+    android:useDefaultMargins="true"
+    android:padding="@dimen/padding">
 
     <!-- TODO: Update blank fragment layout -->
     <TextView
-        android:text="Program Name"
+        android:text="Edit Name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/nameLabel"
+        android:id="@+id/editNameLabel"
         android:layout_column="0" />
 
     <EditText
-        android:layout_width="wrap_content"
+        android:layout_width="190dp"
         android:layout_height="wrap_content"
         android:inputType="textPersonName"
-        android:id="@+id/nameEditText"
+        android:id="@+id/editNameEditText"
         android:layout_column="1" />
 
     <TextView
-        android:text="Description"
+        android:text="Edit Description"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/descriptionLabel"
+        android:id="@+id/editDescriptionLabel"
         android:layout_column="0" />
 
     <EditText
-        android:layout_width="wrap_content"
+        android:layout_width="190dp"
         android:layout_height="wrap_content"
         android:inputType="textPersonName"
-        android:id="@+id/descriptionEditText"
+        android:id="@+id/editDescriptionEditText"
         android:layout_column="1" />
-
-    <Button
-        android:text="Add Workout Program"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/submitButton"
-        android:layout_columnSpan="2"
-        android:layout_column="0" />
 
 </GridLayout>

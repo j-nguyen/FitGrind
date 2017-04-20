@@ -31,12 +31,14 @@
                     android:id="@+id/currentDate"
                     android:textSize="18sp"
                     android:layout_weight="1"
-                    android:gravity="center_horizontal" />
+                    android:gravity="center_horizontal"
+                    android:textColor="@color/primaryText" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:baselineAligned="false">
 
                     <LinearLayout
                         android:orientation="vertical"
@@ -51,7 +53,9 @@
                             android:layout_height="wrap_content"
                             android:id="@+id/calories_goal"
                             android:textAlignment="center"
-                            android:textSize="@dimen/title_font_size" />
+                            android:textSize="@dimen/title_font_size"
+                            android:textStyle="normal|bold"
+                            android:textColor="@color/primaryText" />
 
                         <TextView
                             android:text="@string/calorie_goal"
@@ -59,8 +63,8 @@
                             android:layout_height="wrap_content"
                             android:id="@+id/calories_goal_title"
                             android:textAlignment="center"
-                            android:textStyle="normal|bold"
-                            android:textSize="@dimen/title_label_font_size" />
+                            android:textSize="@dimen/title_label_font_size"
+                            android:textColor="@color/primaryText" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -76,7 +80,8 @@
                             android:layout_height="wrap_content"
                             android:id="@+id/calories_obtained_title"
                             android:textAlignment="center"
-                            android:textSize="@dimen/title_font_size" />
+                            android:textSize="@dimen/title_font_size"
+                            android:textStyle="normal|bold" />
 
                         <TextView
                             android:text="@string/calories_obtained"
@@ -84,8 +89,8 @@
                             android:layout_height="wrap_content"
                             android:id="@+id/calories_obtained_label"
                             android:textAlignment="center"
-                            android:textStyle="normal|bold"
-                            android:textSize="@dimen/title_label_font_size" />
+                            android:textSize="@dimen/title_label_font_size"
+                            android:textColor="@color/primaryText" />
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
@@ -99,17 +104,20 @@
             android:id="@+id/recent_title_label"
             android:padding="@dimen/padding"
             android:textStyle="normal|bold"
-            android:textSize="@dimen/title_font_size" />
+            android:textSize="@dimen/title_font_size"
+            android:textColor="@color/primaryText" />
+
+        <View
+            android:layout_width="match_parent"
+            android:background="@color/cardview_shadow_end_color"
+            android:layout_height="1dp" />
 
         <ListView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/calorie_listview"
             android:divider="@android:color/transparent"
-            android:dividerHeight="@dimen/padding"
-            android:layout_marginTop="@dimen/padding"
-            android:headerDividersEnabled="false"
-            android:elevation="2dp" />
+            android:dividerHeight="@dimen/padding" />
 
     </LinearLayout>
 
@@ -120,14 +128,12 @@
         app:fabSize="normal"
         app:srcCompat="@drawable/ic_add_black_24dp"
         android:id="@+id/fab"
-        android:layout_alignParentLeft="false"
-        android:layout_centerHorizontal="false"
-        android:layout_alignWithParentIfMissing="false"
-        android:layout_alignParentStart="false"
-        android:layout_margin="@dimen/fab_margin"
-        android:layout_alignParentEnd="false"
+        android:layout_marginLeft="@dimen/fab_margin"
+        android:layout_marginRight="@dimen/fab_margin"
+        android:layout_marginBottom="16dp"
+        android:layout_centerInParent="false"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true" />
+        android:layout_alignParentEnd="true" />
 
 
 </RelativeLayout>

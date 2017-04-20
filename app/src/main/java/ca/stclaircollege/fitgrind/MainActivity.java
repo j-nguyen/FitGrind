@@ -24,7 +24,6 @@ public class MainActivity extends AppCompatActivity
                     MainFragment.OnFragmentInteractionListener,
                     AddFoodFragment.OnFragmentInteractionListener,
                     ViewFoodFragment.OnFragmentInteractionListener,
-                    WorkoutExerciseFragment.OnFragmentInteractionListener,
                     ExerciseFragment.OnFragmentInteractionListener,
                     ViewCalorieLogFragment.OnFragmentInteractionListener, ViewCalorieDayLogFragment.OnFragmentInteractionListener,
                     EditFoodFragment.OnFragmentInteractionListener, AddCustomFoodFragment.OnFragmentInteractionListener,
@@ -113,24 +112,22 @@ public class MainActivity extends AppCompatActivity
             trans.commit();
 
         } else if (id == R.id.nav_add_food) {
-//            FragmentTransaction trans = fm.beginTransaction();
-//            tran.replace(R.id.content_main, new );
-//            tran.commit();
-
+            FragmentTransaction trans = fm.beginTransaction();
+            trans.replace(R.id.content_main, new AddFoodFragment());
+            trans.commit();
         } else if (id == R.id.nav_weight_log) {
-
-            FragmentTransaction tran = fm.beginTransaction();
-            tran.replace(R.id.content_main, new WeightLogFragment());
-            tran.commit();
-
+            FragmentTransaction trans = fm.beginTransaction();
+            trans.replace(R.id.content_main, new WeightLogFragment());
+            trans.commit();
         } else if (id == R.id.nav_workout_schedule) {
             startActivity(new Intent(MainActivity.this, TabbedActivity.class));
-
-        } else if (id == R.id.nav_progress_gallary) {
-//            FragmentTransaction tran = fm.beginTransaction();
-//            tran.replace(R.id.content_main, new ());
-//            tran.commit();
-
+        } else if (id == R.id.nav_helpful_link) {
+            // Create an intent to launch website
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setData(Uri.parse("https://www.bodybuilding.com/fun/back-to-basics-9-essential-workout-tips.html"));
+            if (intent.resolveActivity(getPackageManager()) != null) {
+                startActivity(intent);
+            }
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

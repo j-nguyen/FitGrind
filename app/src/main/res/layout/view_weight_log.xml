@@ -5,7 +5,8 @@
     android:layout_height="wrap_content"
     card_view:cardElevation="@dimen/elevation"
     card_view:contentPadding="@dimen/padding"
-    android:layout_margin="@dimen/cardview_calorie_margin">
+    android:layout_margin="@dimen/cardview_calorie_margin"
+    android:id="@+id/item_card_view">
 
     <LinearLayout
         android:orientation="vertical"
@@ -25,7 +26,8 @@
                 android:id="@+id/recorded_date"
                 android:layout_weight="1"
                 android:textSize="@dimen/food_title_font_size"
-                android:textStyle="normal|bold" />
+                android:textStyle="normal|bold"
+                android:textColor="@color/primaryText" />
 
             <ImageView
                 android:layout_width="wrap_content"

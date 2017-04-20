@@ -68,7 +68,7 @@ public class AddFoodFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // create api here
-        foodApi = new FoodAPI(getActivity().getApplicationContext(), getString(R.string.API_KEY));
+        foodApi = new FoodAPI(getContext(), getString(R.string.API_KEY));
     }
 
     @Override
@@ -224,10 +224,10 @@ public class AddFoodFragment extends Fragment {
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    // clear textfield
                     searchField.setText("");
-                    searchField.clearFocus();
                     // we wanna get the position of where it is
-                    int position = mRecyclerView.indexOfChild(v);
+                    int position = mRecyclerView.getChildLayoutPosition(v);
                     // we can reference from the mDataset, and launch a new fragment
                     // but we need to get the fragment Manager
                     FragmentManager fm = getActivity().getSupportFragmentManager();

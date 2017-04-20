@@ -4,32 +4,38 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import com.github.chrisbanes.photoview.PhotoView;
+import com.squareup.picasso.Picasso;
+import java.io.File;
+import ca.stclaircollege.fitgrind.database.Progress;
 
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link AddCardioExerciseFragment.OnFragmentInteractionListener} interface
+ * {@link ViewProgressLogFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link AddCardioExerciseFragment#newInstance} factory method to
+ * Use the {@link ViewProgressLogFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class AddCardioExerciseFragment extends Fragment {
+public class ViewProgressLogFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
     // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private Progress mProgress;
+    private PhotoView mImageView;
 
     private OnFragmentInteractionListener mListener;
 
-    public AddCardioExerciseFragment() {
+    public ViewProgressLogFragment() {
         // Required empty public constructor
     }
 
@@ -37,16 +43,14 @@ public class AddCardioExerciseFragment extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment AddCardioExerciseFragment.
+     * @param progress Parameter 1.
+     * @return A new instance of fragment ViewProgressLogFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static AddCardioExerciseFragment newInstance(String param1, String param2) {
-        AddCardioExerciseFragment fragment = new AddCardioExerciseFragment();
+    public static ViewProgressLogFragment newInstance(Progress progress) {
+        ViewProgressLogFragment fragment = new ViewProgressLogFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putParcelable(ARG_PARAM1, progress);
         fragment.setArguments(args);
         return fragment;
     }
@@ -55,8 +59,7 @@ public class AddCardioExerciseFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            mProgress = getArguments().getParcelable(ARG_PARAM1);
         }
     }
 
@@ -64,7 +67,34 @@ public class AddCardioExerciseFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_add_cardio_exercise, container, false);
+        View view = inflater.inflate(R.layout.fragment_view_progress_log, container, false);
+
+        // get action bar
+        final ActionBar bar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+
+        // connect
+        mImageView = (PhotoView) view.findViewById(R.id.progress_imageview);
+
+        // check resource
+        if (mProgress != null) {
+            // Use Picasso set-up the imageview
+            Picasso.with(getActivity()).load(new File(mProgress.getResource())).into(mImageView);
+
+            // we also want to set up the listener too
+            mImageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    // hide or view action bar depending on state
+                    if (bar.isShowing()) {
+                        bar.hide();
+                    } else {
+                        bar.show();
+                    }
+                }
+            });
+        }
+
+        return view;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
