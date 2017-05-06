@@ -96,8 +96,6 @@ public class AddExerciseActivity extends AppCompatActivity implements
                 // we add one to this list because AUTOINCREMENT starts at 1
                 long dayId = daySpinner.getSelectedItemPosition() + 1;
 
-                Intent intent = new Intent();
-
 
                 if(isStrengthSelected) {
 
@@ -113,6 +111,7 @@ public class AddExerciseActivity extends AppCompatActivity implements
                         if (result) {
                             // success
                             // create an intent too
+                            Intent intent = new Intent();
                             intent.putExtra("item", item);
                             setResult(RESULT_OK, intent);
                             finish();
@@ -126,7 +125,7 @@ public class AddExerciseActivity extends AppCompatActivity implements
 
                 } else {
                     if (isCardioFieldsFilled()) {
-                        Cardio item = new Cardio(name, time.getText().toString());
+                        Cardio item = new Cardio(name, Double.parseDouble(time.getText().toString()));
 
                         // create db to start
                         DatabaseHandler db = new DatabaseHandler(getApplicationContext());
@@ -136,6 +135,7 @@ public class AddExerciseActivity extends AppCompatActivity implements
                         if (result) {
                             // success
                             // create an intent too
+                            Intent intent = new Intent();
                             intent.putExtra("item", item);
                             setResult(RESULT_OK, intent);
                             finish();

@@ -43,7 +43,7 @@
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="50dp"
             android:id="@+id/spinnerLayout"
             android:padding="@dimen/padding">
 
@@ -57,7 +57,7 @@
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="50dp"
             android:id="@+id/dayLayout"
             android:padding="@dimen/padding">
 
@@ -184,7 +184,7 @@
                     android:id="@+id/timeEditText"
                     android:layout_weight="1"
                     android:maxLength="9"
-                    android:inputType="time" />
+                    android:inputType="number|numberDecimal" />
 
             </LinearLayout>
         </LinearLayout>

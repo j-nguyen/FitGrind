@@ -9,16 +9,16 @@ import android.os.Parcelable;
 
 public class Cardio extends WorkoutType {
     private long cardioId;
-    private String time;
+    private Double time;
 
-    public Cardio(long cardioId, String name, String time) {
+    public Cardio(long cardioId, String name, Double time) {
         super(-1, name);
         this.name = name;
         this.cardioId = cardioId;
         this.time = time;
     }
 
-    public Cardio(long id, String name, long cardioId, String time) {
+    public Cardio(long id, String name, long cardioId, Double time) {
         super(id, name);
         this.id = id;
         this.name = name;
@@ -26,7 +26,7 @@ public class Cardio extends WorkoutType {
         this.time = time;
     }
 
-    public Cardio(String name, String time) {
+    public Cardio(String name, Double time) {
         super(-1, name);
         this.name = name;
         this.time = time;
@@ -41,18 +41,18 @@ public class Cardio extends WorkoutType {
         this.cardioId = cardioId;
     }
 
-    public String getTime() {
+    public Double getTime() {
         return time;
     }
 
-    public void setTime(String time) {
+    public void setTime(Double time) {
         this.time = time;
     }
 
     private Cardio(Parcel in) {
         super(in);
         cardioId = in.readLong();
-        time = in.readString();
+        time = in.readDouble();
     }
 
     @Override
@@ -64,7 +64,7 @@ public class Cardio extends WorkoutType {
     public void writeToParcel(Parcel dest, int flags) {
         super.writeToParcel(dest, flags);
         dest.writeLong(cardioId);
-        dest.writeString(time);
+        dest.writeDouble(time);
     }
 
     @SuppressWarnings("unused")
