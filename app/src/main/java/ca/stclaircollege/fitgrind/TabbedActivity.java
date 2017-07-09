@@ -26,14 +26,13 @@ import java.util.List;
 
 public class TabbedActivity extends AppCompatActivity implements
     WorkoutProgramFragment.OnFragmentInteractionListener,
-    TimeFragment.OnFragmentInteractionListener,
     ExerciseFragment.OnFragmentInteractionListener {
 
     private Toolbar toolbar;
     private TabLayout tabLayout;
     private int[] tabIcons = {
             R.drawable.ic_today_black_tabbed_24dp,
-            R.drawable.ic_access_alarm_black_24dp,
+            //R.drawable.ic_access_alarm_black_24dp,
     };
 
     /**
@@ -77,13 +76,12 @@ public class TabbedActivity extends AppCompatActivity implements
 
     private void setupTabIcons() {
         tabLayout.getTabAt(0).setIcon(tabIcons[0]);
-        tabLayout.getTabAt(1).setIcon(tabIcons[1]);
+        //tabLayout.getTabAt(1).setIcon(tabIcons[1]);
     }
 
     private void setupViewPager(ViewPager viewPager) {
         SectionsPagerAdapter adapter = new SectionsPagerAdapter(getSupportFragmentManager());
         adapter.addFrag(new WorkoutProgramFragment());
-        adapter.addFrag(new TimeFragment());
         viewPager.setAdapter(adapter);
     }
 
