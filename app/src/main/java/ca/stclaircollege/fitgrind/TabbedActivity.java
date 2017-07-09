@@ -82,6 +82,7 @@ public class TabbedActivity extends AppCompatActivity implements
     private void setupViewPager(ViewPager viewPager) {
         SectionsPagerAdapter adapter = new SectionsPagerAdapter(getSupportFragmentManager());
         adapter.addFrag(new WorkoutProgramFragment());
+        //adapter.addFrag(new TimeFragment());
         viewPager.setAdapter(adapter);
     }
 
