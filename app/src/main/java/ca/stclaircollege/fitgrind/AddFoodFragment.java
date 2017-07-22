@@ -68,7 +68,7 @@ public class AddFoodFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // create api here
-        foodApi = new FoodAPI(getContext(), getString(R.string.API_KEY));
+        foodApi = new FoodAPI(getContext());
     }
 
     @Override

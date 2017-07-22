@@ -76,7 +76,7 @@ public class ViewFoodFragment extends Fragment {
         if (getArguments() != null) {
             currNdbno = getArguments().getInt(NDBNO_KEY);
             // set API here
-            foodApi = new FoodAPI(getActivity().getApplicationContext(), getString(R.string.API_KEY));
+            foodApi = new FoodAPI(getActivity().getApplicationContext());
         }
     }
 

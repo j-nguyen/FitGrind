@@ -3,8 +3,19 @@ package ca.stclaircollege.fitgrind.api;
 import android.content.Context;
 import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.interfaces.JSONObjectRequestListener;
+import com.rx2androidnetworking.Rx2ANRequest;
+import com.rx2androidnetworking.Rx2AndroidNetworking;
+
+import org.json.JSONArray;
+
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.annotations.NonNull;
+import io.reactivex.functions.Function;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * FoodAPI class is where we retrieve all our food, nutritional values and much more.
@@ -19,14 +30,12 @@ public class FoodAPI {
     // URL INFO is to get nutritional info from the search parameters.
     // We can create constants inside here to use later on
     private static final String BASE_URL = "https://api.nal.usda.gov/ndb/";
-    private static final String NUTRIENT_URL = "&nutrients=208&nutrients=269&nutrients=204&nutrients=205&nutrients=606&nutrients=605" +
+    private static final String NUTRIENT_URL = BASE_URL + "nutrients/?nutrients=208&nutrients=269&nutrients=204&nutrients=205&nutrients=606&nutrients=605" +
             "&nutrients=601&nutrients=307&nutrients=291&nutrients=203&nutrients=320&nutrients=401&nutrients=301&nutrients=303&nutrients=306";
+    // A static API key works here
+    private static String apiKey = "pwiN99R45M4Zs6Wj0yHYBxokOxhPYQcZ6WxbQMYt";
 
-    // We will need the API key. We can use context to pass, but having it passed like this might be much better
-    private String apiKey;
-
-    public FoodAPI(Context context, String apiKey) {
-        this.apiKey = apiKey;
+    public FoodAPI(Context context) {
         // Initialize it here
         AndroidNetworking.initialize(context);
     }
@@ -46,6 +55,23 @@ public class FoodAPI {
                 .getAsJSONObject(requestListener);
     }
 
+    public Observable<Food> searchFood(String food) {
+         return Rx2AndroidNetworking.get(BASE_URL + "search/?")
+                .addQueryParameter("format", "json")
+                .addQueryParameter("q", food)
+                .addQueryParameter("api_key", this.apiKey)
+                .build()
+                .getJSONArrayObservable()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .map(new Function<JSONArray, Food>() {
+                    @Override
+                    public Food apply(JSONArray jsonArray) throws Exception {
+                        return null;
+                    }
+                });
+    }
+
     /**
      * Food Results from specified number
      * @param ndbno
@@ -53,7 +79,8 @@ public class FoodAPI {
      */
     public void foodResult(int ndbno, JSONObjectRequestListener requestListener) {
         // because there's no easy way, we'll have to add it manually like so
-        AndroidNetworking.get(BASE_URL + "nutrients/?format=json" + NUTRIENT_URL)
+        AndroidNetworking.get(NUTRIENT_URL)
+                .addQueryParameter("format", "json")
                 .addQueryParameter("ndbno", Integer.toString(ndbno))
                 .addQueryParameter("api_key", this.apiKey)
                 .build()
