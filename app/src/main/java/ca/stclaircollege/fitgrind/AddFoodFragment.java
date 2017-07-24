@@ -25,24 +25,20 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.util.ArrayList;
+
+import ca.stclaircollege.fitgrind.api.Food;
 import ca.stclaircollege.fitgrind.api.FoodAPI;
 import ca.stclaircollege.fitgrind.api.Item;
+import io.reactivex.Observable;
+import io.reactivex.Observer;
+import io.reactivex.annotations.NonNull;
+import io.reactivex.disposables.Disposable;
 
 /**
  * AddFoodFragment class handles the search and view aspects of the food item you've searched for.
  * Once searched, it opens up a new Fragment that allows us to find fragments
  */
 public class AddFoodFragment extends Fragment {
-
-    private static final String LIST_KEY = "list";
-    private static final String ERRORS_KEY = "errors";
-    private static final String ERROR_KEY = "error";
-    private static final String MESSAGE_KEY = "message";
-    private static final String ITEM_KEY = "item";
-    // -------------------------------------------
-    private static final String START_KEY = "start";
-    private static final String END_KEY = "end";
-    private static final String TOTAL_KEY = "total";
 
     private OnFragmentInteractionListener mListener;
 
@@ -62,13 +58,15 @@ public class AddFoodFragment extends Fragment {
     // Instead of creating a class for this, we can set up private variables for start, end, and total for the result returned
     private int start, end, total;
 
+    private ArrayList<Item> itemList = new ArrayList<Item>();
+
     public AddFoodFragment() {}
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // create api here
-        foodApi = new FoodAPI(getContext(), getString(R.string.API_KEY));
+        foodApi = new FoodAPI(getContext());
     }
 
     @Override
@@ -140,46 +138,24 @@ public class AddFoodFragment extends Fragment {
     private void searchFood(){
         // show progress
         progressBar.setVisibility(View.VISIBLE);
-        foodApi.foodSearch(searchField.getText().toString(), new JSONObjectRequestListener() {
+        Observable<ArrayList<Item>> itemObservable = foodApi.searchFood(searchField.getText().toString());
+        itemObservable.subscribe(new Observer<ArrayList<Item>>() {
             @Override
-            public void onResponse(JSONObject response) {
-                // If a response occurs we search
-                progressBar.setVisibility(View.GONE);
-                try {
-                    // check to make sure if we have a result, if not, then who care
-                    if (response.has(LIST_KEY)) {
-                        // We now want to only get the items, so we can display it on the listview
-                        JSONObject list = response.getJSONObject(LIST_KEY);
-                        // we need this for later to gather when Recycler View is scrolling down.
-                        start = list.getInt(START_KEY);
-                        end = list.getInt(END_KEY);
-                        total = list.getInt(TOTAL_KEY);
-                        JSONArray jsonArray = list.getJSONArray(ITEM_KEY);
-                        // create a new item list to start
-                        ArrayList<Item> itemList = new ArrayList<Item>();
-                        // iterate in a for loop
-                        for (int i=0; i< jsonArray.length(); i++) {
-                            JSONObject obj = jsonArray.getJSONObject(i);
-                            itemList.add(new Item(obj.getString(Item.GROUP_KEY), obj.getString(Item.NAME_KEY), Integer.parseInt(obj.getString(Item.NDBNO_KEY))));
-                        }
-                        // set the adapter
-                        mRecyclerView.setAdapter(new MyAdapter(itemList));
-                    } else {
-                        // if we don't we make a text view
-                        JSONArray result = response.getJSONObject(ERRORS_KEY).getJSONArray(ERROR_KEY);
-                        String message = (String) ((JSONObject) result.get(0)).get(MESSAGE_KEY);
-                        Toast.makeText(getContext(),  message, Toast.LENGTH_LONG).show();
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+            public void onSubscribe(Disposable d) { }
+
+            @Override
+            public void onNext(ArrayList<Item> items) {
+                mRecyclerView.setAdapter(new MyAdapter(items));
             }
 
             @Override
-            public void onError(ANError anError) {
+            public void onError(Throwable e) {
                 progressBar.setVisibility(View.GONE);
-                Toast.makeText(getContext(), R.string.invalid_search, Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
             }
+
+            @Override
+            public void onComplete() { progressBar.setVisibility(View.GONE); }
         });
     }
 
