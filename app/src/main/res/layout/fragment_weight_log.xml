@@ -75,12 +75,14 @@
 
     </LinearLayout>
 
-    <android.support.design.widget.FloatingActionButton
+    <com.github.clans.fab.FloatingActionButton
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:clickable="true"
         app:fabSize="normal"
-        app:srcCompat="@drawable/ic_add_black_24dp"
+        android:src="@drawable/ic_add_black_24dp"
+        app:fab_colorPressed="@color/colorSecondary"
+        app:fab_colorNormal="@color/colorAccent"
         android:id="@+id/fab"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"

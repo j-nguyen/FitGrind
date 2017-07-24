@@ -123,19 +123,54 @@
 
     </LinearLayout>
 
-    <android.support.design.widget.FloatingActionButton
-        android:layout_width="match_parent"
+
+    <com.github.clans.fab.FloatingActionMenu
+        android:id="@+id/menu"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:clickable="true"
-        app:srcCompat="@drawable/ic_add_black_24dp"
-        android:id="@+id/fab"
-        android:layout_marginLeft="@dimen/fab_margin"
-        android:layout_marginRight="@dimen/fab_margin"
-        android:layout_marginBottom="16dp"
-        android:layout_centerInParent="false"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        app:fabSize="normal" />
+        android:layout_alignParentRight="true"
+        android:layout_margin="@dimen/fab_margin"
+        app:menu_fab_size="normal"
+        app:menu_colorNormal="@color/colorAccent"
+        app:menu_colorPressed="@color/colorSecondary"
+        app:menu_animationDelayPerItem="50"
+        app:menu_icon="@drawable/fab_add"
+        app:menu_labels_showAnimation="@anim/fab_slide_in_from_right"
+        app:menu_labels_hideAnimation="@anim/fab_slide_out_to_right"
+        app:menu_labels_position="left"
+        app:menu_openDirection="up"
+        app:menu_backgroundColor="@android:color/transparent">
 
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/foodFab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_food"
+            app:menu_colorNormal="@color/colorPrimary"
+            app:fab_colorPressed="@color/colorPrimaryDark"
+            app:fab_size="mini"
+            app:fab_label="@string/add_food" />
 
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/customFoodFab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_food"
+            app:menu_colorNormal="@color/colorPrimary"
+            app:fab_colorPressed="@color/colorPrimaryDark"
+            app:fab_size="mini"
+            app:fab_label="@string/add_custom_food" />
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/weightLogFab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_scale_bathroom"
+            app:menu_colorNormal="@color/colorPrimary"
+            app:fab_colorPressed="@color/colorPrimaryDark"
+            app:fab_size="mini"
+            app:fab_label="@string/weight_log" />
+
+    </com.github.clans.fab.FloatingActionMenu>
 </RelativeLayout>
