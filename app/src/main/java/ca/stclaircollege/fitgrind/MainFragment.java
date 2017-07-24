@@ -8,7 +8,6 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -26,6 +25,8 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.github.clans.fab.FloatingActionButton;
 
 import org.w3c.dom.Text;
 
@@ -64,7 +65,7 @@ public class MainFragment extends Fragment {
     private CardView results;
 
     // connect from the xml layout here
-    private FloatingActionButton fab;
+    private FloatingActionButton foodFab, customFoodFab, weightLogFab;
     private WeightCalculator weightCalculator;
 
     public MainFragment() {}
@@ -146,13 +147,13 @@ public class MainFragment extends Fragment {
         results.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Create a fragmentManager
-                FragmentManager fm = getActivity().getSupportFragmentManager();
-                FragmentTransaction trans = fm.beginTransaction();
-                trans.setCustomAnimations(R.anim.fade_in, R.anim.fade_out);
-                trans.replace(R.id.content_main, new ViewCalorieLogFragment());
-                trans.addToBackStack(null);
-                trans.commit();
+            // Create a fragmentManager
+            FragmentManager fm = getActivity().getSupportFragmentManager();
+            FragmentTransaction trans = fm.beginTransaction();
+            trans.setCustomAnimations(R.anim.fade_in, R.anim.fade_out);
+            trans.replace(R.id.content_main, new ViewCalorieLogFragment());
+            trans.addToBackStack(null);
+            trans.commit();
             }
         });
 
@@ -175,10 +176,6 @@ public class MainFragment extends Fragment {
         // we want to set the text view for last logged weight, last calories and calories goal
         Calendar cal = Calendar.getInstance(Locale.getDefault());
         mCurrentDate.setText("Today\'s Date: " + new SimpleDateFormat("EEE, MMM d, ''yy").format(cal.getTime()));
-
-        // set up for last logged, we'll need to db this one
-        String calorieLogDate = (db.lastRecordedCalorieLog() != null) ? db.lastRecordedCalorieLog() : "";
-        String weightLogDate = (db.lastRecordedWeightLog() != null) ? db.lastRecordedWeightLog() : "";
         db.close();
 
         // set a long lcick for mlistview
@@ -218,15 +215,38 @@ public class MainFragment extends Fragment {
         });
 
         // connect layout
-        fab = (FloatingActionButton) view.findViewById(R.id.fab);
+        foodFab = (FloatingActionButton) view.findViewById(R.id.foodFab);
+        customFoodFab = (FloatingActionButton) view.findViewById(R.id.customFoodFab);
+        weightLogFab = (FloatingActionButton) view.findViewById(R.id.weightLogFab);
 
-        fab.setOnClickListener(new View.OnClickListener() {
+        foodFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                FragmentManager fm = getActivity().getSupportFragmentManager();
-                FragmentTransaction trans = fm.beginTransaction();
+                FragmentTransaction trans = getActivity().getSupportFragmentManager().beginTransaction();
                 trans.setCustomAnimations(R.anim.fade_in, R.anim.fade_out);
                 trans.replace(R.id.content_main, new AddFoodFragment());
+                trans.addToBackStack(null);
+                trans.commit();
+            }
+        });
+
+        customFoodFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FragmentTransaction trans = getActivity().getSupportFragmentManager().beginTransaction();
+                trans.setCustomAnimations(R.anim.fade_in, R.anim.fade_out);
+                trans.replace(R.id.content_main, new AddCustomFoodFragment());
+                trans.addToBackStack(null);
+                trans.commit();
+            }
+        });
+
+        weightLogFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FragmentTransaction trans = getActivity().getSupportFragmentManager().beginTransaction();
+                trans.setCustomAnimations(R.anim.fade_in, R.anim.fade_out);
+                trans.replace(R.id.content_main, new WeightLogFragment());
                 trans.addToBackStack(null);
                 trans.commit();
             }

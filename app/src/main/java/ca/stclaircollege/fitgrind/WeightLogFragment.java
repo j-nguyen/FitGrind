@@ -14,10 +14,8 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.ActivityCompat;
+import com.github.clans.fab.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.FileProvider;
 import android.support.v7.widget.PopupMenu;
 import android.text.InputType;
@@ -46,10 +44,7 @@ import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 import ca.stclaircollege.fitgrind.database.DatabaseHandler;
 import ca.stclaircollege.fitgrind.database.Progress;
-import ca.stclaircollege.fitgrind.database.Strength;
 import ca.stclaircollege.fitgrind.database.Weight;
-
-
 
 /**
  * A simple {@link Fragment} subclass.

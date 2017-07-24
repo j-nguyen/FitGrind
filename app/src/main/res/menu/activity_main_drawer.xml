@@ -20,29 +20,20 @@
             android:id="@+id/nav_workout_schedule"
             android:icon="@drawable/ic_today_black_24dp"
             android:title="@string/workout_schedule" />
-    </group>
 
-    <item android:title="@string/add_title">
-        <menu>
-            <item
-                android:id="@+id/nav_add_custom_food"
-                android:icon="@drawable/ic_food"
-                android:title="@string/add_custom_food" />
-            <item
-                android:id="@+id/nav_add_food"
-                android:icon="@drawable/ic_food"
-                android:title="@string/add_food" />
-        </menu>
-    </item>
+        <item
+            android:id="@+id/nav_add_custom_food"
+            android:icon="@drawable/ic_food"
+            android:title="@string/add_custom_food" />
+        <item
+            android:id="@+id/nav_add_food"
+            android:icon="@drawable/ic_food"
+            android:title="@string/add_food" />
+    </group>
 
     <group
         android:checkableBehavior="single"
         android:id="@+id/links">
-
-        <item
-            android:id="@+id/nav_helpful_link"
-            android:title="@string/workout_tips"
-            android:icon="@drawable/ic_help_black_24dp"/>
 
         <item
             android:id="@+id/nav_credits"

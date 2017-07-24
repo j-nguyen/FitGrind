@@ -6,9 +6,6 @@
     tools:context="ca.stclaircollege.fitgrind.AddExerciseActivity"
     android:orientation="vertical">
 
-    <!-- TODO: Update blank fragment layout -->
-
-
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
@@ -21,22 +18,19 @@
             android:layout_height="wrap_content"
             android:id="@+id/NameLayout">
 
-            <TextView
-                android:text="Exercise"
-                android:layout_height="wrap_content"
-                android:id="@+id/exerciseName"
-                android:layout_weight="1"
-                android:layout_width="0dp"
-                android:gravity="center_horizontal"
-                android:textSize="@dimen/listview_font_size" />
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-            <EditText
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:inputType="textPersonName"
-                android:ems="10"
-                android:id="@+id/exerciseEditText"
-                android:layout_weight="1" />
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPersonName"
+                    android:hint="Workout"
+                    android:ems="10"
+                    android:id="@+id/exerciseEditText" />
+
+            </android.support.design.widget.TextInputLayout>
 
         </LinearLayout>
 
@@ -80,78 +74,60 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <TextView
-                    android:text="Set"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/exerciseSet"
+                <android.support.design.widget.TextInputLayout
                     android:layout_weight="1"
-                    android:layout_marginLeft="3dp"
-                    android:layout_width="0dp"
-                    android:gravity="center_horizontal"
-                    android:textSize="@dimen/listview_font_size" />
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
 
-                <EditText
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:ems="10"
-                    android:id="@+id/setEditText"
+                    <EditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:ems="10"
+                        android:hint="Sets"
+                        android:id="@+id/setEditText"
+                        android:layout_weight="1"
+                        android:inputType="number"
+                        android:maxLength="9" />
+
+
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
                     android:layout_weight="1"
-                    android:inputType="number"
-                    android:maxLength="9" />
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <EditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:ems="10"
+                        android:hint="Reps"
+                        android:id="@+id/repEditText"
+                        android:layout_weight="1"
+                        android:inputType="number"
+                        android:maxLength="9" />
+
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_weight="1"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <EditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:ems="10"
+                        android:hint="Weight"
+                        android:id="@+id/weightEditText"
+                        android:layout_weight="1"
+                        android:inputType="numberDecimal"
+                        android:maxLength="9" />
+
+                </android.support.design.widget.TextInputLayout>
 
             </LinearLayout>
 
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:text="Rep"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/exerciseRep"
-                    android:layout_weight="1"
-                    android:layout_marginLeft="3dp"
-                    android:layout_width="0dp"
-                    android:gravity="center_horizontal"
-                    android:textSize="@dimen/listview_font_size" />
-
-                <EditText
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:ems="10"
-                    android:id="@+id/repEditText"
-                    android:layout_weight="1"
-                    android:inputType="number"
-                    android:maxLength="9" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:text="Weight"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/exerciseWeight"
-                    android:layout_weight="1"
-                    android:layout_marginLeft="3dp"
-                    android:layout_width="0dp"
-                    android:gravity="center_horizontal"
-                    android:textSize="@dimen/listview_font_size" />
-
-                <EditText
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:ems="10"
-                    android:id="@+id/weightEditText"
-                    android:layout_weight="1"
-                    android:inputType="numberDecimal"
-                    android:maxLength="9" />
-
-            </LinearLayout>
 
         </LinearLayout>
 
@@ -167,49 +143,32 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <TextView
-                    android:text="Time"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/exerciseTime"
-                    android:layout_weight="1"
-                    android:layout_marginLeft="3dp"
-                    android:layout_width="0dp"
-                    android:gravity="center_horizontal"
-                    android:textSize="@dimen/listview_font_size" />
-
-                <EditText
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:ems="10"
-                    android:id="@+id/timeEditText"
-                    android:layout_weight="1"
-                    android:maxLength="9"
-                    android:inputType="number|numberDecimal" />
-
-            </LinearLayout>
-        </LinearLayout>
-
-        <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center_vertical">
-
-            <LinearLayout
-                android:orientation="vertical"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <Button
-                    android:text="Add Exercise "
+                <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/exerciseSubmitButton"
-                    android:layout_weight="1"
-                    android:backgroundTint="@color/buttonPrimaryColor"
-                    android:textColor="@android:color/white" />
+                    android:layout_height="match_parent">
+
+                    <EditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:ems="10"
+                        android:id="@+id/timeEditText"
+                        android:maxLength="9"
+                        android:hint="Time Duration"
+                        android:inputType="number|numberDecimal" />
+
+                </android.support.design.widget.TextInputLayout>
+
             </LinearLayout>
         </LinearLayout>
+
+        <Button
+            android:text="Add Exercise "
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/exerciseSubmitButton"
+            android:layout_marginTop="@dimen/submit_margin"
+            android:backgroundTint="@color/buttonPrimaryColor"
+            android:textColor="@android:color/white" />
 
     </LinearLayout>
 </LinearLayout>
