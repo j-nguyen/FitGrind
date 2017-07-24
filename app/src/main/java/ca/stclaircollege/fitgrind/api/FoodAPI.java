@@ -7,6 +7,7 @@ import com.rx2androidnetworking.Rx2ANRequest;
 import com.rx2androidnetworking.Rx2AndroidNetworking;
 
 import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,6 +15,7 @@ import java.util.HashMap;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.annotations.NonNull;
+import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
@@ -35,6 +37,16 @@ public class FoodAPI {
     // A static API key works here
     private static String apiKey = "pwiN99R45M4Zs6Wj0yHYBxokOxhPYQcZ6WxbQMYt";
 
+    private static final String LIST_KEY = "list";
+    private static final String ERRORS_KEY = "errors";
+    private static final String ERROR_KEY = "error";
+    private static final String MESSAGE_KEY = "message";
+    private static final String ITEM_KEY = "item";
+    // -------------------------------------------
+    private static final String START_KEY = "start";
+    private static final String END_KEY = "end";
+    private static final String TOTAL_KEY = "total";
+
     public FoodAPI(Context context) {
         // Initialize it here
         AndroidNetworking.initialize(context);
@@ -55,21 +67,39 @@ public class FoodAPI {
                 .getAsJSONObject(requestListener);
     }
 
-    public Observable<Food> searchFood(String food) {
+    public Observable<ArrayList<Item>> searchFood(String food) {
          return Rx2AndroidNetworking.get(BASE_URL + "search/?")
                 .addQueryParameter("format", "json")
                 .addQueryParameter("q", food)
                 .addQueryParameter("api_key", this.apiKey)
                 .build()
-                .getJSONArrayObservable()
+                .getJSONObjectObservable()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .map(new Function<JSONArray, Food>() {
-                    @Override
-                    public Food apply(JSONArray jsonArray) throws Exception {
-                        return null;
-                    }
-                });
+                .map(new ParseData());
+
+    }
+
+    private final class ParseData implements Function<JSONObject, ArrayList<Item>> {
+        @Override
+        public ArrayList<Item> apply(JSONObject json) throws Exception {
+            if (json.has(LIST_KEY)) {
+                // We now want to only get the items, so we can display it on the listview
+                JSONObject list = json.getJSONObject(LIST_KEY);
+                JSONArray jsonArray = list.getJSONArray(ITEM_KEY);
+                // create a new item list to start
+                ArrayList<Item> itemList = new ArrayList<Item>();
+                // iterate in a for loop
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject obj = jsonArray.getJSONObject(i);
+                    itemList.add(new Item(obj.getString(Item.GROUP_KEY), obj.getString(Item.NAME_KEY), Integer.parseInt(obj.getString(Item.NDBNO_KEY))));
+                }
+                return itemList;
+            }
+            JSONArray result = json.getJSONObject(ERRORS_KEY).getJSONArray(ERROR_KEY);
+            String message = (String) ((JSONObject) result.get(0)).get(MESSAGE_KEY);
+            throw new Exception(message);
+        }
     }
 
     /**
