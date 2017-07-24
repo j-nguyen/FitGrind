@@ -11,6 +11,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -43,9 +44,9 @@ public class FoodAPI {
     private static final String MESSAGE_KEY = "message";
     private static final String ITEM_KEY = "item";
     // -------------------------------------------
-    private static final String START_KEY = "start";
-    private static final String END_KEY = "end";
-    private static final String TOTAL_KEY = "total";
+    private static final String REPORT_KEY = "report";
+    private static final String FOODS_KEY = "foods";
+    private static final String NUTRIENT_KEY = "nutrients";
 
     public FoodAPI(Context context) {
         // Initialize it here
@@ -66,30 +67,59 @@ public class FoodAPI {
                 .getJSONObjectObservable()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .map(new ParseData());
+                .map(new Function<JSONObject, ArrayList<Item>>() {
+                    @Override
+                    public ArrayList<Item> apply(JSONObject json) throws Exception {
+                        if (json.has(LIST_KEY)) {
+                            // We now want to only get the items, so we can display it on the listview
+                            JSONObject list = json.getJSONObject(LIST_KEY);
+                            JSONArray jsonArray = list.getJSONArray(ITEM_KEY);
+                            // create a new item list to start
+                            ArrayList<Item> itemList = new ArrayList<Item>();
+                            // iterate in a for loop
+                            for (int i = 0; i < jsonArray.length(); i++) {
+                                JSONObject obj = jsonArray.getJSONObject(i);
+                                itemList.add(new Item(obj.getString(Item.GROUP_KEY), obj.getString(Item.NAME_KEY), Integer.parseInt(obj.getString(Item.NDBNO_KEY))));
+                            }
+                            return itemList;
+                        }
+                        JSONArray result = json.getJSONObject(ERRORS_KEY).getJSONArray(ERROR_KEY);
+                        String message = (String) ((JSONObject) result.get(0)).get(MESSAGE_KEY);
+                        throw new Exception(message);
+                    }
+                });
 
     }
 
-    private final class ParseData implements Function<JSONObject, ArrayList<Item>> {
-        @Override
-        public ArrayList<Item> apply(JSONObject json) throws Exception {
-            if (json.has(LIST_KEY)) {
-                // We now want to only get the items, so we can display it on the listview
-                JSONObject list = json.getJSONObject(LIST_KEY);
-                JSONArray jsonArray = list.getJSONArray(ITEM_KEY);
-                // create a new item list to start
-                ArrayList<Item> itemList = new ArrayList<Item>();
-                // iterate in a for loop
-                for (int i = 0; i < jsonArray.length(); i++) {
-                    JSONObject obj = jsonArray.getJSONObject(i);
-                    itemList.add(new Item(obj.getString(Item.GROUP_KEY), obj.getString(Item.NAME_KEY), Integer.parseInt(obj.getString(Item.NDBNO_KEY))));
-                }
-                return itemList;
-            }
-            JSONArray result = json.getJSONObject(ERRORS_KEY).getJSONArray(ERROR_KEY);
-            String message = (String) ((JSONObject) result.get(0)).get(MESSAGE_KEY);
-            throw new Exception(message);
-        }
+    public Observable<Food> getFood(int ndbno) {
+        return Rx2AndroidNetworking.get(NUTRIENT_URL)
+                .addQueryParameter("format", "json")
+                .addQueryParameter("ndbno", Integer.toString(ndbno))
+                .addQueryParameter("api_key", this.apiKey)
+                .build()
+                .getJSONObjectObservable()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .map(new Function<JSONObject, Food>() {
+                    @Override
+                    public Food apply(JSONObject json) throws Exception {
+                        JSONObject report = json.getJSONObject(REPORT_KEY);
+                        // retrieve the data. Because we know NDBno is unique, we expect ONLY 1.
+                        JSONObject foodObj = (JSONObject) report.getJSONArray(FOODS_KEY).get(0);
+                        // Create a tmp variable for better storage organize
+                        String serving = foodObj.getString(Food.MEASURE_KEY) + " " + foodObj.getString(Food.WEIGHT_KEY) + "g";
+                        // create the food object
+                        Food currFood = new Food(foodObj.getString(Food.NAME_KEY), serving);
+                        // now we want to iterate through the nutrient list json object.
+                        JSONArray nutrientObj = foodObj.getJSONArray(NUTRIENT_KEY);
+                        for (int i=0; i < nutrientObj.length(); i++) {
+                            JSONObject obj = nutrientObj.getJSONObject(i);
+                            currFood.addNutrient(new Nutrient(obj.getString(Nutrient.NUTRIENT_KEY),
+                                    obj.getString(Nutrient.UNIT_KEY), obj.getString(Nutrient.VALUE_KEY)));
+                        }
+                        return currFood;
+                    }
+                });
     }
 
     /**

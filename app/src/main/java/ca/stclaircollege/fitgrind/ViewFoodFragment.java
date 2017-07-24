@@ -28,6 +28,9 @@ import ca.stclaircollege.fitgrind.api.Food;
 import ca.stclaircollege.fitgrind.api.FoodAPI;
 import ca.stclaircollege.fitgrind.api.Nutrient;
 import ca.stclaircollege.fitgrind.database.DatabaseHandler;
+import io.reactivex.Observer;
+import io.reactivex.annotations.NonNull;
+import io.reactivex.disposables.Disposable;
 
 /**
  * ViewFoodFragment class handles the viewing process of the food, such as the nutritional values that the food provides, as well
@@ -35,12 +38,8 @@ import ca.stclaircollege.fitgrind.database.DatabaseHandler;
  */
 public class ViewFoodFragment extends Fragment {
 
-    private static final String NDBNO_KEY = "ndbno";
-    private static final String REPORT_KEY = "report";
-    private static final String FOODS_KEY = "foods";
-    private static final String NUTRIENT_KEY = "nutrients";
-
     private OnFragmentInteractionListener mListener;
+    private static final String NDBNO_KEY = "ndbno";
 
     // Get the unique Id from the previous fragment
     private int currNdbno;
@@ -98,41 +97,26 @@ public class ViewFoodFragment extends Fragment {
             // load the progress bar
             progressView.setVisibility(View.VISIBLE);
             // use food method
-            foodApi.foodResult(currNdbno, new JSONObjectRequestListener() {
+            foodApi.getFood(currNdbno).subscribe(new Observer<Food>() {
                 @Override
-                public void onResponse(JSONObject response) {
-                    progressView.setVisibility(View.GONE);
-                    // In this response, we show them
-                    try {
-                        JSONObject report = response.getJSONObject(REPORT_KEY);
-                        // retrieve the data. Because we know NDBno is unique, we expect ONLY 1.
-                        JSONObject foodObj = (JSONObject) report.getJSONArray(FOODS_KEY).get(0);
-                        // Create a tmp variable for better storage organize
-                        String serving = foodObj.getString(Food.MEASURE_KEY) + " " + foodObj.getString(Food.WEIGHT_KEY) + "g";
-                        // create the food object
-                        currFood = new Food(foodObj.getString(Food.NAME_KEY), serving);
-                        // now we want to iterate through the nutrient list json object.
-                        JSONArray nutrientObj = foodObj.getJSONArray(NUTRIENT_KEY);
-                        for (int i=0; i < nutrientObj.length(); i++) {
-                            JSONObject obj = nutrientObj.getJSONObject(i);
-                            currFood.addNutrient(new Nutrient(obj.getString(Nutrient.NUTRIENT_KEY),
-                                    obj.getString(Nutrient.UNIT_KEY), obj.getString(Nutrient.VALUE_KEY)));
-                        }
-                        // set adapter and food name as well as the serving
-                        mFoodName.setText(currFood.getName());
-                        mFoodWeight.setText(currFood.getServingSize());
-                        mListView.setAdapter(new CustomAdapter(getContext(), currFood.getNutrients()));
-                    } catch (JSONException e) {
-                        Toast.makeText(getContext(), R.string.invalid_nutrients, Toast.LENGTH_SHORT).show();
-                        e.printStackTrace();
-                    }
+                public void onSubscribe(Disposable d) { }
+
+                @Override
+                public void onNext(Food food) {
+                    currFood = food;
+                    mFoodName.setText(currFood.getName());
+                    mFoodWeight.setText(currFood.getServingSize());
+                    mListView.setAdapter(new CustomAdapter(getContext(), currFood.getNutrients()));
                 }
 
                 @Override
-                public void onError(ANError anError) {
-                    // output toast text if error
-                    Toast.makeText(getContext(), R.string.invalid_info, Toast.LENGTH_SHORT).show();
+                public void onError(Throwable e) {
+                    progressView.setVisibility(View.GONE);
+                    Toast.makeText(getContext(), R.string.invalid_info, Toast.LENGTH_LONG).show();
                 }
+
+                @Override
+                public void onComplete() { progressView.setVisibility(View.GONE); }
             });
         }
 
