@@ -8,6 +8,7 @@ import android.preference.Preference;
 import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.design.widget.NavigationView;
@@ -27,7 +28,8 @@ public class MainActivity extends AppCompatActivity
                     ExerciseFragment.OnFragmentInteractionListener,
                     ViewCalorieLogFragment.OnFragmentInteractionListener, ViewCalorieDayLogFragment.OnFragmentInteractionListener,
                     EditFoodFragment.OnFragmentInteractionListener, AddCustomFoodFragment.OnFragmentInteractionListener,
-                    WeightLogFragment.OnFragmentInteractionListener, CreditsFragment.OnFragmentInteractionListener {
+                    WeightLogFragment.OnFragmentInteractionListener, CreditsFragment.OnFragmentInteractionListener,
+                    WorkoutProgramFragment.OnFragmentInteractionListener {
 
     // create fragment manager
     private FragmentManager fm = getSupportFragmentManager();
@@ -94,41 +96,28 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        FragmentTransaction trans = fm.beginTransaction();
+        Fragment fragment = null;
+        final FragmentTransaction trans = fm.beginTransaction();
 
         if (id == R.id.nav_home) {
-            trans.replace(R.id.content_main, new MainFragment());
-            trans.setCustomAnimations(R.anim.fade_in, R.anim.fade_out);
-            trans.commit();
+            fragment = new MainFragment();
         } else if (id == R.id.nav_diary) {
-            trans.replace(R.id.content_main, new ViewCalorieLogFragment());
-            trans.setCustomAnimations(R.anim.fade_in, R.anim.fade_out);
-            trans.commit();
+            fragment = new ViewCalorieLogFragment();
         } else if (id == R.id.nav_add_custom_food) {
-            trans.replace(R.id.content_main, new AddCustomFoodFragment());
-            trans.setCustomAnimations(R.anim.fade_in, R.anim.fade_out);
-            trans.commit();
+            fragment = new AddCustomFoodFragment();
         } else if (id == R.id.nav_add_food) {
-            trans.replace(R.id.content_main, new AddFoodFragment());
-            trans.setCustomAnimations(R.anim.fade_in, R.anim.fade_out);
-            trans.commit();
+            fragment = new AddFoodFragment();
         } else if (id == R.id.nav_weight_log) {
-            trans.replace(R.id.content_main, new WeightLogFragment());
-            trans.setCustomAnimations(R.anim.fade_in, R.anim.fade_out);
-            trans.commit();
+            fragment = new WeightLogFragment();
         } else if (id == R.id.nav_workout_schedule) {
-            trans.replace(R.id.content_main, new WorkoutProgramFragment());
-            trans.setCustomAnimations(R.anim.fade_in, R.anim.fade_out);
-            trans.commit();
-        } else if (id == R.id.nav_helpful_link) {
-            // Create an intent to launch website
-            Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.setData(Uri.parse("https://www.bodybuilding.com/fun/back-to-basics-9-essential-workout-tips.html"));
-            if (intent.resolveActivity(getPackageManager()) != null) startActivity(intent);
+            fragment = new WorkoutProgramFragment();
         } else if (id == R.id.nav_credits) {
-            trans.replace(R.id.content_main, new CreditsFragment());
-            trans.commit();
+            fragment = new CreditsFragment();
         }
+
+        trans.replace(R.id.content_main, fragment);
+        trans.setCustomAnimations(R.anim.fade_in, R.anim.fade_out);
+        trans.commit();
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);

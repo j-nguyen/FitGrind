@@ -110,4 +110,5 @@
     <string name="title_log_day">Food Logs</string>
     <string name="credits_title">Credits</string>
     <string name="credits_desc">Special Thanks to: \nUSDA API\nPicassco\nFast Android Networking\nMaterial Design Icons\nChris\'s Banes PhotoView for Pinching and Zooming\nCircleIndicator for showing viewpagers</string>
+    <string name="workout_program_title">Workout Program</string>
 </resources>
