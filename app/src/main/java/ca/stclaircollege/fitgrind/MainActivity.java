@@ -30,12 +30,11 @@ public class MainActivity extends AppCompatActivity
                     WeightLogFragment.OnFragmentInteractionListener, CreditsFragment.OnFragmentInteractionListener {
 
     // create fragment manager
-    FragmentManager fm = getSupportFragmentManager();
+    private FragmentManager fm = getSupportFragmentManager();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -95,46 +94,38 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
+        FragmentTransaction trans = fm.beginTransaction();
+
         if (id == R.id.nav_home) {
-            FragmentTransaction trans = fm.beginTransaction();
             trans.replace(R.id.content_main, new MainFragment());
             trans.setCustomAnimations(R.anim.fade_in, R.anim.fade_out);
             trans.commit();
-
         } else if (id == R.id.nav_diary) {
-
-            FragmentTransaction trans = fm.beginTransaction();
             trans.replace(R.id.content_main, new ViewCalorieLogFragment());
             trans.setCustomAnimations(R.anim.fade_in, R.anim.fade_out);
             trans.commit();
-
         } else if (id == R.id.nav_add_custom_food) {
-
-            FragmentTransaction trans = fm.beginTransaction();
             trans.replace(R.id.content_main, new AddCustomFoodFragment());
             trans.setCustomAnimations(R.anim.fade_in, R.anim.fade_out);
             trans.commit();
         } else if (id == R.id.nav_add_food) {
-            FragmentTransaction trans = fm.beginTransaction();
             trans.replace(R.id.content_main, new AddFoodFragment());
             trans.setCustomAnimations(R.anim.fade_in, R.anim.fade_out);
             trans.commit();
         } else if (id == R.id.nav_weight_log) {
-            FragmentTransaction trans = fm.beginTransaction();
             trans.replace(R.id.content_main, new WeightLogFragment());
             trans.setCustomAnimations(R.anim.fade_in, R.anim.fade_out);
             trans.commit();
         } else if (id == R.id.nav_workout_schedule) {
-            startActivity(new Intent(MainActivity.this, TabbedActivity.class));
+            trans.replace(R.id.content_main, new WorkoutProgramFragment());
+            trans.setCustomAnimations(R.anim.fade_in, R.anim.fade_out);
+            trans.commit();
         } else if (id == R.id.nav_helpful_link) {
             // Create an intent to launch website
             Intent intent = new Intent(Intent.ACTION_VIEW);
             intent.setData(Uri.parse("https://www.bodybuilding.com/fun/back-to-basics-9-essential-workout-tips.html"));
-            if (intent.resolveActivity(getPackageManager()) != null) {
-                startActivity(intent);
-            }
+            if (intent.resolveActivity(getPackageManager()) != null) startActivity(intent);
         } else if (id == R.id.nav_credits) {
-            FragmentTransaction trans = fm.beginTransaction();
             trans.replace(R.id.content_main, new CreditsFragment());
             trans.commit();
         }

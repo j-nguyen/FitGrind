@@ -189,8 +189,6 @@ public class WorkoutExerciseActivity extends AppCompatActivity implements
 
         if (requestCode == ADD_EXERCISE_REQUEST && resultCode == RESULT_OK && data != null) {
             WorkoutType item = data.getExtras().getParcelable("item");
-//            System.out.println(item.getName());
-//            WorkoutType item = data.getExtras().getParcelable("item");
             ((ExerciseFragment) sectionPagerAdapter.getRegisteredFragment(viewPager.getCurrentItem())).addItem(item);
         }
 

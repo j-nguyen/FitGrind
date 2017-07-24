@@ -146,13 +146,13 @@ public class MainFragment extends Fragment {
         results.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Create a fragmentManager
-                FragmentManager fm = getActivity().getSupportFragmentManager();
-                FragmentTransaction trans = fm.beginTransaction();
-                trans.setCustomAnimations(R.anim.fade_in, R.anim.fade_out);
-                trans.replace(R.id.content_main, new ViewCalorieLogFragment());
-                trans.addToBackStack(null);
-                trans.commit();
+            // Create a fragmentManager
+            FragmentManager fm = getActivity().getSupportFragmentManager();
+            FragmentTransaction trans = fm.beginTransaction();
+            trans.setCustomAnimations(R.anim.fade_in, R.anim.fade_out);
+            trans.replace(R.id.content_main, new ViewCalorieLogFragment());
+            trans.addToBackStack(null);
+            trans.commit();
             }
         });
 
@@ -175,10 +175,6 @@ public class MainFragment extends Fragment {
         // we want to set the text view for last logged weight, last calories and calories goal
         Calendar cal = Calendar.getInstance(Locale.getDefault());
         mCurrentDate.setText("Today\'s Date: " + new SimpleDateFormat("EEE, MMM d, ''yy").format(cal.getTime()));
-
-        // set up for last logged, we'll need to db this one
-        String calorieLogDate = (db.lastRecordedCalorieLog() != null) ? db.lastRecordedCalorieLog() : "";
-        String weightLogDate = (db.lastRecordedWeightLog() != null) ? db.lastRecordedWeightLog() : "";
         db.close();
 
         // set a long lcick for mlistview
