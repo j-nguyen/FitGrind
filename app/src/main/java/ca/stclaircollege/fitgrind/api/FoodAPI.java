@@ -51,22 +51,12 @@ public class FoodAPI {
         // Initialize it here
         AndroidNetworking.initialize(context);
     }
-    
 
     /**
-     * Item search for food. This is the easiest way to get food items
+     * Searches food, and returns an observable before continuing
      * @param food
-     * @param requestListener
+     * @return
      */
-    public void foodSearch(String food, JSONObjectRequestListener requestListener) {
-        AndroidNetworking.get(BASE_URL + "search/?")
-                .addQueryParameter("format", "json")
-                .addQueryParameter("q", food)
-                .addQueryParameter("api_key", this.apiKey)
-                .build()
-                .getAsJSONObject(requestListener);
-    }
-
     public Observable<ArrayList<Item>> searchFood(String food) {
          return Rx2AndroidNetworking.get(BASE_URL + "search/?")
                 .addQueryParameter("format", "json")
